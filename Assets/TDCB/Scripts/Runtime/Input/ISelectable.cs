@@ -10,8 +10,13 @@ namespace TDCB
     {
         public int Priority { get; }
         public SelectableType selectableType { get; }
+
+        public Sprite Icon { get; }
         public bool IsControllable { get; }
         public IControllableUnit ControllableUnit { get; }
+        
+        public bool HasCommands { get; }
+        public CommandTemplate Commands { get; }
         
         public Vector3 Position { get; }
         public float Size { get; }
@@ -31,7 +36,9 @@ namespace TDCB
     public enum SelectableType
     {
         Unit,
-        Building
+        Building,
+        Enemy,
+        Object
     }
 
     public interface IHoverable

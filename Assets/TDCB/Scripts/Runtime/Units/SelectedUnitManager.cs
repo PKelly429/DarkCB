@@ -46,6 +46,15 @@ namespace TDCB
             AddUnitToSelection(toSelect);
             
             SoundManager.Instance.CreateSoundBuilder().WithPosition(toSelect.Position).Play(toSelect.SelectionClip);
+
+            if (toSelect.HasCommands)
+            {
+                UIReferences.Instance.commandButtonGrid.Bind(toSelect.Commands);
+            }
+            else
+            {
+                UIReferences.Instance.commandButtonGrid.Unbind();
+            }
         }
 
         public void SetUnitSelection(HashSet<ISelectable> toSelect, bool replaceSelection = true)
@@ -79,6 +88,15 @@ namespace TDCB
                 if (highestPrioUnit.IsAlive())
                 {
                     SoundManager.Instance.CreateSoundBuilder().WithPosition(highestPrioUnit.Position).Play(highestPrioUnit.SelectionClip);
+                }
+                
+                if (highestPrioUnit.HasCommands)
+                {
+                    UIReferences.Instance.commandButtonGrid.Bind(highestPrioUnit.Commands);
+                }
+                else
+                {
+                    UIReferences.Instance.commandButtonGrid.Unbind();
                 }
             }
         }

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 348ddf736c75d004f8d49ff3627ba924, type: 3}
+  m_Name: TorchBearer
+  m_EditorClassIdentifier: 
+  priority: 1
+  icon: {fileID: 21300000, guid: e134dbfe83328854fa9f3c7da99c64dc, type: 3}
+  unitPrefab: {fileID: 8613050218598687926, guid: 3549afd18e484674697a830b53e72160, type: 3}
+  commands: {fileID: 11400000, guid: 3b5d05e3ebf3ad549b26de1376286a93, type: 2}
+  selectSound: {fileID: 11400000, guid: 10435241eb99b4648ae457f3f0131398, type: 2}
+  moveSound: {fileID: 11400000, guid: 02890f100c021b14e90a817bb2e7a431, type: 2}
+  stopSound: {fileID: 0}
+  holdSound: {fileID: 0}
+  attackSound: {fileID: 0}
+  tooltip:
+    type: 0
+    position: 0
+    header: Fighter
+    body: 

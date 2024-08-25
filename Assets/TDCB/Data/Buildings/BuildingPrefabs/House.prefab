@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c22a020ecfa01ad4585322bb7a9b02c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: 77022723d35a19448a42e8d75f655f05, type: 2}
+  size: 4
+  selectionCollider: {fileID: 7746029492782497375}
 --- !u!1 &3969632347525762183
 GameObject:
   m_ObjectHideFlags: 0

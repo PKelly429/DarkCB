@@ -9,33 +9,31 @@ using UnityEngine;
 
 namespace TDCB
 {
-    public class SelectableObject : MonoBehaviour, ISelectable
+    public abstract class SelectableObject : MonoBehaviour, ISelectable
     {
-        [SerializeField, SuffixLabel("Higher Better")] private int priority = 1;
-        [SerializeField] private SelectableType unitType;
-        [SerializeField] private float size;
-        [SerializeField] private CommandTemplate commands;
-        [SerializeField] private Collider collider;
-        [SerializeField] private SoundData selectSoundData;
-
         public static readonly HashSet<SelectableObject> AllSelectableObjects = new HashSet<SelectableObject>();
 
-        public int Priority => priority;
-        public SelectableType selectableType => unitType;
-        public float Size => size;
+        public abstract int Priority { get; }
+        public abstract SelectableType selectableType { get; }
+        public abstract Sprite Icon { get; }
+        public abstract float Size { get; }
+        public abstract Collider Collider { get; }
         
-        public SoundData SelectionClip => selectSoundData;
+        public abstract SoundData SelectionClip { get; }
         
         public bool IsControllable { get; private set; }
         public IControllableUnit ControllableUnit { get; private set; }
+        
+        public abstract bool HasCommands { get; }
+        public abstract CommandTemplate Commands { get; }
+
 
         public Vector3 Position => transform.position;
-        public Collider Collider => collider;
 
         private ICommandRegister[] commandListeners;
         private IHighlight _highlight;
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             AllSelectableObjects.Add(this);
             _highlight = SceneReferences.Instance.highlightManager.RegisterUnit(this);
@@ -43,13 +41,13 @@ namespace TDCB
             IsControllable = ControllableUnit != null;
         }
         
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             AllSelectableObjects.Remove(this);
             SceneReferences.Instance.highlightManager.DeregisterUnit(this);
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             commandListeners = GetComponents<ICommandRegister>();
         }
@@ -84,8 +82,6 @@ namespace TDCB
 
         public void OnSelect()
         {
-            UIReferences.Instance.commandButtonGrid.Bind(commands);
-            
             _highlight.Selected = true;
             SetLayer();
             RegisterCommands();
@@ -93,8 +89,6 @@ namespace TDCB
 
         public void OnDeSelect()
         {
-            UIReferences.Instance.commandButtonGrid.Unbind();
-            
             _highlight.Selected = false;
             SetLayer();
             DeregisterCommands();

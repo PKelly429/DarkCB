@@ -11,7 +11,6 @@ namespace TDCB
     public class MoveableEntity : MonoBehaviour, IControllableUnit
     {
         [Required, SerializeField] private GameObject aiObject;
-        [SerializeField, SuffixLabel("Higher Better")] private int priority;
         [SerializeField] private SoundData moveSoundData;
         
         private IAstarAI ai;
@@ -20,8 +19,7 @@ namespace TDCB
         {
             ai = aiObject.GetComponent<IAstarAI>();
         }
-
-        public int Priority => priority;
+        
         public SoundData MoveClip => moveSoundData;
         public Vector3 CurrentPosition => ai.position;
 

@@ -7,7 +7,6 @@ namespace TDCB
 {
     public interface IControllableUnit
     {
-        public int Priority { get; }
         public SoundData MoveClip { get; }
         
         public Vector3 CurrentPosition { get; }

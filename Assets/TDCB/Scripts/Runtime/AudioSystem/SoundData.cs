@@ -60,8 +60,11 @@ namespace AudioSystem
         {
             get
             {
-                sharedVoice.SetTime();
-                
+                if (uniqueClip)
+                {
+                    sharedVoice.SetTime();
+                }
+
                 if (fullyRandom)
                 {
                     return clips[Random.Range(0, clips.Length)];

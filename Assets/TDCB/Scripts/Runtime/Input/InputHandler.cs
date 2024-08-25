@@ -56,7 +56,7 @@ namespace TDCB
             {
                 if (_dragState == value) return;
                 
-                if (_dragState == DragState.MultiUnitSelection)
+                if (value == DragState.Idle)
                 {
                     SceneReferences.Instance.unitManager.SetUnitSelection(_hoveredSelectables);
                     ClearHover();
@@ -188,18 +188,13 @@ namespace TDCB
 
             if (dragState is DragState.Idle or DragState.SingleUnitSelection)
             {
-                RaycastSelectableUnitsAndHoverFirst(ray);
+                HoverFirstSelectableUnit();
             }
 
             if (dragState == DragState.Idle) return;
             
             if (!LeftMouseDown)
             {
-                if (dragState == DragState.SingleUnitSelection)
-                {
-                    TrySelectFirstHoveredUnit();
-                }
-
                 dragState = DragState.Idle;
                 return;
             }
@@ -229,20 +224,25 @@ namespace TDCB
             }
         }
 
-        private void RaycastSelectableUnitsAndHoverFirst(Ray ray)
+        private List<ISelectable> selectablesAtMousePos = new List<ISelectable>();
+        private void HoverFirstSelectableUnit()
         {
-            _hitCount = Physics.RaycastNonAlloc(ray.origin, ray.direction, _hits, MaxDistance, clickableLayers);
-
-            SortHits();
+            Vector3 cameraPos = _mainCamera.transform.position;
+            selectablesAtMousePos.Clear();
+            foreach (var obj in SelectableObject.AllSelectableObjects)
+            {
+                if (IsUnitInSelection(MouseScreenPosition, obj))
+                {
+                    selectablesAtMousePos.Add(obj);
+                }
+            }
             
+            selectablesAtMousePos.Sort((x, y) => Vector3.Distance(y.Position, cameraPos).CompareTo(Vector3.Distance(x.Position, cameraPos)));
             ClearHover();
 
-            for (int i = 0; i < _hitCount; i++)
+            if (selectablesAtMousePos.Count > 0)
             {
-                ISelectable selectable = _hits[i].transform.GetComponent<ISelectable>();
-                if(selectable == null) continue;
-                AddHover(selectable);
-                return;
+                AddHover(selectablesAtMousePos[0]);
             }
         }
 
@@ -259,18 +259,6 @@ namespace TDCB
             } 
         }
 
-        private void TrySelectFirstHoveredUnit()
-        {
-            for (int i = 0; i < _hitCount; i++)
-            {
-                ISelectable selectable = _hits[i].transform.GetComponent<ISelectable>();
-                if(selectable == null) continue;
-                SceneReferences.Instance.unitManager.SetUnitSelection(selectable);
-                return;
-            }
-            
-            SceneReferences.Instance.unitManager.ClearSelection();
-        }
 
         private bool IsMultiUnitSelect()
         {
@@ -308,6 +296,16 @@ namespace TDCB
             Rect objRect = new Rect(Mathf.Min(min.x, max.x), Mathf.Min(min.y, max.y), Mathf.Abs(min.x - max.x), Mathf.Abs(min.y - max.y));
             
             return rect.Overlaps(objRect);
+        }
+        
+        private bool IsUnitInSelection(Vector3 pos, SelectableObject obj)
+        {
+            Vector2 min = _mainCamera.WorldToScreenPoint(obj.Collider.bounds.min);
+            Vector2 max = _mainCamera.WorldToScreenPoint(obj.Collider.bounds.max);
+            
+            Rect objRect = new Rect(Mathf.Min(min.x, max.x), Mathf.Min(min.y, max.y), Mathf.Abs(min.x - max.x), Mathf.Abs(min.y - max.y));
+            
+            return objRect.Contains(pos);
         }
 
         private void TrySelectHoveredObject(Ray ray)
