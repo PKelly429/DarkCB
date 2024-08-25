@@ -73,6 +73,7 @@ crashlytics-build.properties
 
 /Packages*
 /Assets/AmplifyShaderEditor*
+/Assets/AmplifyShaderPack*
 /Assets/DeepVoice*
 /Assets/Stylized*
 /Assets/Vefects*

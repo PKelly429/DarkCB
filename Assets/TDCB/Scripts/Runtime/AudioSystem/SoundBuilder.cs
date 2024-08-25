@@ -27,9 +27,9 @@ namespace AudioSystem {
                 Debug.LogError("SoundData is null");
                 return;
             }
-            if (soundData.clips.Length == 0) 
+            
+            if (!soundData.CanPlay())
             {
-                Debug.LogError("SoundData has no clips");
                 return;
             }
             

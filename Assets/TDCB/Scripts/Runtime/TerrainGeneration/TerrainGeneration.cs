@@ -13,6 +13,7 @@ namespace TDCB
     public class TerrainGeneration : MonoBehaviour
     {
         [SerializeField] private Texture2D texture;
+        [SerializeField] private Texture2D validTerrainTextire;
         [SerializeField] private Terrain terrain;
         [SerializeField] private int width = 1024;
         [SerializeField] private int height = 1024;
@@ -124,7 +125,21 @@ namespace TDCB
                 }
             }
             
+            for (int x = 0; x < 512; x++)
+            {
+                for (int y = 0; y < 512; y++)
+                {
+                    bool valid = texture.GetPixel(x * 2, y * 2).g > 0.5f;
+                    valid |= texture.GetPixel((x * 2)+1, y * 2).g > 0.5f;
+                    valid |= texture.GetPixel(x * 2, (y * 2)+1).g > 0.5f;
+                    valid |= texture.GetPixel((x * 2)+1, (y * 2)+1).g > 0.5f;
+                    
+                    validTerrainTextire.SetPixel(x, y, valid ? Color.red : Color.black);
+                }
+            }
+            
             texture.Apply();
+            validTerrainTextire.Apply();
 #if UNITY_EDITOR
             string path = Application.dataPath + "/../" + AssetDatabase.GetAssetPath(texture);
             System.IO.File.WriteAllBytes(path, texture.EncodeToJPG());
@@ -137,7 +152,7 @@ namespace TDCB
         private Color GenerateColor(float sample, bool closeToCenter)
         {
             bool isTree = !closeToCenter && sample > treeThreshold;
-            return isTree ? new Color(1, 0, 1, 1) : new Color(1, 1, 1, 1);
+            return isTree ? new Color(0, 0, 0, 1) : new Color(0, 1, 0, 1);
         }
     }
 }

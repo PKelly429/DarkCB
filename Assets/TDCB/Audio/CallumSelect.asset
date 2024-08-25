@@ -21,7 +21,9 @@ MonoBehaviour:
   loop: 0
   playOnAwake: 0
   frequentSound: 0
-  allowRepeat: 0
+  fullyRandom: 0
+  uniqueClip: 1
+  sharedVoice: {fileID: 11400000, guid: dd180c2b95aca694288f5d2a55226542, type: 2}
   mute: 0
   bypassEffects: 0
   bypassListenerEffects: 0

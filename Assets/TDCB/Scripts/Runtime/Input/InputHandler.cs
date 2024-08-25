@@ -123,14 +123,19 @@ namespace TDCB
             
             MouseScreenPosition = inputControls.PlayerInput.MousePosition.ReadValue<Vector2>();
             
-            Vector3 worldMousePos = _mainCamera.ScreenToWorldPoint(MouseScreenPosition);
-            MousePosition = new Vector3(worldMousePos.x, worldMousePos.y, 0);
+            // Vector3 worldMousePos = _mainCamera.ScreenToWorldPoint(MouseScreenPosition);
+            // MousePosition = new Vector3(worldMousePos.x, 0, worldMousePos.z);
             
             bool rightMousePressed = InputControls.PlayerInput.RightMousePress.WasPressedThisFrame();
             bool processCommand = rightMousePressed || (LeftMouseDownPressedThisFrame && HasTargetCommand);
 
             Ray ray = _mainCamera.ScreenPointToRay(MouseScreenPosition);
             
+            _hitCount = Physics.RaycastNonAlloc(ray.origin, ray.direction, _hits, MaxDistance, groundLayers);
+            if (_hitCount > 0)
+            {
+                MousePosition = _hits[0].point;
+            }
 
             if (processCommand)
             {
@@ -151,8 +156,6 @@ namespace TDCB
         private void HandleMoveCommand(Ray ray)
         {
             if (PointerOverUI) return;
-            
-            _hitCount = Physics.RaycastNonAlloc(ray.origin, ray.direction, _hits, MaxDistance, groundLayers);
             
             if (_hitCount > 0)
             {

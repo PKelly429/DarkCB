@@ -16,7 +16,8 @@ namespace AudioSystem {
             audioSource = gameObject.GetOrAdd<AudioSource>();
         }
 
-        public void Initialize(SoundData data) {
+        public void Initialize(SoundData data) 
+        {
             Data = data;
             audioSource.clip = data.GetClip;
             audioSource.outputAudioMixerGroup = data.mixerGroup;
@@ -46,7 +47,8 @@ namespace AudioSystem {
             audioSource.rolloffMode = data.rolloffMode;
         }
 
-        public void Play() {
+        public void Play() 
+        {
             if (playingCoroutine != null) {
                 StopCoroutine(playingCoroutine);
             }

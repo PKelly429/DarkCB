@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace AudioSystem 
@@ -15,7 +17,10 @@ namespace AudioSystem
         public bool loop;
         public bool playOnAwake;
         public bool frequentSound;
-        public bool allowRepeat;
+        public bool fullyRandom;
+
+        [InfoBox("Prevent repeating any clips with matching voice until time has passed")] public bool uniqueClip;
+        [ShowIf("uniqueClip")] public SharedVoice sharedVoice;
         
         public bool mute;
         public bool bypassEffects;
@@ -39,12 +44,25 @@ namespace AudioSystem
         
         public AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
 
+        public bool CanPlay()
+        {
+            if (clips.Length == 0) return false;
+            if (uniqueClip)
+            {
+                return sharedVoice.CanPlay();
+            }
+
+            return true;
+        }
+        
         [NonSerialized] private List<AudioClip> _next = new List<AudioClip>();
         public AudioClip GetClip
         {
             get
             {
-                if (allowRepeat)
+                sharedVoice.SetTime();
+                
+                if (fullyRandom)
                 {
                     return clips[Random.Range(0, clips.Length)];
                 }

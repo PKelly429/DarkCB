@@ -24,6 +24,7 @@ namespace TDCB
         [Header("Zoom")] 
         [SerializeField] private Transform minPosition;
         [SerializeField] private Transform maxPosition;
+        [SerializeField] private AnimationCurve tiltCurve;
         [SerializeField] private float zoomSpeed = 0.05f;
         private float cameraZoomDampTime = 0.1f;
 
@@ -162,7 +163,7 @@ namespace TDCB
             zoom = Mathf.SmoothDamp(zoom, _targetZoom, ref _zoomVelocity, cameraZoomDampTime);
             
             float distance = Mathf.Lerp(_minZoomDistance, _maxZoomDistance, zoom);
-            Vector3 forward = Vector3.Lerp(_minCameraForward, _maxCameraForward, zoom);
+            Vector3 forward = Vector3.Lerp(_minCameraForward, _maxCameraForward, tiltCurve.Evaluate(zoom));
 
             cameraTransform.localPosition = forward * -distance;
             cameraTransform.localRotation = Quaternion.LookRotation(forward);
