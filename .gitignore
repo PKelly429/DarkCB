@@ -72,9 +72,13 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 /Packages*
+/Assets/AmplifyShaderEditor*
 /Assets/DeepVoice*
-"/Assets/Stylized Terrain Textures"*
+/Assets/Stylized*
 /Assets/Vefects*
 /Assets/BrokenVector*
-"/Assets/Day-Night Skyboxes"*
+/Assets/Day-Night*
 /Assets/GothicUI*
+/Assets/MicroSplatData*
+/Assets/Shapes*
+/Assets/VolumetricFog2*
