@@ -5,8 +5,19 @@ using UnityEngine;
 
 namespace TDCB
 {
+    [CreateAssetMenu(menuName = "Command/Move Command")]
     public class MoveCommand : PositionCommand
     {
+        public override void OnBeforeExecute()
+        {
+            UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(true);
+        }
+        
+        public override void OnAfterExecuteOrCancel()
+        {
+            UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(false);
+        }
+        
         public override void Execute(Vector3 position)
         {
             var unitObservers = SceneReferences.Instance.unitManager.allControllableUnits;

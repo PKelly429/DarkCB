@@ -10,7 +10,7 @@ namespace TDCB
     {
         [SerializeField] private float radius;
 
-        public static HashSet<FogClearingObject> AllFogClearingObjects = new HashSet<FogClearingObject>();
+        public static readonly HashSet<FogClearingObject> AllFogClearingObjects = new HashSet<FogClearingObject>();
 
         public Vector3 Position => transform.position;
         public float Radius => radius;

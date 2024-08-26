@@ -13,8 +13,8 @@ namespace TDCB
         
         private InputControls _inputControls;
         
-        public readonly OrderedUnitList OrderedUnits = new OrderedUnitList();
-        public readonly HashSet<IControllableUnit> allControllableUnits = new HashSet<IControllableUnit>();
+        public readonly OrderedUnitList OrderedUnits = new OrderedUnitList(200);
+        public readonly HashSet<IControllableUnit> allControllableUnits = new HashSet<IControllableUnit>(200);
 
         public delegate void SelectedUnitsChanged();
         public event SelectedUnitsChanged OnSelectedUnitsChanged; 
@@ -93,6 +93,7 @@ namespace TDCB
                 if (highestPrioUnit.HasCommands)
                 {
                     UIReferences.Instance.commandButtonGrid.Bind(highestPrioUnit.Commands);
+                    UIReferences.Instance.commandButtonGrid.BindToSelectedUnits();
                 }
                 else
                 {

@@ -42,7 +42,7 @@ namespace TDCB
             foreach (var unit in SceneReferences.Instance.unitManager.OrderedUnits.unitsInPrioirtyOrder)
             {
                 var newIcon = iconPool.Get();
-                newIcon.SetIcon(unit.Icon);
+                newIcon.SetUnit(unit);
                 newIcon.transform.SetSiblingIndex(index);
                 _activeIcons.Add(newIcon);
                 index++;

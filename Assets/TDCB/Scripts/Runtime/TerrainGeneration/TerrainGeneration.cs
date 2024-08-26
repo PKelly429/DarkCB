@@ -47,6 +47,11 @@ namespace TDCB
         private Vector2 offset;
         private const float OffsetMulti = 9999f;
 
+        public void Awake()
+        {
+            GenerateTrees();
+        }
+
         public float[,] GenerateNoise()
         {
             Random.InitState(seed);
@@ -129,25 +134,46 @@ namespace TDCB
             {
                 for (int y = 0; y < 512; y++)
                 {
-                    bool valid = texture.GetPixel(x * 2, y * 2).g > 0.5f;
-                    valid |= texture.GetPixel((x * 2)+1, y * 2).g > 0.5f;
-                    valid |= texture.GetPixel(x * 2, (y * 2)+1).g > 0.5f;
-                    valid |= texture.GetPixel((x * 2)+1, (y * 2)+1).g > 0.5f;
+                    float av = texture.GetPixel(x * 2, y * 2).g;
+                    av += texture.GetPixel((x * 2)+1, y * 2).g;
+                    av += texture.GetPixel(x * 2, (y * 2)+1).g;
+                    av += texture.GetPixel((x * 2)+1, (y * 2)+1).g;
+
+                    bool valid = av > 2.5f;
                     
-                    validTerrainTextire.SetPixel(x, y, valid ? Color.red : Color.black);
+                    // bool valid = texture.GetPixel(x * 2, y * 2).g > 0.5f;
+                    // valid &= texture.GetPixel((x * 2)+1, y * 2).g > 0.5f;
+                    // valid &= texture.GetPixel(x * 2, (y * 2)+1).g > 0.5f;
+                    // valid &= texture.GetPixel((x * 2)+1, (y * 2)+1).g > 0.5f;
+                    
+                    validTerrainTextire.SetPixel(x, y, valid ? Color.black : Color.red);
                 }
             }
             
             texture.Apply();
             validTerrainTextire.Apply();
-#if UNITY_EDITOR
-            string path = Application.dataPath + "/../" + AssetDatabase.GetAssetPath(texture);
-            System.IO.File.WriteAllBytes(path, texture.EncodeToJPG());
             
-            EditorUtility.SetDirty(texture);
+#if UNITY_EDITOR
+            WriteToTexture(texture);
+            WriteToTexture(validTerrainTextire);
             AssetDatabase.SaveAssets();
 #endif
         }
+        
+#if UNITY_EDITOR
+        private void WriteToTexture(Texture2D tex)
+        {
+            if (Application.isPlaying)
+            {
+                return;
+            }
+            
+            string path = Application.dataPath + "/../" + AssetDatabase.GetAssetPath(tex);
+            System.IO.File.WriteAllBytes(path, tex.EncodeToJPG());
+            
+            EditorUtility.SetDirty(tex);
+        }
+#endif
 
         private Color GenerateColor(float sample, bool closeToCenter)
         {

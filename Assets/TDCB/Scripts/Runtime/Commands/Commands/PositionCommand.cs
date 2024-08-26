@@ -7,7 +7,18 @@ namespace TDCB
     {
         public override void Execute()
         {
+            OnBeforeExecute();
             SceneReferences.Instance.inputHandler.SetCommand(this);
+        }
+
+        public virtual void OnBeforeExecute()
+        {
+            
+        }
+        
+        public virtual void OnAfterExecuteOrCancel()
+        {
+            
         }
     }
 }

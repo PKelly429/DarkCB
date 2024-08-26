@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Shapes;
 using Sirenix.Utilities;
 using UnityEngine;
@@ -126,8 +127,8 @@ namespace TDCB
             // Vector3 worldMousePos = _mainCamera.ScreenToWorldPoint(MouseScreenPosition);
             // MousePosition = new Vector3(worldMousePos.x, 0, worldMousePos.z);
             
-            bool rightMousePressed = InputControls.PlayerInput.RightMousePress.WasPressedThisFrame();
-            bool processCommand = rightMousePressed || (LeftMouseDownPressedThisFrame && HasTargetCommand);
+            bool processCommand = LeftMouseDownPressedThisFrame && HasTargetCommand;
+            processCommand |= InputControls.PlayerInput.RightMousePress.WasPressedThisFrame() && !HasTargetCommand;
 
             Ray ray = _mainCamera.ScreenPointToRay(MouseScreenPosition);
             
@@ -168,8 +169,16 @@ namespace TDCB
                     SceneReferences.Instance.commandManager.MoveCommand.Execute(_hits[0].point);   
                 }
             }
+
+            ClearCurrentCommand();
+        }
+
+        private void ClearCurrentCommand()
+        {
+            if (!HasTargetCommand) return;
             
             HasTargetCommand = false;
+            currentTargetCommand.OnAfterExecuteOrCancel();
             currentTargetCommand = null;
         }
 
@@ -308,18 +317,20 @@ namespace TDCB
             return objRect.Contains(pos);
         }
 
-        private void TrySelectHoveredObject(Ray ray)
-        {
-
-        }
-
         public void OnSelect(InputAction.CallbackContext context)
         {
         }
 
         public void OnCancel(InputAction.CallbackContext context)
         {
-
+            if (HasTargetCommand)
+            {
+                ClearCurrentCommand();
+            }
+            else
+            {
+                UIReferences.Instance.commandButtonGrid.BindToSelectedUnits();
+            }
         }
 
         public void OnMouseDelta(InputAction.CallbackContext context)

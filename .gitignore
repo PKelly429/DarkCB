@@ -71,6 +71,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+/Assets/Resources/TerrainMaps/ValidTerrainGrid.jpg
+
 /Packages*
 /Assets/AmplifyShaderEditor*
 /Assets/AmplifyShaderPack*
@@ -83,3 +85,4 @@ crashlytics-build.properties
 /Assets/MicroSplatData*
 /Assets/Shapes*
 /Assets/VolumetricFog2*
+/Assets/GameInputControllerIconsFree*

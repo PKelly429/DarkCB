@@ -34,6 +34,8 @@ namespace TDCB
             foreach (var obj in FogClearingObject.AllFogClearingObjects)
             {
                 SetFogOfWarAlpha(obj.Position, obj.Radius, 0);
+                
+                SceneReferences.Instance.gridManager.SetFlags(obj.Position, obj.Radius, GridState.Lit);
             }
         }
 

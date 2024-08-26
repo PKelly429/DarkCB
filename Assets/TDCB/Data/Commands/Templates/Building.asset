@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Building
   m_EditorClassIdentifier: 
   commandRow1:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 59d03788207bf5449a27a04e937b422a, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

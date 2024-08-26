@@ -8,10 +8,16 @@ namespace TDCB
     {
         public delegate void ControllableUnitListChanged();
 
-        public event ControllableUnitListChanged OnControllableUnitListChanged; 
-        
-        public readonly HashSet<ISelectable> containedUnits = new HashSet<ISelectable>();
-        public readonly List<ISelectable> unitsInPrioirtyOrder = new List<ISelectable>();
+        public event ControllableUnitListChanged OnControllableUnitListChanged;
+
+        private readonly HashSet<ISelectable> containedUnits;
+        public readonly List<ISelectable> unitsInPrioirtyOrder;
+
+        public OrderedUnitList(int capacity)
+        {
+            containedUnits = new HashSet<ISelectable>(capacity);
+            unitsInPrioirtyOrder = new List<ISelectable>(capacity);
+        }
 
         public int Count => containedUnits.Count;
         public ISelectable HighestPriorityUnit => unitsInPrioirtyOrder[0];

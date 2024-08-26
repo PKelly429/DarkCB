@@ -11,6 +11,8 @@ namespace TDCB
     {
         private const int Commands = 15;
         
+        [SerializeField] private GameObject moveCanvas;
+        [SerializeField] private GameObject buildCanvas;
         [SerializeField] private GameObject commandButtonPrefab;
 
         [SerializeField] private GameObject[] commandButtonObjects = new GameObject[Commands];
@@ -19,6 +21,26 @@ namespace TDCB
         private void Start()
         {
             Unbind();
+            SetMoveCanvasVisible(false);
+        }
+
+        public void SetMoveCanvasVisible(bool visible)
+        {
+            moveCanvas.SetActive(visible);
+        }
+        
+        public void SetBuildCanvasVisible(bool visible)
+        {
+            buildCanvas.SetActive(visible);
+        }
+
+        public void BindToSelectedUnits()
+        {
+            ISelectable highestPrioUnit = SceneReferences.Instance.unitManager.HighestPrioritySelectedUnit;
+            if (highestPrioUnit != null)
+            {
+                Bind(highestPrioUnit.Commands);
+            }
         }
 
         public void Bind(CommandTemplate unitCommands)

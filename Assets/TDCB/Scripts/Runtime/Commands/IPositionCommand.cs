@@ -7,5 +7,6 @@ namespace TDCB
     public interface IPositionCommand
     {
         public void Execute(Vector3 value);
+        public void OnAfterExecuteOrCancel();
     }
 }

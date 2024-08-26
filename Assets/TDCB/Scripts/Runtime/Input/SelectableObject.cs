@@ -35,21 +35,31 @@ namespace TDCB
 
         protected virtual void OnEnable()
         {
+            RegisterObject();
+        }
+        
+        protected virtual void OnDisable()
+        {
+            DeregisterObject();
+        }
+
+        protected virtual void Start()
+        {
+            commandListeners = GetComponents<ICommandRegister>();
+        }
+
+        protected void RegisterObject()
+        {
             AllSelectableObjects.Add(this);
             _highlight = SceneReferences.Instance.highlightManager.RegisterUnit(this);
             ControllableUnit = GetComponent<IControllableUnit>();
             IsControllable = ControllableUnit != null;
         }
         
-        protected virtual void OnDisable()
+        protected void DeregisterObject()
         {
             AllSelectableObjects.Remove(this);
             SceneReferences.Instance.highlightManager.DeregisterUnit(this);
-        }
-
-        protected virtual void Start()
-        {
-            commandListeners = GetComponents<ICommandRegister>();
         }
 
         private void RegisterCommands()

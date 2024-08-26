@@ -143,6 +143,17 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""e9c9b5c7-b2ea-429f-b1a1-8e843c4ce413"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""0d61d91a-ee34-423f-88ca-b7b05b99fe6a"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
