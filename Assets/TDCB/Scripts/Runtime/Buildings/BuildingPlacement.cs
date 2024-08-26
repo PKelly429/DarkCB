@@ -36,7 +36,7 @@ namespace TDCB
         {
             if (!InPlacementMode) return;
 
-            GridCell mousePos = SceneReferences.Instance.gridManager.GetGridCellFromWorldPos(SceneReferences.Instance.inputHandler.MousePosition);
+            GridCell mousePos = GridCell.FromWorldPos(SceneReferences.Instance.inputHandler.MousePosition);
             _currentPlacement.transform.position = SceneReferences.Instance.gridManager.GetWorldPositionFromCell(mousePos);
             
             _currentPlacementBuilding.ValidBuildingPosition = SceneReferences.Instance.gridManager.IsPositionValid(_currentPlacementBuilding.Collider.bounds);

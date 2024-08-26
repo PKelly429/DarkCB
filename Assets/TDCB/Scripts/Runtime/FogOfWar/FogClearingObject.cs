@@ -8,21 +8,23 @@ namespace TDCB
 {
     public class FogClearingObject : MonoBehaviour
     {
+        [SerializeField] private bool isStatic;
         [SerializeField] private float radius;
 
-        public static readonly HashSet<FogClearingObject> AllFogClearingObjects = new HashSet<FogClearingObject>();
-
         public Vector3 Position => transform.position;
+        public bool IsStatic => isStatic;
         public float Radius => radius;
+        
+        public GridCell GridPosition { get; set; }
         
         private void OnEnable()
         {
-            AllFogClearingObjects.Add(this);
+            SceneReferences.Instance.fogManager.RegisterFogClearingObj(this);
         }
         
         private void OnDisable()
         {
-            AllFogClearingObjects.Remove(this);
+            SceneReferences.Instance.fogManager.DeregisterFogClearingObj(this);
         }
     }
 }

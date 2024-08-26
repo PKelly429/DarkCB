@@ -231,7 +231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddb80b51530b7754e9c87d3bbbe2a143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 30
+  isStatic: 0
+  radius: 15
 --- !u!1001 &3972216552311165078
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -352,7 +353,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5553458753133035957, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
       propertyPath: m_Name
-      value: TorchBearer Variant
+      value: TorchBearer
       objectReference: {fileID: 0}
     - target: {fileID: 7999440232233511966, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
       propertyPath: m_Materials.Array.data[0]

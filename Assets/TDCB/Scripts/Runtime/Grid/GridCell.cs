@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace TDCB
 {
@@ -16,10 +17,34 @@ namespace TDCB
             this.x = x;
             this.y = y;
         }
+
+        public bool Overlaps(Vector3 pos, float radius)
+        {
+            Profiler.BeginSample("Overlaps");
+            Vector2 center = new Vector2((pos.x / GridManager.GridSize)+GridManager.HalfGridBounds, (pos.z / GridManager.GridSize)+GridManager.HalfGridBounds);
+            radius /= GridManager.GridSize;
+            
+            float closestX = Math.Max(x, Math.Min(center.x, x+GridManager.GridSize));
+            float closestY = Math.Max(y, Math.Min(center.y, y+GridManager.GridSize));
+            
+            float distanceX = center.x - closestX;
+            float distanceY = center.y - closestY;
+            
+            float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+            Profiler.EndSample();
+            return distanceSquared <= (radius * radius);
+        }
         
         public override string ToString()
         {
             return $"[{x},{y}]";
+        }
+
+        public static GridCell FromWorldPos(Vector3 worldPos)
+        {
+            int x = Mathf.FloorToInt(Mathf.Clamp((worldPos.x / GridManager.GridSize)+GridManager.HalfGridBounds, 0, GridManager.GridBounds));
+            int y = Mathf.FloorToInt(Mathf.Clamp((worldPos.z / GridManager.GridSize)+GridManager.HalfGridBounds, 0, GridManager.GridBounds));
+            return new GridCell(x, y);
         }
     
         public static GridCell operator +(GridCell a, GridCell b) => new (a.x + b.x, a.y + b.y);

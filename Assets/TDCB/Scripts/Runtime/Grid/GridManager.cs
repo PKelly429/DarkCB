@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
 namespace TDCB
@@ -14,26 +15,29 @@ namespace TDCB
         public const int HalfGridBounds = 256;
         public const int GridSize = 2;
         
+        public const int MaxColorBatchSize = 45;
+        
         private static readonly int MousePos = Shader.PropertyToID("_MousePos");
         private LocalKeyword _showGraph;
         
         [SerializeField] private AstarPath pathfinding;
         [SerializeField] private Material gridMaterial;
         [SerializeField] private Texture2D gridTexture;
-        
+
+        private Color[] toApply = new Color[MaxColorBatchSize*MaxColorBatchSize];
         private Dictionary<GridCell, GridState> _gridCells = new Dictionary<GridCell, GridState>();
         private bool _needToApplyTexture = false;
 
         public bool IsPositionValid(Bounds bounds)
         {
-            GridCell min = GetGridCellFromWorldPos(bounds.min);
-            GridCell max = GetGridCellFromWorldPos(bounds.max);
+            GridCell min = GridCell.FromWorldPos(bounds.min);
+            GridCell max = GridCell.FromWorldPos(bounds.max);
 
             for (int x = min.x; x <= max.x; x++)
             {
                 for (int y = min.y; y <= max.y; y++)
                 {
-                    if (GetGridCellState(x, y).HasFlag(GridState.BlockedByTerrain) || GetGridCellState(x, y).HasFlag(GridState.BlockedByBuilding))
+                    if ((GetGridCellState(x, y) & GridState.Blocked) != 0)
                     {
                         return false;
                     }
@@ -45,8 +49,8 @@ namespace TDCB
         
         public void SetFlags(Bounds bounds, GridState toSet)
         {
-            GridCell min = GetGridCellFromWorldPos(bounds.min);
-            GridCell max = GetGridCellFromWorldPos(bounds.max);
+            GridCell min = GridCell.FromWorldPos(bounds.min);
+            GridCell max = GridCell.FromWorldPos(bounds.max);
 
             for (int x = min.x; x <= max.x; x++)
             {
@@ -55,54 +59,56 @@ namespace TDCB
                     SetGridCellState(x, y, toSet);
                 }
             }
-
-            _needToApplyTexture = true;
+            
+            ApplyGridCellColors(min, max);
 
             if (toSet.HasFlag(GridState.BlockedByBuilding))
             {
-                int minX = min.x * 2;
-                int minY = min.y * 2;
-                int maxX = (max.x * 2)+1;
-                int maxY = (max.y * 2)+1;
-                int width = (maxX - minX)+1;
-                int height = (maxY - minY)+1;
-                
-                pathfinding.AddWorkItem(new AstarWorkItem(() => 
-                {
-                    if (pathfinding.graphs[0] is not GridGraph gridGraph) return;
-    
-                    gridGraph.SetWalkability(new bool[width*height], new IntRect(minX, minY, maxX, maxY));
-                }));
+                SetWalkable(min, max, false);
             }
         }
-
-        public void SetFlags(Vector3 position, float radius, GridState toSet)
+        
+        public void ClearFlags(Bounds bounds, GridState toSet)
         {
-            Bounds bounds = new Bounds(position, new Vector3(radius * 2, 1, radius * 2));
-            GridCell min = GetGridCellFromWorldPos(bounds.min);
-            GridCell max = GetGridCellFromWorldPos(bounds.max);
-            
-            GridCell center = GetGridCellFromWorldPos(position);
-            Vector2 centerPos = new Vector2(center.x, center.y);
-            float distance = Mathf.FloorToInt(radius / GridSize);
-            
+            GridCell min = GridCell.FromWorldPos(bounds.min);
+            GridCell max = GridCell.FromWorldPos(bounds.max);
+
             for (int x = min.x; x <= max.x; x++)
             {
                 for (int y = min.y; y <= max.y; y++)
                 {
-                    if(Vector2.Distance(centerPos, new Vector2(x, y)) > distance) continue;
-                    SetGridCellState(x, y, toSet);
+                    ClearGridCellState(x, y, toSet);
                 }
             }
-            
-            _needToApplyTexture = true;
+
+            ApplyGridCellColors(min, max);
+
+            if (toSet.HasFlag(GridState.BlockedByBuilding))
+            {
+                SetWalkable(min, max, false);
+            }
         }
 
-        public GridCell GetGridCellFromWorldPos(Vector3 pos)
+        private void SetWalkable(GridCell min, GridCell max, bool walkable)
         {
-            int x = Mathf.FloorToInt(Mathf.Clamp((pos.x / GridSize)+HalfGridBounds, 0, GridBounds));
-            int y = Mathf.FloorToInt(Mathf.Clamp((pos.z / GridSize)+HalfGridBounds, 0, GridBounds));
-            return new GridCell(x, y);
+            int minX = min.x * 2;
+            int minY = min.y * 2;
+            int maxX = (max.x * 2)+1;
+            int maxY = (max.y * 2)+1;
+            int width = (maxX - minX)+1;
+            int height = (maxY - minY)+1;
+
+            pathfinding.AddWorkItem(new AstarWorkItem(() => 
+            {
+                if (pathfinding.graphs[0] is not GridGraph gridGraph) return;
+
+                bool[] walkableArray = new bool[width * height];
+                for (int i = 0; i < walkableArray.Length; i++)
+                {
+                    walkableArray[i] = walkable;
+                }
+                gridGraph.SetWalkability(walkableArray, new IntRect(minX, minY, maxX, maxY));
+            }));
         }
 
         public Vector3 GetWorldPositionFromCell(GridCell cell)
@@ -129,25 +135,59 @@ namespace TDCB
             }
         }
 
-        private void SetGridCellState(int x, int y, GridState state)
+        public void ApplyGridCellColors(GridCell min, GridCell max)
+        {
+            Profiler.BeginSample("UpdateGridCellColor Batch"); 
+            int width = max.x - min.x;
+            int height = max.y - min.y;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    var curState = GetGridCellState(new GridCell(min.x+x, min.y+y)); 
+                    bool invalid = (curState & GridState.Blocked) != 0;
+                    bool lit = (curState & GridState.Lit) != 0; 
+                    toApply[y * width + x] = new Color(invalid ? 1 : 0, 0, lit ? 1 : 0, 1);
+                } 
+            }
+            
+            gridTexture.SetPixels(min.x, min.y, width, height, toApply);
+            _needToApplyTexture = true;
+            Profiler.EndSample();
+        }
+
+        public void ApplyGridCellColor(GridCell cell)
+        {
+            _needToApplyTexture = true;
+            
+            Profiler.BeginSample("UpdateGridCellColor"); 
+            var curState = _gridCells[cell]; 
+            bool invalid = (curState & GridState.Blocked) != 0;
+            bool lit = (curState & GridState.Lit) != 0; 
+            gridTexture.SetPixel(cell.x, cell.y, new Color(invalid ? 1 : 0, 0, lit ? 1 : 0, 1));
+            Profiler.EndSample();
+        }
+
+        public void SetGridCellState(int x, int y, GridState state)
         {
             SetGridCellState(new GridCell(x, y), state);
         }
         
-        private void SetGridCellState(GridCell cell, GridState state)
+        public void SetGridCellState(GridCell cell, GridState state)
         {
             if (!_gridCells.TryAdd(cell, state))
             {
                 _gridCells[cell] |= state;
             }
-
-            var curState = _gridCells[cell];
-            bool invalid = curState.HasFlag(GridState.BlockedByTerrain) || curState.HasFlag(GridState.BlockedByBuilding);
-            bool lit = curState.HasFlag(GridState.Lit);
-            gridTexture.SetPixel(cell.x, cell.y, new Color(invalid ? 1 : 0, 0, lit ? 1 : 0, 1));
         }
         
-        private void ClearGridCellState(GridCell cell, GridState state)
+        public void ClearGridCellState(int x, int y, GridState state)
+        {
+            ClearGridCellState(new GridCell(x, y), state);
+        }
+        
+        public void ClearGridCellState(GridCell cell, GridState state)
         {
             if (_gridCells.ContainsKey(cell))
             {
@@ -165,8 +205,14 @@ namespace TDCB
             return _gridCells[cell];
         }
         
+        
+        static bool HasFlag(GridState flags, GridState flag)
+        {
+            return (flags & flag) != 0;
+        }
+        
         #region Unity Functions
-        private void Start()
+        private void Awake()
         {
             InitialiseGridWithTerrain();
             _showGraph = new LocalKeyword(gridMaterial.shader, "_SHOWGRID_ON");
