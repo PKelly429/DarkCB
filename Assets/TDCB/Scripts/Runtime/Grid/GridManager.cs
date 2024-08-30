@@ -25,7 +25,7 @@ namespace TDCB
         [SerializeField] private Texture2D gridTexture;
 
         private Color[] toApply = new Color[MaxColorBatchSize*MaxColorBatchSize];
-        private Dictionary<GridCell, GridState> _gridCells = new Dictionary<GridCell, GridState>();
+        private GridState[] gridStates = new GridState[WorldSize * WorldSize];
         private bool _needToApplyTexture = false;
 
         public bool IsPositionValid(Bounds bounds)
@@ -37,7 +37,8 @@ namespace TDCB
             {
                 for (int y = min.y; y <= max.y; y++)
                 {
-                    if ((GetGridCellState(x, y) & GridState.Blocked) != 0)
+                    //if ((GetGridCellState(x, y) & GridState.Blocked) != 0)
+                    if (GetGridCellState(x, y) != GridState.Lit)
                     {
                         return false;
                     }
@@ -62,7 +63,7 @@ namespace TDCB
             
             ApplyGridCellColors(min, max);
 
-            if (toSet.HasFlag(GridState.BlockedByBuilding))
+            if (toSet.HasFlag(GridState.Blocked))
             {
                 SetWalkable(min, max, false);
             }
@@ -83,7 +84,7 @@ namespace TDCB
 
             ApplyGridCellColors(min, max);
 
-            if (toSet.HasFlag(GridState.BlockedByBuilding))
+            if ((toSet & GridState.Blocked) != 0)
             {
                 SetWalkable(min, max, false);
             }
@@ -129,17 +130,42 @@ namespace TDCB
                 {
                     if (gridTexture.GetPixel(x, y).r > 0.5f)
                     {
-                        _gridCells.TryAdd(new GridCell(x, y), GridState.BlockedByTerrain);
+                        gridStates[y * WorldSize + x] = GridState.Blocked;
                     }
                 }
             }
         }
 
+        public void AddGridCellState(GridCell min, GridCell max, GridState state, Func<GridCell, bool> applyCell)
+        {
+            Profiler.BeginSample("AddGridCellState Batch"); 
+            int width = (max.x - min.x)+1;
+            int height = (max.y - min.y)+1;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    GridCell next = new GridCell(min.x+x, min.y+y);
+                    if (!applyCell(next)) continue;
+                    SetGridCellState(next, state);
+                    var curState = GetGridCellState(next); 
+                    bool invalid = (curState & GridState.Blocked) != 0;
+                    bool lit = (curState & GridState.Lit) != 0; 
+                    toApply[y * width + x] = new Color(invalid ? 1 : 0, 0, lit ? 1 : 0, 1);
+                } 
+            }
+            
+            gridTexture.SetPixels(min.x, min.y, width, height, toApply);
+            _needToApplyTexture = true;
+            Profiler.EndSample();
+        }
+
         public void ApplyGridCellColors(GridCell min, GridCell max)
         {
             Profiler.BeginSample("UpdateGridCellColor Batch"); 
-            int width = max.x - min.x;
-            int height = max.y - min.y;
+            int width = (max.x - min.x)+1;
+            int height = (max.y - min.y)+1;
 
             for (int x = 0; x < width; x++)
             {
@@ -162,7 +188,7 @@ namespace TDCB
             _needToApplyTexture = true;
             
             Profiler.BeginSample("UpdateGridCellColor"); 
-            var curState = _gridCells[cell]; 
+            var curState = gridStates[cell.y*WorldSize + cell.x]; 
             bool invalid = (curState & GridState.Blocked) != 0;
             bool lit = (curState & GridState.Lit) != 0; 
             gridTexture.SetPixel(cell.x, cell.y, new Color(invalid ? 1 : 0, 0, lit ? 1 : 0, 1));
@@ -176,10 +202,7 @@ namespace TDCB
         
         public void SetGridCellState(GridCell cell, GridState state)
         {
-            if (!_gridCells.TryAdd(cell, state))
-            {
-                _gridCells[cell] |= state;
-            }
+            gridStates[cell.y * WorldSize + cell.x] |= state;
         }
         
         public void ClearGridCellState(int x, int y, GridState state)
@@ -189,10 +212,7 @@ namespace TDCB
         
         public void ClearGridCellState(GridCell cell, GridState state)
         {
-            if (_gridCells.ContainsKey(cell))
-            {
-                _gridCells[cell] &= ~state;
-            }
+            gridStates[cell.y * WorldSize + cell.x] &= ~state;
         }
 
         private GridState GetGridCellState(int x, int y)
@@ -201,16 +221,10 @@ namespace TDCB
         }
         private GridState GetGridCellState(GridCell cell)
         {
-            _gridCells.TryAdd(cell, new GridState());
-            return _gridCells[cell];
+            return gridStates[cell.y * WorldSize + cell.x];
         }
         
-        
-        static bool HasFlag(GridState flags, GridState flag)
-        {
-            return (flags & flag) != 0;
-        }
-        
+
         #region Unity Functions
         private void Awake()
         {
@@ -254,13 +268,10 @@ namespace TDCB
 
     [Serializable]
     [Flags]
-    public enum GridState
+    public enum GridState : byte
     {
         None = 0,
         Lit = 1 << 0,
-        BlockedByTerrain = 1 << 1,
-        BlockedByBuilding = 1 << 2,
-        
-        Blocked = BlockedByTerrain | BlockedByBuilding
+        Blocked = 1 << 1,
     }
 }

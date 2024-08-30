@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AudioSystem;
 using UnityEngine;
 
 namespace TDCB
 {
     public class BuildingPlacement : MonoBehaviour
     {
+        [SerializeField] private SoundData failToPlaceBuildingSFX;
+        
         public bool InPlacementMode { get; private set; }
         private GameObject _currentPlacement;
         private Building _currentPlacementBuilding;
@@ -22,6 +25,12 @@ namespace TDCB
         
         public void TryCompletePlacement()
         {
+            if (!_currentPlacementBuilding.ValidBuildingPosition)
+            {
+                //TODO: Display Error Message
+                SoundManager.Instance.CreateSoundBuilder().Play(failToPlaceBuildingSFX);
+                return;
+            }
             _currentPlacementBuilding.Build();
             _currentPlacement = null;
             SetPlacementMode(false);

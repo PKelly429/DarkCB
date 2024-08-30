@@ -56,7 +56,7 @@ namespace TDCB
         {
             RegisterObject();
             
-            SceneReferences.Instance.gridManager.SetFlags(Collider.bounds, GridState.BlockedByBuilding);
+            SceneReferences.Instance.gridManager.SetFlags(Collider.bounds, GridState.Blocked);
         }
     }
 }

@@ -29,10 +29,10 @@ namespace TDCB
                 staticFogClearingObjects.Add(obj);
                 AddLitStateForObject(obj);
             }
-            else
-            {
-                dynamicFogClearingObjects.Add(obj);
-            }
+            // else
+            // {
+            //     dynamicFogClearingObjects.Add(obj);
+            // }
         }
         
         public void DeregisterFogClearingObj(FogClearingObject obj)
@@ -42,10 +42,10 @@ namespace TDCB
                 staticFogClearingObjects.Remove(obj);
                 _recalculateStaticObjs = true;
             }
-            else
-            {
-                dynamicFogClearingObjects.Remove(obj);
-            }
+            // else
+            // {
+            //     dynamicFogClearingObjects.Remove(obj);
+            // }
         }
         
         private void Start()
@@ -89,22 +89,22 @@ namespace TDCB
                 }
             }
             
-            Profiler.BeginSample("Clear Previous Cells");
-            foreach (var cell in _dynamicallyLitCells)
-            {
-                SceneReferences.Instance.gridManager.ClearGridCellState(cell, GridState.Lit);
-                SceneReferences.Instance.gridManager.ApplyGridCellColor(cell);
-            }
-            _dynamicallyLitCells.Clear();
-            Profiler.EndSample();
-
-            Profiler.BeginSample("Apply dynamic objects");
-            foreach (var obj in dynamicFogClearingObjects)
-            {
-                AddLitStateForObject(obj);
-            }
-            
-            Profiler.EndSample();
+            // Profiler.BeginSample("Clear Previous Cells");
+            // foreach (var cell in _dynamicallyLitCells)
+            // {
+            //     SceneReferences.Instance.gridManager.ClearGridCellState(cell, GridState.Lit);
+            //     SceneReferences.Instance.gridManager.ApplyGridCellColor(cell);
+            // }
+            // _dynamicallyLitCells.Clear();
+            // Profiler.EndSample();
+            //
+            // Profiler.BeginSample("Apply dynamic objects");
+            // foreach (var obj in dynamicFogClearingObjects)
+            // {
+            //     AddLitStateForObject(obj);
+            // }
+            //
+            // Profiler.EndSample();
         }
 
         

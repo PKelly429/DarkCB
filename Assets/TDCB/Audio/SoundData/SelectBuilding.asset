@@ -10,21 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f82bef45c934bcea274627533144cd0, type: 3}
-  m_Name: CharlotteMove
+  m_Name: SelectBuilding
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: d96d6f7c97a1378459a7f5f4d46e4876, type: 3}
-  - {fileID: 8300000, guid: 62665bece30f6ce4b94984a1da432060, type: 3}
-  - {fileID: 8300000, guid: 630f2702debeaec4295cd3ed2b179d2b, type: 3}
-  - {fileID: 8300000, guid: f90b63b16002dae40a8ece832f479d72, type: 3}
-  - {fileID: 8300000, guid: 4150b3789b00d4e4696282daed41e062, type: 3}
-  mixerGroup: {fileID: 6031991356610453623, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
+  - {fileID: 8300000, guid: 693eaa99905edcd40a4a5e29516940f8, type: 3}
+  mixerGroup: {fileID: -5953739953036936921, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
   loop: 0
   playOnAwake: 0
   frequentSound: 0
   fullyRandom: 0
-  uniqueClip: 1
-  sharedVoice: {fileID: 11400000, guid: 4b418d275e5693a43b1df81ad8714855, type: 2}
+  uniqueClip: 0
+  sharedVoice: {fileID: 0}
   mute: 0
   bypassEffects: 0
   bypassListenerEffects: 0
@@ -33,7 +29,7 @@ MonoBehaviour:
   volume: 1
   pitch: 1
   panStereo: 0
-  spatialBlend: 0
+  spatialBlend: 0.7
   reverbZoneMix: 1
   dopplerLevel: 1
   spread: 0
