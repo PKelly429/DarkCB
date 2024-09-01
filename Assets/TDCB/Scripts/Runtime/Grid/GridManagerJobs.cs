@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Pathfinding;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 using @ReadOnly = global::Unity.Collections.ReadOnlyAttribute;
 
 namespace TDCB
@@ -21,46 +23,247 @@ namespace TDCB
 
         public const int MaxUnits = 100;
         
-        //private readonly HashSet<FogClearingObject> additions = new HashSet<FogClearingObject>();
-        //private readonly HashSet<FogClearingObject> removeals = new HashSet<FogClearingObject>();
+        [SerializeField] private AstarPath pathfinding;
+        [SerializeField] private Material gridMaterial;
+        [SerializeField] private Texture2D gridTexture;
+        
+        private static readonly int MousePos = Shader.PropertyToID("_MousePos");
+        private LocalKeyword _showGraph;
+        
+        private readonly HashSet<FogClearingObject> additions = new HashSet<FogClearingObject>();
+        private readonly List<UnitVision> removals = new List<UnitVision>();
         private readonly HashSet<FogClearingObject> fogClearingObjects = new HashSet<FogClearingObject>();
         
         private NativeArray<UnitVision> unitsToProcess;
         private NativeArray<uint> unitsWithVisionInCell;
-        //private NativeArray<bool> blockedCells;
+        private NativeArray<uint> unitsWithVisionInCellBuffer; // separate array for passing into the job
         
-        private JobHandle _jobHandle;
-        private bool _jobRunning;
+        private NativeArray<bool> blockedCells;
+        private NativeArray<bool> blockedCellsBuffer; // separate array for passing into the job
+        private NativeArray<Color32> gridTextureData;
         
+        private JobHandle _updateLitCellsJobHandle;
+        private JobHandle _updateTextureJobHandle;
+        private bool _litCalculationJobRunning;
+        private bool _updateTextureJobRunning;
+
+        private bool _blockedCellsUpdated;
+        
+        #region Grid Visibility
+        private bool _showGrid;
+        public bool ShowGrid
+        {
+            get => _showGrid;
+            set
+            {
+                _showGrid = value;
+                gridMaterial.SetKeyword(_showGraph, value);
+            }
+        }
+        private void SetMouseGridPos()
+        {
+            if (!_showGrid) return;
+            
+            Vector3 worldPos = SceneReferences.Instance.inputHandler.MousePosition;
+            Vector2 mousePos = new Vector2(worldPos.x, worldPos.z);
+            gridMaterial.SetVector(MousePos, mousePos);
+        }
+        #endregion
+        
+        #region Public Methods
+        public Vector3 GetWorldPositionFromCell(GridCell cell)
+        {
+            float halfGrid = GridSize / 2f;
+            float worldX = ((cell.x-HalfGridBounds) * GridSize)+halfGrid;
+            float worldZ = ((cell.y-HalfGridBounds) * GridSize)+halfGrid;
+            //float worldY = SampleTerrainHeight(new Vector3(worldX, 0, worldZ));
+            float worldY = 0;
+            return new Vector3(worldX, worldY, worldZ);
+        }
+        
+        public Vector3 GetCenterPosition(Vector3 position, Bounds bounds)
+        {
+            int sizeX = Mathf.CeilToInt(bounds.size.x / GridSize);
+            int sizeY = Mathf.CeilToInt(bounds.size.z / GridSize);
+            
+            int halfGridSize = (int)(GridSize / 2); 
+            Vector3 worldPos = GetWorldPositionFromCell(GridCell.FromWorldPos(position));
+            
+            bool xEven = sizeX % 2 == 0;
+            bool yEven = sizeY % 2 == 0;
+            if (xEven)
+            {
+                if (worldPos.x > position.x)
+                {
+                    worldPos.x -= halfGridSize;
+                }
+                else
+                {
+                    worldPos.x += halfGridSize;
+                }
+            }
+
+            if (yEven)
+            {
+                if (worldPos.z > position.z)
+                {
+                    worldPos.z -= halfGridSize;
+                }
+                else
+                {
+                    worldPos.z += halfGridSize;
+                }
+            }
+
+            //float worldY = SampleTerrainHeight(new Vector3(worldX, 0, worldZ));
+            float worldY = 0;
+            return new Vector3(worldPos.x, worldY, worldPos.z);
+        }
+        
+        public bool IsPositionValid(Bounds bounds)
+        {
+            GridCell min = GridCell.FromWorldPos(bounds.min);
+            GridCell max = GridCell.FromWorldPos(bounds.max);
+
+            for (int x = min.x; x < max.x; x++)
+            {
+                for (int y = min.y; y < max.y; y++)
+                {
+                    if (blockedCells[y * GridBounds + x]) return false;
+                    if (unitsWithVisionInCell[y * GridBounds + x] < 1) return false;
+                }
+            }
+
+            return true;
+        }
+        
+        public void SetBoundsBlocked(Bounds bounds, bool blocked)
+        {
+            _blockedCellsUpdated = true;
+            
+            GridCell min = GridCell.FromWorldPos(bounds.min);
+            GridCell max = GridCell.FromWorldPos(bounds.max);
+
+            for (int x = min.x; x < max.x; x++)
+            {
+                for (int y = min.y; y < max.y; y++)
+                {
+                    blockedCells[y * GridBounds + x] = blocked;
+                }
+            }
+
+            SetWalkable(min, max, !blocked);
+        }
+        
+        #endregion
+        
+        #region Unit Registration
         public void RegisterFogClearingObj(FogClearingObject obj)
         {
             fogClearingObjects.Add(obj);
+            additions.Add(obj);
         }
         
         public void DeregisterFogClearingObj(FogClearingObject obj)
         {
             fogClearingObjects.Remove(obj);
+            removals.Add(new UnitVision()
+            {
+                lastGridCell = obj.GridPosition,
+                newGridCell = obj.GridPosition,
+                radius = obj.Radius,
+                onlyRemove = true
+            });
         }
+        #endregion
+        
+        #region Update Pathfinding
+        private void SetWalkable(GridCell min, GridCell max, bool walkable)
+        {
+            int halfGrid = GridSize / 2;
+            
+            int minX = min.x * GridSize;
+            int minY = min.y * GridSize;
+            int maxX = (max.x * GridSize)-halfGrid;
+            int maxY = (max.y * GridSize)-halfGrid;
+            int width = (maxX - minX)+1;
+            int height = (maxY - minY)+1;
 
-        private void Start()
+            pathfinding.AddWorkItem(new AstarWorkItem(() => 
+            {
+                if (pathfinding.graphs[0] is not GridGraph gridGraph) return;
+
+                bool[] walkableArray = new bool[width * height];
+                for (int i = 0; i < walkableArray.Length; i++)
+                {
+                    walkableArray[i] = walkable;
+                }
+                gridGraph.SetWalkability(walkableArray, new IntRect(minX, minY, maxX, maxY));
+            }));
+        }
+        #endregion
+
+        private void Awake()
         {
             unitsToProcess = new NativeArray<UnitVision>(MaxUnits, Allocator.Persistent);
             unitsWithVisionInCell = new NativeArray<uint>(GridBounds * GridBounds, Allocator.Persistent);
+            unitsWithVisionInCellBuffer = new NativeArray<uint>(GridBounds * GridBounds, Allocator.Persistent);
+            blockedCells = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
+            blockedCellsBuffer = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
+            
+            InitialiseGridWithTerrain();
+            gridTextureData = gridTexture.GetRawTextureData<Color32>();
+            
+            _showGraph = new LocalKeyword(gridMaterial.shader, "_SHOWGRID_ON");
+
+            ShowGrid = true;
+        }
+        
+        private void InitialiseGridWithTerrain()
+        {
+            for (int x = 0; x < GridBounds; x++)
+            {
+                for (int y = 0; y < GridBounds; y++)
+                {
+                    if (gridTexture.GetPixel(x, y).r > 0.5f)
+                    {
+                        blockedCells[y * GridBounds + x] = true;
+                        blockedCellsBuffer[y * GridBounds + x] = true;
+                    }
+                }
+            }
         }
         
         private void OnDestroy()
         {
-            if (!_jobHandle.IsCompleted)
+            if (!_updateLitCellsJobHandle.IsCompleted)
             {
-                _jobHandle.Complete();
+                _updateLitCellsJobHandle.Complete();
+            }
+            if (!_updateTextureJobHandle.IsCompleted)
+            {
+                _updateLitCellsJobHandle.Complete();
             }
             unitsToProcess.Dispose();
             unitsWithVisionInCell.Dispose();
+            unitsWithVisionInCellBuffer.Dispose();
+            blockedCells.Dispose();
+            blockedCellsBuffer.Dispose();
+            gridTextureData.Dispose();
         }
 
         private void Update()
         {
+            SetMouseGridPos();
+            
             int processQueueIndex = 0;
+            
+            foreach (var removal in removals)
+            {
+                unitsToProcess[processQueueIndex] = removal;
+                processQueueIndex++;
+            }
+            
             foreach (var obj in fogClearingObjects)
             {
                 // skip if hasn't moved
@@ -72,37 +275,71 @@ namespace TDCB
                     newGridCell = newPos,
                     lastGridCell = obj.GridPosition,
                     radius = obj.Radius,
-                    onlyAdd = !obj.HasBeenAdded
+                    onlyAdd = additions.Contains(obj)
                 };
-
-                obj.HasBeenAdded = true;
+                
                 obj.GridPosition = newPos;
                 processQueueIndex++;
                 if(processQueueIndex >= MaxUnits) break;
             }
 
+            additions.Clear();
+            removals.Clear();
+
             if (processQueueIndex > 0)
             {
-                var job = new UpdateGridLitJob()
+                var gridLitJob = new UpdateGridLitJob()
                 {
                     units = unitsToProcess,
-                    unitsWithVisionInCell = unitsWithVisionInCell,
+                    unitsWithVisionInCell = unitsWithVisionInCellBuffer,
                     UnitCount = processQueueIndex,
                     GridBounds = GridBounds
                 };
                 
-                _jobHandle = job.Schedule();
-                _jobRunning = true;
+                _updateLitCellsJobHandle = gridLitJob.Schedule();
+                _litCalculationJobRunning = true;
+                
+                var updateTextureJob = new UpdateGridTextureJob()
+                {
+                    blockedCells = blockedCellsBuffer,
+                    unitsWithVisionInCell = unitsWithVisionInCellBuffer,
+                    texture = gridTextureData
+                };
+                _updateTextureJobHandle = updateTextureJob.Schedule(GridBounds*GridBounds, 8, _updateLitCellsJobHandle);
+                _updateTextureJobRunning = true;
+
+            }
+            else if (_blockedCellsUpdated) // just update texture
+            {
+                var updateTextureJob = new UpdateGridTextureJob()
+                {
+                    blockedCells = blockedCellsBuffer,
+                    unitsWithVisionInCell = unitsWithVisionInCellBuffer,
+                    texture = gridTextureData
+                };
+                _updateTextureJobHandle = updateTextureJob.Schedule(GridBounds*GridBounds, 8);
+                _updateTextureJobRunning = true;
             }
         }
 
         private void LateUpdate()
         {
-            if (!_jobRunning) return;
+            if (!_litCalculationJobRunning && !_updateTextureJobRunning) return;
             
             Profiler.BeginSample("Complete Job");
-            _jobHandle.Complete();
-            _jobRunning = false;
+            if(_litCalculationJobRunning) _updateLitCellsJobHandle.Complete();
+            _litCalculationJobRunning = false;
+            if(_updateTextureJobRunning) _updateTextureJobHandle.Complete();
+            _updateTextureJobRunning = false;
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Apply Texture");
+            gridTexture.Apply();
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Copy blocked cell buffer");
+            blockedCells.CopyTo(blockedCellsBuffer);
+            unitsWithVisionInCellBuffer.CopyTo(unitsWithVisionInCell);
             Profiler.EndSample();
         }
 
@@ -132,6 +369,7 @@ namespace TDCB
         // }
     }
 
+    #region Update Lit Objects Job
     public struct UnitVision
     {
         public GridCell lastGridCell;
@@ -201,4 +439,23 @@ namespace TDCB
             }
         }
     }
+    #endregion
+    
+    #region Update Texture Job
+    [BurstCompile]
+    public struct UpdateGridTextureJob : IJobParallelFor
+    {
+        [@ReadOnly] public NativeArray<bool> blockedCells;
+        [@ReadOnly] public NativeArray<uint> unitsWithVisionInCell;
+        [WriteOnly] public NativeArray<Color32> texture;
+        public void Execute(int index)
+        {
+            byte r = blockedCells[index] ? byte.MaxValue : byte.MinValue;
+            byte g = byte.MinValue;
+            byte b = unitsWithVisionInCell[index] > 0 ? byte.MaxValue : byte.MinValue;
+            byte a = byte.MaxValue;
+            texture[index] = new Color32(r, g, b, a);
+        }
+    }
+    #endregion
 }

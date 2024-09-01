@@ -10,13 +10,12 @@ namespace TDCB
     {
         [SerializeField] private bool isStatic;
         [SerializeField] private int radius = 30;
-
-        public bool HasBeenAdded { get; set; }
+        
         public Vector3 Position => transform.position;
         public bool IsStatic => isStatic;
         public int Radius => radius;
-        
-        public GridCell GridPosition { get; set; }
+
+        public GridCell GridPosition { get; set; } = new GridCell(-1, -1);
         
         private void OnEnable()
         {

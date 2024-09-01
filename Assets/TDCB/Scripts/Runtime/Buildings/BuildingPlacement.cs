@@ -45,10 +45,11 @@ namespace TDCB
         {
             if (!InPlacementMode) return;
 
-            GridCell mousePos = GridCell.FromWorldPos(SceneReferences.Instance.inputHandler.MousePosition);
-            _currentPlacement.transform.position = SceneReferences.Instance.gridManager.GetWorldPositionFromCell(mousePos);
+            Vector3 mousePos = SceneReferences.Instance.inputHandler.MousePosition;
+            Bounds bounds = _currentPlacementBuilding.Collider.bounds;
+            _currentPlacement.transform.position = SceneReferences.Instance.gridJobs.GetCenterPosition(mousePos, bounds);
             
-            _currentPlacementBuilding.ValidBuildingPosition = SceneReferences.Instance.gridManager.IsPositionValid(_currentPlacementBuilding.Collider.bounds);
+            _currentPlacementBuilding.ValidBuildingPosition = SceneReferences.Instance.gridJobs.IsPositionValid(bounds);
         }
 
 
@@ -64,7 +65,7 @@ namespace TDCB
 
             _currentPlacementBuilding = null;
             InPlacementMode = active;
-            SceneReferences.Instance.gridManager.ShowGrid = InPlacementMode;
+            SceneReferences.Instance.gridJobs.ShowGrid = InPlacementMode;
         }
     }
 }
