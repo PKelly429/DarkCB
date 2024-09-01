@@ -36,6 +36,12 @@ namespace TDCB
 
         public void BindToSelectedUnits()
         {
+            if (SceneReferences.Instance.unitManager.SelectedUnitCount < 1)
+            {
+                Unbind();
+                return;
+            }
+            
             ISelectable highestPrioUnit = SceneReferences.Instance.unitManager.HighestPrioritySelectedUnit;
             if (highestPrioUnit != null)
             {

@@ -11,9 +11,9 @@ namespace TDCB
     public class GridManager : MonoBehaviour
     {
         public const int WorldSize = 1024;
-        public const int GridBounds = 512; // WorldSize / GridSize
-        public const int HalfGridBounds = 256;
-        public const int GridSize = 2;
+        public const int GridBounds = 256; // WorldSize / GridSize
+        public const int HalfGridBounds = 128;
+        public const int GridSize = 4;
         
         public const int MaxColorBatchSize = 45;
         
@@ -25,7 +25,7 @@ namespace TDCB
         [SerializeField] private Texture2D gridTexture;
 
         private Color[] toApply = new Color[MaxColorBatchSize*MaxColorBatchSize];
-        private GridState[] gridStates = new GridState[WorldSize * WorldSize];
+        private GridState[] gridStates = new GridState[GridBounds * GridBounds];
         private bool _needToApplyTexture = false;
 
         public bool IsPositionValid(Bounds bounds)
@@ -130,7 +130,7 @@ namespace TDCB
                 {
                     if (gridTexture.GetPixel(x, y).r > 0.5f)
                     {
-                        gridStates[y * WorldSize + x] = GridState.Blocked;
+                        gridStates[y * GridBounds + x] = GridState.Blocked;
                     }
                 }
             }
@@ -188,7 +188,7 @@ namespace TDCB
             _needToApplyTexture = true;
             
             Profiler.BeginSample("UpdateGridCellColor"); 
-            var curState = gridStates[cell.y*WorldSize + cell.x]; 
+            var curState = gridStates[cell.y*GridBounds + cell.x]; 
             bool invalid = (curState & GridState.Blocked) != 0;
             bool lit = (curState & GridState.Lit) != 0; 
             gridTexture.SetPixel(cell.x, cell.y, new Color(invalid ? 1 : 0, 0, lit ? 1 : 0, 1));
@@ -202,7 +202,7 @@ namespace TDCB
         
         public void SetGridCellState(GridCell cell, GridState state)
         {
-            gridStates[cell.y * WorldSize + cell.x] |= state;
+            gridStates[cell.y * GridBounds + cell.x] |= state;
         }
         
         public void ClearGridCellState(int x, int y, GridState state)
@@ -212,7 +212,7 @@ namespace TDCB
         
         public void ClearGridCellState(GridCell cell, GridState state)
         {
-            gridStates[cell.y * WorldSize + cell.x] &= ~state;
+            gridStates[cell.y * GridBounds + cell.x] &= ~state;
         }
 
         private GridState GetGridCellState(int x, int y)
@@ -221,7 +221,7 @@ namespace TDCB
         }
         private GridState GetGridCellState(GridCell cell)
         {
-            return gridStates[cell.y * WorldSize + cell.x];
+            return gridStates[cell.y * GridBounds + cell.x];
         }
         
 

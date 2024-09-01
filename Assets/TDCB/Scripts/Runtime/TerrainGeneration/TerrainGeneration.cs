@@ -130,16 +130,28 @@ namespace TDCB
                 }
             }
             
-            for (int x = 0; x < 512; x++)
+            for (int x = 0; x < 256; x++)
             {
-                for (int y = 0; y < 512; y++)
+                for (int y = 0; y < 256; y++)
                 {
-                    float av = texture.GetPixel(x * 2, y * 2).g;
-                    av += texture.GetPixel((x * 2)+1, y * 2).g;
-                    av += texture.GetPixel(x * 2, (y * 2)+1).g;
-                    av += texture.GetPixel((x * 2)+1, (y * 2)+1).g;
+                    float av = texture.GetPixel(x * 4, y * 4).g;
+                    av += texture.GetPixel((x * 4)+1, y * 4).g;
+                    av += texture.GetPixel((x * 4)+2, y * 4).g;
+                    av += texture.GetPixel((x * 4)+3, y * 4).g;
+                    av += texture.GetPixel(x * 4, (y * 4)+1).g;
+                    av += texture.GetPixel(x * 4, (y * 4)+2).g;
+                    av += texture.GetPixel(x * 4, (y * 4)+3).g;
+                    av += texture.GetPixel((x * 4)+1, (y * 4)+1).g;
+                    av += texture.GetPixel((x * 4)+1, (y * 4)+2).g;
+                    av += texture.GetPixel((x * 4)+1, (y * 4)+3).g;
+                    av += texture.GetPixel((x * 4)+2, (y * 4)+1).g;
+                    av += texture.GetPixel((x * 4)+2, (y * 4)+2).g;
+                    av += texture.GetPixel((x * 4)+2, (y * 4)+3).g;
+                    av += texture.GetPixel((x * 4)+3, (y * 4)+1).g;
+                    av += texture.GetPixel((x * 4)+3, (y * 4)+2).g;
+                    av += texture.GetPixel((x * 4)+3, (y * 4)+3).g;
 
-                    bool valid = av > 2.5f;
+                    bool valid = av > 8f;
                     
                     // bool valid = texture.GetPixel(x * 2, y * 2).g > 0.5f;
                     // valid &= texture.GetPixel((x * 2)+1, y * 2).g > 0.5f;

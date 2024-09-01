@@ -13,39 +13,16 @@ namespace TDCB
         [SerializeField] private VolumetricFog fogOfWar;
         [SerializeField] private VolumetricFog fog;
         
-        private static readonly HashSet<FogClearingObject> staticFogClearingObjects = new HashSet<FogClearingObject>();
         private static readonly HashSet<FogClearingObject> dynamicFogClearingObjects = new HashSet<FogClearingObject>();
-
-        // could use a count to avoid recalculating
-        [SerializeField] private HashSet<GridCell> _staticallyLitCells = new HashSet<GridCell>();
-        [SerializeField] private HashSet<GridCell> _dynamicallyLitCells = new HashSet<GridCell>();
-
-        private bool _recalculateStaticObjs;
 
         public void RegisterFogClearingObj(FogClearingObject obj)
         {
-            if (obj.IsStatic)
-            {
-                staticFogClearingObjects.Add(obj);
-                AddLitStateForObject(obj);
-            }
-            // else
-            // {
-            //     dynamicFogClearingObjects.Add(obj);
-            // }
+            dynamicFogClearingObjects.Add(obj);
         }
         
         public void DeregisterFogClearingObj(FogClearingObject obj)
         {
-            if (obj.IsStatic)
-            {
-                staticFogClearingObjects.Remove(obj);
-                _recalculateStaticObjs = true;
-            }
-            // else
-            // {
-            //     dynamicFogClearingObjects.Remove(obj);
-            // }
+            dynamicFogClearingObjects.Remove(obj);
         }
         
         private void Start()
@@ -63,7 +40,7 @@ namespace TDCB
                 //fog.ResetFogOfWar(0);
             }
         }
-        #endif 
+        #endif
 
         private void Update()
         {
@@ -71,87 +48,7 @@ namespace TDCB
             // {
             //     SetFogOfWarAlpha(obj.Position, obj.Radius, 0);
             // }
-            
-            Profiler.BeginSample("Update Lit GridCells");
-            if (_recalculateStaticObjs)
-            {
-                _recalculateStaticObjs = false;
-                foreach (var cell in _staticallyLitCells)
-                {
-                    SceneReferences.Instance.gridManager.ClearGridCellState(cell, GridState.Lit);
-                    SceneReferences.Instance.gridManager.ApplyGridCellColor(cell);
-                }
-                _staticallyLitCells.Clear();
-                
-                foreach (var obj in staticFogClearingObjects)
-                {
-                    AddLitStateForObject(obj);
-                }
-            }
-            
-            // Profiler.BeginSample("Clear Previous Cells");
-            // foreach (var cell in _dynamicallyLitCells)
-            // {
-            //     SceneReferences.Instance.gridManager.ClearGridCellState(cell, GridState.Lit);
-            //     SceneReferences.Instance.gridManager.ApplyGridCellColor(cell);
-            // }
-            // _dynamicallyLitCells.Clear();
-            // Profiler.EndSample();
-            //
-            // Profiler.BeginSample("Apply dynamic objects");
-            // foreach (var obj in dynamicFogClearingObjects)
-            // {
-            //     AddLitStateForObject(obj);
-            // }
-            //
-            // Profiler.EndSample();
         }
-
-        
-        private void AddLitStateForObject(FogClearingObject obj)
-        {
-            Profiler.BeginSample("Get Bounds");
-            obj.GridPosition = GridCell.FromWorldPos(obj.Position);
-            Bounds bounds = new Bounds(obj.Position, new Vector3(obj.Radius * 2, 1, obj.Radius * 2));
-            GridCell min = GridCell.FromWorldPos(bounds.min);
-            GridCell max = GridCell.FromWorldPos(bounds.max);
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("Test Cells and Set States");
-            for (int x = min.x; x <= max.x; x++)
-            {
-                for (int y = min.y; y <= max.y; y++)
-                {
-                    GridCell cell = new GridCell(x, y);
-                    if(_staticallyLitCells.Contains(cell)) continue;
-                    if(!obj.IsStatic && _dynamicallyLitCells.Contains(cell)) continue;
-                    
-                    if(!cell.Overlaps(obj.Position, obj.Radius)) continue;
-                    
-                    Profiler.BeginSample("Set Cell State");
-                    if (obj.IsStatic)
-                    {
-                        if (_staticallyLitCells.Add(cell))
-                        {
-                            _dynamicallyLitCells.Remove(cell);
-                            SceneReferences.Instance.gridManager.SetGridCellState(cell, GridState.Lit);
-                        }
-                    }
-                    else
-                    {
-                        if (_dynamicallyLitCells.Add(cell))
-                        {
-                            SceneReferences.Instance.gridManager.SetGridCellState(cell, GridState.Lit);
-                        }
-                    }
-                    Profiler.EndSample();
-                }
-            }
-            Profiler.EndSample();
-            
-            SceneReferences.Instance.gridManager.ApplyGridCellColors(min, max);
-        }
-
         public void SetFogOfWarAlpha(Vector3 position, float radius, float alpha)
         {
             fogOfWar.SetFogOfWarAlpha(position, radius+10, alpha, true, 0.5f, 1f, 1f, 0.5f);

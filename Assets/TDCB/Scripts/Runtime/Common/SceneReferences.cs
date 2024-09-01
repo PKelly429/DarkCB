@@ -12,6 +12,7 @@ namespace TDCB
         public SelectedUnitManager unitManager;
         public UnitHighlightManager highlightManager;
         public FogOfWarManager fogManager;
+        public GridManagerJobs gridJobs;
         public GridManager gridManager;
         public BuildingPlacement buildingPlacement;
         
