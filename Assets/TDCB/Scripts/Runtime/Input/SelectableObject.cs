@@ -9,9 +9,12 @@ using UnityEngine;
 
 namespace TDCB
 {
-    public abstract class SelectableObject : MonoBehaviour, ISelectable
+    public abstract class SelectableObject : MonoBehaviour, ISelectable, ISpatialHashable
     {
         public static readonly HashSet<SelectableObject> AllSelectableObjects = new HashSet<SelectableObject>();
+        
+        public int HashGridIndex { get; set; }
+        public Transform Transform => transform;
 
         public abstract int Priority { get; }
         public abstract SelectableType selectableType { get; }
@@ -54,12 +57,16 @@ namespace TDCB
             _highlight = SceneReferences.Instance.highlightManager.RegisterUnit(this);
             ControllableUnit = GetComponent<IControllableUnit>();
             IsControllable = ControllableUnit != null;
+
+            SceneReferences.Instance.playerUnitHash.RegisterUnit(this);
         }
         
         protected void DeregisterObject()
         {
             AllSelectableObjects.Remove(this);
             SceneReferences.Instance.highlightManager.DeregisterUnit(this);
+            
+            SceneReferences.Instance.playerUnitHash.DeregisterUnit(this);
         }
 
         private void RegisterCommands()

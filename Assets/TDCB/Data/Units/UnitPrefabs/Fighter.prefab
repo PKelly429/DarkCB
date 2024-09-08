@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5302519491987042885}
   - component: {fileID: 963912587977634708}
+  - component: {fileID: 425311211866299843}
   - component: {fileID: 3686551086049158228}
   - component: {fileID: 3722411839396143018}
   - component: {fileID: 8876385318692905630}
@@ -64,7 +65,7 @@ MonoBehaviour:
       leadInRadiusWhenApproachingDestination: 1
       allowRotatingOnSpotBacking: 1
     debugFlags: 0
-    stopDistance: 0.1
+    stopDistance: 3
     rotationSmoothing: 0.1
     positionSmoothing: 0.1
     groundMask:
@@ -93,7 +94,7 @@ MonoBehaviour:
       tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
       traversableTags: -1
     enableLocalAvoidance: 1
-    enableGravity: 1
+    enableGravity: 0
   autoRepathBacking:
     mode: 2
     period: 2
@@ -101,6 +102,21 @@ MonoBehaviour:
   movementPlaneSourceBacking: 0
   syncPosition: 1
   syncRotation: 1
+--- !u!114 &425311211866299843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5553458753133035957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9679e68a0f1144e79c664d9a11ca121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1073741824
+  target: {fileID: 0}
+  useRotation: 0
 --- !u!114 &3686551086049158228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +145,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aiObject: {fileID: 5553458753133035957}
+  selectableObject: {fileID: 3686551086049158228}
   moveSoundData: {fileID: 11400000, guid: 0c13f223a55047e4e97817e02b859163, type: 2}
+  unitTarget: {fileID: 425311211866299843}
 --- !u!136 &8876385318692905630
 CapsuleCollider:
   m_ObjectHideFlags: 0

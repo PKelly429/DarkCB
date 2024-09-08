@@ -11,8 +11,7 @@ namespace TDCB
         [SerializeField] private UnitData data;
         [SerializeField] private float size;
         [SerializeField] private Collider selectionCollider;
-
-
+        
         public override int Priority => data.priority;
         public override SelectableType selectableType => SelectableType.Unit;
         public override Sprite Icon => data.icon;
