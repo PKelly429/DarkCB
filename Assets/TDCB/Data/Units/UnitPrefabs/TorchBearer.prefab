@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isStatic: 0
-  radius: 12
+  radius: 8
 --- !u!1001 &3972216552311165078
 PrefabInstance:
   m_ObjectHideFlags: 0

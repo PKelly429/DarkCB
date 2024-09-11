@@ -10,7 +10,7 @@ namespace TDCB
 
         public event ControllableUnitListChanged OnControllableUnitListChanged;
 
-        private readonly HashSet<ISelectable> containedUnits;
+        public readonly HashSet<ISelectable> containedUnits;
         public readonly List<ISelectable> unitsInPrioirtyOrder;
 
         public OrderedUnitList(int capacity)
@@ -58,6 +58,14 @@ namespace TDCB
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void AddRange(OrderedUnitList other)
+        {
+            foreach (var unit in other)
+            {
+                Add(unit);
+            }
         }
     }
 }

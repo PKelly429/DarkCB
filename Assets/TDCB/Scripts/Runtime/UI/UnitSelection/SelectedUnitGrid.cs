@@ -10,6 +10,7 @@ namespace TDCB
     {
         [SerializeField] private GameObject selectedUnitPrefab;
         [SerializeField] private RectTransform iconParent;
+        [SerializeField] private int maxPerPage;
         private ObjectPool<SelectedUnitIcon> iconPool = new ObjectPool<SelectedUnitIcon>(CreateIcon, GetIcon, ReleaseIcon, DestroyIcon);
 
         private HashSet<SelectedUnitIcon> _activeIcons = new HashSet<SelectedUnitIcon>();
@@ -46,6 +47,7 @@ namespace TDCB
                 newIcon.transform.SetSiblingIndex(index);
                 _activeIcons.Add(newIcon);
                 index++;
+                if (index >= maxPerPage) break;
             }
         }
 

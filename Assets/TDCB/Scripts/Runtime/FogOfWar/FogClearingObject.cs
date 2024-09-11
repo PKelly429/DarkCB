@@ -14,6 +14,7 @@ namespace TDCB
         public Vector3 Position => transform.position;
         public bool IsStatic => isStatic;
         public int Radius => radius;
+        public float LightDistance => radius*4;
 
         public GridCell GridPosition { get; set; } = new GridCell(-1, -1);
         

@@ -9,19 +9,27 @@ namespace TDCB
 {
     public class SelectedUnitManager : MonoBehaviour
     {
-        private const int ControlGroupCount = 9;
+        public const int MaxUnits = 200;
+        
+        public const int ControlGroupCount = 9;
         
         private InputControls _inputControls;
         
-        public readonly OrderedUnitList OrderedUnits = new OrderedUnitList(200);
-        public readonly HashSet<IControllableUnit> allControllableUnits = new HashSet<IControllableUnit>(200);
+        public readonly OrderedUnitList OrderedUnits = new OrderedUnitList(MaxUnits);
+        public readonly HashSet<IControllableUnit> allControllableUnits = new HashSet<IControllableUnit>(MaxUnits);
 
         public delegate void SelectedUnitsChanged();
         public event SelectedUnitsChanged OnSelectedUnitsChanged; 
 
         private bool _listChanged;
         
-        private readonly HashSet<ISelectable>[] controlGroups = new HashSet<ISelectable>[ControlGroupCount];
+        private readonly OrderedUnitList[] controlGroups = new OrderedUnitList[ControlGroupCount];
+        
+        public delegate void ControlGroupChanged(int id);
+        public event ControlGroupChanged OnControlGroupChanged;
+        
+        public delegate void ControlGroupSelectionChanged(int id);
+        public event ControlGroupSelectionChanged OnControlGroupSelectionChanged;
 
         public int SelectedUnitCount => OrderedUnits.Count;
         public ISelectable HighestPrioritySelectedUnit => OrderedUnits.HighestPriorityUnit;
@@ -34,6 +42,8 @@ namespace TDCB
             }
             allControllableUnits.Clear();
             OrderedUnits.Clear();
+            
+            OnControlGroupSelectionChanged?.Invoke(-1);
         }
 
         public void SetUnitSelection(ISelectable toSelect, bool replaceSelection = true)
@@ -55,6 +65,8 @@ namespace TDCB
             {
                 UIReferences.Instance.commandButtonGrid.Unbind();
             }
+            
+            OnControlGroupSelectionChanged?.Invoke(-1);
         }
 
         public void SetUnitSelection(HashSet<ISelectable> toSelect, bool replaceSelection = true)
@@ -63,6 +75,8 @@ namespace TDCB
             {
                 ClearSelection();
             }
+            
+            OnControlGroupSelectionChanged?.Invoke(-1);
 
             bool selectAll = true; // controllable units have priority
             foreach (var unit in toSelect)
@@ -101,12 +115,17 @@ namespace TDCB
                 }
             }
         }
+        
+        public OrderedUnitList GetControlGroup(int id)
+        {
+            return controlGroups[id];
+        }
 
         public void SetControlGroup(int id)
         {
             if (controlGroups[id] == null)
             {
-                controlGroups[id] = new HashSet<ISelectable>();
+                controlGroups[id] = new OrderedUnitList(MaxUnits);
             }
             else
             {
@@ -114,13 +133,17 @@ namespace TDCB
             }
             
             controlGroups[id].AddRange(OrderedUnits);
+            
+            OnControlGroupChanged?.Invoke(id);
+            OnControlGroupSelectionChanged?.Invoke(id);
         }
         
         public void SwitchToControlGroup(int id)
         {
             if (controlGroups[id] != null)
             {
-                SetUnitSelection(controlGroups[id]);
+                SetUnitSelection(controlGroups[id].containedUnits);
+                OnControlGroupSelectionChanged?.Invoke(id);
             }
         }
 
@@ -164,6 +187,7 @@ namespace TDCB
             _inputControls.ControlGroups.ControlGroup7.performed += context => { PressControlGroup(6); };
             _inputControls.ControlGroups.ControlGroup8.performed += context => { PressControlGroup(7); };
             _inputControls.ControlGroups.ControlGroup9.performed += context => { PressControlGroup(8); };
+            //_inputControls.ControlGroups.ControlGroup10.performed += context => { PressControlGroup(9); };
         }
 
         private void PressControlGroup(int id)

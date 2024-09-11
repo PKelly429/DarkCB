@@ -96,12 +96,10 @@ namespace TDCB
         
         private void ProcessDeregister(ISpatialHashable unit)
         {
-            Debug.Log($"Remove ID: {unit.HashGridIndex}");
             int id = unit.HashGridIndex;
             
             hashGridRemovals.Add(allUnits[^1]);
             
-            Debug.Log($"Swap With: {managedUnits[^1].HashGridIndex}");
             managedUnits[^1].HashGridIndex = id;
             movedUnits.Enqueue(new SpatialHashItem()
             {
@@ -116,7 +114,6 @@ namespace TDCB
             closestEnemy.RemoveAtSwapBack(id);
 
             if (id >= managedUnits.Count) id--;
-            Debug.Log($"AfterSwap: {id} = {managedUnits[id].HashGridIndex} = {allUnits[id].index}");
         }
         
         public void OnEarlyFrameUpdate()

@@ -27,8 +27,8 @@ namespace TDCB
         
         private void Start()
         {
-            //fogOfWar.ResetFogOfWar(1);
-            //fog.ResetFogOfWar(1);
+            fogOfWar.ResetFogOfWar(1);
+            fog.ResetFogOfWar(1);
         }
         
         #if UNITY_EDITOR
@@ -36,22 +36,22 @@ namespace TDCB
         {
             if (Application.isPlaying)
             {
-                //fogOfWar.ResetFogOfWar(0);
-                //fog.ResetFogOfWar(0);
+                fogOfWar.ResetFogOfWar(0);
+                fog.ResetFogOfWar(0);
             }
         }
         #endif
 
         private void Update()
         {
-            // foreach (var obj in dynamicFogClearingObjects)
-            // {
-            //     SetFogOfWarAlpha(obj.Position, obj.Radius, 0);
-            // }
+            foreach (var obj in dynamicFogClearingObjects)
+            {
+                SetFogOfWarAlpha(obj.Position, obj.LightDistance, 0);
+            }
         }
         public void SetFogOfWarAlpha(Vector3 position, float radius, float alpha)
         {
-            fogOfWar.SetFogOfWarAlpha(position, radius+10, alpha, true, 0.5f, 1f, 1f, 0.5f);
+            fogOfWar.SetFogOfWarAlpha(position, radius+10, alpha, true, 0.1f, 1f, 1f, 0.5f);
             
             //fog.SetFogOfWarAlpha(position, radius, alpha, true, 2f, 1f, 1f, 3f);
              fog.SetFogOfWarAlpha(position, radius-5, alpha, true, 1f, 1f, 1f, 1f);
