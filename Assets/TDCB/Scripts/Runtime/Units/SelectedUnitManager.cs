@@ -69,14 +69,12 @@ namespace TDCB
             OnControlGroupSelectionChanged?.Invoke(-1);
         }
 
-        public void SetUnitSelection(HashSet<ISelectable> toSelect, bool replaceSelection = true)
+        public void SetUnitSelection(HashSet<ISelectable> toSelect, bool replaceSelection = true, int controlGroupId = -1)
         {
             if (replaceSelection)
             {
                 ClearSelection();
             }
-            
-            OnControlGroupSelectionChanged?.Invoke(-1);
 
             bool selectAll = true; // controllable units have priority
             foreach (var unit in toSelect)
@@ -114,6 +112,22 @@ namespace TDCB
                     UIReferences.Instance.commandButtonGrid.Unbind();
                 }
             }
+
+            if (controlGroupId >= 0)
+            {
+                OnControlGroupSelectionChanged?.Invoke(controlGroupId);   
+            }
+            else
+            {
+                for (int i = 0; i < controlGroups.Length; i++)
+                {
+                    if(controlGroups[i]==null) continue;
+                    if (!OrderedUnits.Equals(controlGroups[i])) continue;
+                    controlGroupId = i;
+                    break;
+                }
+                OnControlGroupSelectionChanged?.Invoke(controlGroupId); 
+            }
         }
         
         public OrderedUnitList GetControlGroup(int id)
@@ -142,8 +156,7 @@ namespace TDCB
         {
             if (controlGroups[id] != null)
             {
-                SetUnitSelection(controlGroups[id].containedUnits);
-                OnControlGroupSelectionChanged?.Invoke(id);
+                SetUnitSelection(controlGroups[id].containedUnits, true, id);
             }
         }
 

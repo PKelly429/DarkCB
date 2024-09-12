@@ -67,5 +67,25 @@ namespace TDCB
                 Add(unit);
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((OrderedUnitList)obj);
+        }
+        private bool Equals(OrderedUnitList other)
+        {
+            if (containedUnits.Count != other.Count) return false;
+
+            foreach (var unit in containedUnits)
+            {
+                if (!other.containedUnits.Contains(unit)) return false;
+            }
+
+            return true;
+        }
+
     }
 }

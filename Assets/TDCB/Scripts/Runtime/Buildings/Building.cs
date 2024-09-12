@@ -25,9 +25,11 @@ namespace TDCB
 
         //TODO: Move to separate component and remove when built
         [SerializeField] private Renderer renderer;
-        [SerializeField] private Material valid;
-        [SerializeField] private Material inValid;
+        [SerializeField] private Material buildingPlacementMaterial;
         private bool _validBuildingPosition;
+        private static readonly int Valid = Shader.PropertyToID("_Valid");
+        private Material _defaultMaterial;
+
         public bool ValidBuildingPosition
         {
             get => _validBuildingPosition;
@@ -37,11 +39,11 @@ namespace TDCB
 
                 if (_validBuildingPosition)
                 {
-                    renderer.material = valid;
+                    buildingPlacementMaterial.SetFloat(Valid, 1);
                 }
                 else
                 {
-                    renderer.material = inValid;
+                    buildingPlacementMaterial.SetFloat(Valid, 0);
                 }
                 
             }
@@ -49,6 +51,8 @@ namespace TDCB
         
         protected override void OnEnable()
         {
+            _defaultMaterial = renderer.material;
+            renderer.material = buildingPlacementMaterial;
             if (autoRegister) Build();
         }
 
@@ -56,6 +60,7 @@ namespace TDCB
         {
             RegisterObject();
             
+            renderer.material = _defaultMaterial;
             SceneReferences.Instance.gridJobs.SetBoundsBlocked(Collider.bounds, this);
         }
     }

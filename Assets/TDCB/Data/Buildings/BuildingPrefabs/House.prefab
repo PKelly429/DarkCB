@@ -45,14 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c22a020ecfa01ad4585322bb7a9b02c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerControlled: 1
   data: {fileID: 11400000, guid: 77022723d35a19448a42e8d75f655f05, type: 2}
   size: 5
   selectionCollider: {fileID: 7746029492782497375}
   autoRegister: 0
   renderer: {fileID: 4370399812803310795}
-  valid: {fileID: 2100000, guid: 942103d8903cc29468fc7e25821b09e2, type: 2}
-  inValid: {fileID: 2100000, guid: 6c86d3fc99ec5904683ef9910ada3c42, type: 2}
+  buildingPlacementMaterial: {fileID: 2100000, guid: ec4a6988d011b734f8b95c76565ce5bc, type: 2}
 --- !u!1 &3969632347525762183
 GameObject:
   m_ObjectHideFlags: 0
