@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f03234cf913c2b844ae1baf937e61c1c, type: 3}
-  m_Name: Building
+  m_Name: RegularBuilding
   m_EditorClassIdentifier: 
   commandRow1:
-  - {fileID: 11400000, guid: 59d03788207bf5449a27a04e937b422a, type: 2}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

@@ -51,7 +51,8 @@ namespace TDCB
         }
         public void SetFogOfWarAlpha(Vector3 position, float radius, float alpha)
         {
-            fogOfWar.SetFogOfWarAlpha(position, radius+10, alpha, true, 0.1f, 1f, 1f, 0.5f);
+            //fogOfWar.SetFogOfWarAlpha(position, radius+10, alpha, true, 0.1f, 1f, 1f, 0.5f);
+            fogOfWar.SetFogOfWarAlpha(position, radius+10, alpha, true, 0.1f, 1f);
             
             //fog.SetFogOfWarAlpha(position, radius, alpha, true, 2f, 1f, 1f, 3f);
              fog.SetFogOfWarAlpha(position, radius-5, alpha, true, 1f, 1f, 1f, 1f);

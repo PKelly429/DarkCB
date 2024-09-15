@@ -15,6 +15,7 @@ namespace TDCB
         public bool InPlacementMode { get; private set; }
         private GameObject _currentPlacement;
         private Building _currentPlacementBuilding;
+        private ResourceHarvester _resourceHarvester;
         private bool _hasTextureChanges;
 
         private void Start()
@@ -25,10 +26,19 @@ namespace TDCB
 
         public void StartPlacement(BuildingData building)
         {
-            SetPlacementMode(true);
-
+            #if DEBUG
+            if (InPlacementMode)
+            {
+                Debug.LogError("Already in placement mode");
+                return;
+            }
+            #endif
+            
             _currentPlacement = Instantiate(building.buildingPrefab);
             _currentPlacementBuilding = _currentPlacement.GetComponent<Building>();
+            _resourceHarvester = _currentPlacement.GetComponent<ResourceHarvester>();
+            
+            SetPlacementMode(true);
         }
         
         public void TryCompletePlacement()
@@ -55,9 +65,23 @@ namespace TDCB
 
             Vector3 mousePos = SceneReferences.Instance.inputHandler.MousePosition;
             Bounds bounds = _currentPlacementBuilding.Collider.bounds;
-            _currentPlacement.transform.position = SceneReferences.Instance.gridJobs.GetCenterPosition(mousePos, bounds);
+            Vector3 position = SceneReferences.Instance.gridJobs.GetCenterPosition(mousePos, bounds);
+            _currentPlacement.transform.position = position;
             
-            _currentPlacementBuilding.ValidBuildingPosition = SceneReferences.Instance.gridJobs.IsPositionValid(bounds);
+            _currentPlacementBuilding.ValidBuildingPosition = _currentPlacementBuilding.IsPlacementValid();
+            
+            if (_resourceHarvester != null)
+            {
+                if (_currentPlacementBuilding.ValidBuildingPosition)
+                {
+                    SetResourceMode(_resourceHarvester.resource);
+                    SceneReferences.Instance.gridJobs.SetBuildingPlacementPosition(position, _resourceHarvester.range);   
+                }
+                else
+                {
+                    SetResourceMode(ResourceType.None);
+                }
+            }
 
             RemovePreviousTextureChanges();
             ApplyObjectTextureChanges();
@@ -72,15 +96,25 @@ namespace TDCB
             {
                 RemovePreviousTextureChanges();
             }
-            if (_currentPlacement != null && _currentPlacement.IsAlive())
+            else
             {
-                Destroy(_currentPlacement);
-                _currentPlacement = null;
+                if (_currentPlacement != null && _currentPlacement.IsAlive())
+                {
+                    Destroy(_currentPlacement);
+                    _currentPlacement = null;
+                }   
+                _currentPlacementBuilding = null;
             }
-
-            _currentPlacementBuilding = null;
+            
             InPlacementMode = active;
             SceneReferences.Instance.gridJobs.ShowGrid = InPlacementMode;
+            SetResourceMode(ResourceType.None);
+        }
+
+        private void SetResourceMode(ResourceType resourceType)
+        {
+            SceneReferences.Instance.gridJobs.ShowWoodResource = resourceType == ResourceType.Wood;
+            SceneReferences.Instance.gridJobs.ShowStoneResource = resourceType == ResourceType.Stone;
         }
 
         private GridCell previousMin;

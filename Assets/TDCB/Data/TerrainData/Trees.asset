@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fd1369dd1956884ea7462bbd5104c37, type: 3}
+  m_Name: Trees
+  m_EditorClassIdentifier: 
+  width: 1024
+  height: 1024
+  texture: {fileID: 2800000, guid: 389d51ec6ed078d49bac04ba853c1d40, type: 3}
+  channel: 2
+  scale: 100
+  octaves: 4
+  persistance: 0.5
+  lacunarity: 2
+  threshold: 0.5
+  centerClearRadius: 25
+  distanceAffectsThreshold: 0
+  offsetMulti: 9994
+  seed: -809060571

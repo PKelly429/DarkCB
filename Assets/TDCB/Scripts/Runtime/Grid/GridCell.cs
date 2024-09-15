@@ -61,6 +61,13 @@ namespace TDCB
             int y = Mathf.RoundToInt(Mathf.Clamp((worldPos.z / GridManager.GridSize)+GridManager.HalfGridBounds, 0, GridManager.GridBounds));
             return new GridCell(x, y);
         }
+        
+        public static GridCell FromWorldPos(Vector2 pos)
+        {
+            int x = Mathf.RoundToInt(Mathf.Clamp((pos.x / GridManager.GridSize)+GridManager.HalfGridBounds, 0, GridManager.GridBounds));
+            int y = Mathf.RoundToInt(Mathf.Clamp((pos.y / GridManager.GridSize)+GridManager.HalfGridBounds, 0, GridManager.GridBounds));
+            return new GridCell(x, y);
+        }
     
         public static GridCell operator +(GridCell a, GridCell b) => new (a.x + b.x, a.y + b.y);
         public static GridCell operator -(GridCell a, GridCell b) => new (a.x - b.x, a.y - b.y);

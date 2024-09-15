@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,9 +14,12 @@ namespace TDCB
     [System.Serializable]
     public class TerrainGeneration : MonoBehaviour
     {
-        [SerializeField] private Texture2D texture;
-        [SerializeField] private Texture2D validTerrainTextire;
+        [SerializeField] private Texture2D terrainFeaturesTexture;
+        [SerializeField] private Texture2D terrainResourcesTexture;
+        [SerializeField] private Texture2D pathfindingTexture;
+        [SerializeField] private Texture2D validTerrainTexture;
         [SerializeField] private Terrain terrain;
+        [SerializeField] private Terrain gridTerrain;
         [SerializeField] private int width = 1024;
         [SerializeField] private int height = 1024;
         [SerializeField] private float centerClearRadius = 70;
@@ -34,43 +39,82 @@ namespace TDCB
         [SerializeField] private float persistance = 0.5f;
         [SerializeField] private float lacunarity = 2;
 
+        [Header("Terrain")] 
+        [SerializeField] private int[] grassIds;
+        [SerializeField] private int[] mudIds;
+        [SerializeField] private int[] stoneIds;
+        [SerializeField] private int[] rootIds;
+
+        [Header("HeightMap")] 
+        public float minGroundHeight = 0f;
+        public float maxGroundHeight = 1f;
+
         [Header("Trees")] 
         [SerializeField] private int treeVariations = 7;
         [SerializeField] private float treeRadius = 1.5f;
         [SerializeField] private float treeThreshold = 0.4f;
 
+        [Header("Rocks")] 
+        [SerializeField] private int rockVariations = 4;
+        [SerializeField] private float rockRadius = 0.5f;
         public int Width => width;
         public int Height => height;
-        public float TreeThreshold => treeThreshold;
 
         private Vector2 _centerPos;
         private Vector2 offset;
         private const float OffsetMulti = 9999f;
 
-        public void Awake()
+        private void Awake()
         {
-            GenerateTrees();
+            UpdateTextures();
         }
 
         public float[,] GenerateNoise()
         {
-            Random.InitState(seed);
             offset = new Vector2(Random.value*OffsetMulti, Random.value*OffsetMulti);
-
+        
             return Noise.GenerateNoiseMap(width, height, seed, scale, octaves, persistance, lacunarity, offset);
         }
 
         [Button]
-        public void GenerateTrees()
+        public void Generate()
         {
             var terrainData = terrain.terrainData;
             terrainData.treeInstances = Array.Empty<TreeInstance>();
+            
+            Random.InitState(seed);
+            var noise1 = GenerateNoise();
+            var noise2 = GenerateNoise();
+            var noise3 = GenerateNoise();
+            var noise4 = GenerateNoise();
+            var noise5 = GenerateNoise();
+            
+            UpdateTextures();
+            
+            
+            // HEIGHT
+            float[,] heightData = new float[terrainData.heightmapResolution, terrainData.heightmapResolution];
+            
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
+            {
+                for (int y = 0; y < terrainData.heightmapResolution; y++)
+                {
+                    int heightX = (int)(((float)x / terrainData.heightmapResolution) * width);
+                    int heightY = (int)(((float)y / terrainData.heightmapResolution) * height);
 
-            var noise = GenerateNoise();
-            _centerPos = new Vector2(width / 2, height / 2);
+                    float heightValue = Mathf.Lerp(minGroundHeight, maxGroundHeight, noise1[heightX, heightY]);
+                    if (terrainFeaturesTexture.GetPixel(heightX, heightY).b > 0.5f)
+                    {
+                        heightValue -= minGroundHeight;
+                    }
+                    heightData[y, x] = heightValue;
+                }
+            }
             
-            SetTexture(noise);
+            terrainData.SetHeights(0, 0, heightData);
+            gridTerrain.terrainData.SetHeights(0, 0, heightData);
             
+
             // TEXTURE
             float[, ,] splatmapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
 
@@ -82,14 +126,38 @@ namespace TDCB
                     int splatY = (int)(((float)y / terrainData.alphamapHeight) * height);
                     splatmapData[x, y, 0] = 1;
 
-                    if (Vector2.Distance(new Vector2(splatX, splatY), _centerPos) < centerClearRadius)
+                    Color featureSample = terrainFeaturesTexture.GetPixel(splatX, splatY);
+                    Color resourceSample = terrainResourcesTexture.GetPixel(splatX, splatY);
+                    
+                    splatmapData[y, x, 0] = 0.65f;
+                    splatmapData[y, x, 1] = noise1[splatX, splatY] * Random.Range(0f, 1f) * 0.5f;
+                    splatmapData[y, x, 2] = noise1[splatX, splatY] * Random.Range(0f, 1f) * 0.5f;
+                    
+                    splatmapData[y, x, 10] = noise2[splatX, splatY] * Random.Range(0f, 1f) * 0.75f;
+                    splatmapData[y, x, 11] = noise3[splatX, splatY] * Random.Range(0f, 1f) * 0.5f;
+                    splatmapData[y, x, 12] = noise4[splatX, splatY] * Random.Range(0f, 1f) * 0.5f;
+                    splatmapData[y, x, 13] = noise5[splatX, splatY] * Random.Range(0f, 1f) * 0.25f;
+                    
+                    float stoneValue = resourceSample.g;
+                    for(int i=0; i<stoneIds.Length; i++)
                     {
-                        splatmapData[y, x, 21] = 0;
+                        splatmapData[y, x, stoneIds[i]] = stoneValue;
+                    }
+                    
+                    if (featureSample.b > 0.5f || Vector2.Distance(new Vector2(splatX, splatY), _centerPos) < centerClearRadius)
+                    {
+                        foreach (var rootId in rootIds)
+                        {
+                            splatmapData[y, x, rootId] = 0;
+                        }
                         continue;
                     }
-                    float noiseValue = noise[splatX, splatY];
-                    if (noiseValue < treeThreshold) noiseValue = 0;
-                    splatmapData[y, x, 21] = noiseValue;
+                    
+                    float treeValue = featureSample.g;
+                    for(int i=0; i<rootIds.Length; i++)
+                    {
+                        splatmapData[y, x, rootIds[i]] = treeValue;
+                    }
                 }
             }
             terrain.terrainData.SetAlphamaps(0, 0, splatmapData);
@@ -99,7 +167,8 @@ namespace TDCB
             foreach (var treePosition in treePositions)
             {
                 if(Vector2.Distance(treePosition, _centerPos) < centerClearRadius) continue;
-                if (noise[(int)treePosition.x, (int)treePosition.y] > treeThreshold)
+                Color sample = terrainFeaturesTexture.GetPixel((int)treePosition.x, (int)treePosition.y);
+                if (sample.b <= 0.5f && sample.g > treeThreshold)
                 {
                     TreeInstance newTree = new TreeInstance();
                     newTree.position = new Vector3(treePosition.x/width, 0, treePosition.y/height);
@@ -112,64 +181,104 @@ namespace TDCB
                 }
             }
             
+            // ROCKS
+            var rockPositions = PoissonDiscSampling.GeneratePoints(rockRadius, new Vector2(width, height));
+            foreach (var rockPosition in rockPositions)
+            {
+                Color sample = terrainResourcesTexture.GetPixel((int)rockPosition.x, (int)rockPosition.y);
+                if (sample.g > 0.5f)
+                {
+                    TreeInstance newTree = new TreeInstance();
+                    newTree.position = new Vector3(rockPosition.x/width, 0, rockPosition.y/height);
+                    newTree.rotation = Random.Range(0, 360*Mathf.Deg2Rad);
+                    newTree.prototypeIndex = Random.Range(treeVariations,treeVariations+rockVariations);
+                    newTree.heightScale = Random.Range(0.7f, 1.3f);
+                    newTree.widthScale = Random.Range(0.9f, 1.1f);
+                    newTree.color = Color.white;
+                    newTree.lightmapColor = Color.white;
+                    terrain.AddTreeInstance(newTree);
+                }
+            }
+            
             terrain.Flush();
+            gridTerrain.Flush();
         }
         
         [Conditional("UNITY_EDITOR")]
-        private void SetTexture(float[,] noise)
+        private void UpdateTextures()
         {
-            if (texture.width != width)
+            if (terrainFeaturesTexture.width != width)
             {
-                texture.Reinitialize(width, height);
+                Debug.LogError("Texture size does not match");
+                return;
             }
+
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    texture.SetPixel(x, y, GenerateColor(noise[x, y], Vector2.Distance(_centerPos, new Vector2(x,y)) < centerClearRadius));
+                    Color terrainTexSample = terrainFeaturesTexture.GetPixel(x, y);
+                    Color resourceTexSample = terrainResourcesTexture.GetPixel(x, y);
+                    bool valid = terrainTexSample.g < 0.5f && terrainTexSample.b < 0.5f && resourceTexSample.g < 0.5f;
+                    pathfindingTexture.SetPixel(x, y, valid ? Color.green : Color.black);
                 }
             }
-            
+
             for (int x = 0; x < 256; x++)
             {
                 for (int y = 0; y < 256; y++)
                 {
-                    float av = texture.GetPixel(x * 4, y * 4).g;
-                    av += texture.GetPixel((x * 4)+1, y * 4).g;
-                    av += texture.GetPixel((x * 4)+2, y * 4).g;
-                    av += texture.GetPixel((x * 4)+3, y * 4).g;
-                    av += texture.GetPixel(x * 4, (y * 4)+1).g;
-                    av += texture.GetPixel(x * 4, (y * 4)+2).g;
-                    av += texture.GetPixel(x * 4, (y * 4)+3).g;
-                    av += texture.GetPixel((x * 4)+1, (y * 4)+1).g;
-                    av += texture.GetPixel((x * 4)+1, (y * 4)+2).g;
-                    av += texture.GetPixel((x * 4)+1, (y * 4)+3).g;
-                    av += texture.GetPixel((x * 4)+2, (y * 4)+1).g;
-                    av += texture.GetPixel((x * 4)+2, (y * 4)+2).g;
-                    av += texture.GetPixel((x * 4)+2, (y * 4)+3).g;
-                    av += texture.GetPixel((x * 4)+3, (y * 4)+1).g;
-                    av += texture.GetPixel((x * 4)+3, (y * 4)+2).g;
-                    av += texture.GetPixel((x * 4)+3, (y * 4)+3).g;
+                    Color features = DownSample(terrainFeaturesTexture, x*4, y*4, 4);
+                    Color resources = DownSample(terrainResourcesTexture, x*4, y*4, 4);
 
-                    bool valid = av > 8f;
+                    bool water = features.b >= 0.5f;
+                    bool tree = features.g >= 0.5f;
+                    bool stone = resources.g >= 0.5f;
+
+                    bool valid = !water && !tree && !stone;
+
+                    Color colour = valid ? Color.black : Color.red;
+                    ResourceType resourceTypeInCell = ResourceType.None;
+                    if (tree)
+                    {
+                        resourceTypeInCell = ResourceType.Wood;
+                    }
+                    else if (stone)
+                    {
+                        resourceTypeInCell = ResourceType.Stone;
+                    }
+
+                    colour.g = resourceTypeInCell.GetResourceTexMapColour() / (float) byte.MaxValue;
                     
-                    // bool valid = texture.GetPixel(x * 2, y * 2).g > 0.5f;
-                    // valid &= texture.GetPixel((x * 2)+1, y * 2).g > 0.5f;
-                    // valid &= texture.GetPixel(x * 2, (y * 2)+1).g > 0.5f;
-                    // valid &= texture.GetPixel((x * 2)+1, (y * 2)+1).g > 0.5f;
-                    
-                    validTerrainTextire.SetPixel(x, y, valid ? Color.black : Color.red);
+                    validTerrainTexture.SetPixel(x, y, colour);
                 }
             }
             
-            texture.Apply();
-            validTerrainTextire.Apply();
+            validTerrainTexture.Apply();
+            pathfindingTexture.Apply();
             
 #if UNITY_EDITOR
-            WriteToTexture(texture);
-            WriteToTexture(validTerrainTextire);
+            WriteToTexture(validTerrainTexture);
+            WriteToTexture(pathfindingTexture);
             AssetDatabase.SaveAssets();
 #endif
+        }
+
+        private Color DownSample(Texture2D tex, int x, int y, int scale)
+        {
+            Vector4 color = new Vector4();
+            for (int z = 0; z < scale; z++)
+            {
+                for (int w = 0; w < scale; w++)
+                {
+                    var sample = tex.GetPixel(x + z, y + w);
+                    color += new Vector4(sample.r, sample.g, sample.b, sample.a);
+                }
+            }
+
+            color /= (scale * scale);
+
+            return new Color(color.x, color.y, color.z, color.w);
         }
         
 #if UNITY_EDITOR

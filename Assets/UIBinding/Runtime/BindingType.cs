@@ -19,7 +19,6 @@ namespace DataBinding
         {
             if (!TryGetType(assemblyQualifiedName, out var type)) 
             {
-                Debug.LogError($"Type {assemblyQualifiedName} not found");
                 return;
             }
             Type = type;

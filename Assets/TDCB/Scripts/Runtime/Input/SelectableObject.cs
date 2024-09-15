@@ -12,8 +12,8 @@ namespace TDCB
     public abstract class SelectableObject : MonoBehaviour, ISelectable, ISpatialHashable
     {
         public static readonly HashSet<SelectableObject> AllSelectableObjects = new HashSet<SelectableObject>();
-        
-        public int HashGridIndex { get; set; }
+
+        public int HashGridIndex { get; set; } = -1;
         public Transform Transform => transform;
 
         public abstract int Priority { get; }
@@ -35,6 +35,7 @@ namespace TDCB
 
         private ICommandRegister[] commandListeners;
         private IHighlight _highlight;
+        private bool _isRegisteredToManagers;
 
         protected virtual void OnEnable()
         {
@@ -53,6 +54,8 @@ namespace TDCB
 
         protected void RegisterObject()
         {
+            _isRegisteredToManagers = true;
+            
             AllSelectableObjects.Add(this);
             _highlight = SceneReferences.Instance.highlightManager.RegisterUnit(this);
             ControllableUnit = GetComponent<IControllableUnit>();
@@ -63,6 +66,9 @@ namespace TDCB
         
         protected void DeregisterObject()
         {
+            if (!_isRegisteredToManagers) return;
+            _isRegisteredToManagers = false;
+            
             AllSelectableObjects.Remove(this);
             SceneReferences.Instance.highlightManager.DeregisterUnit(this);
             
@@ -85,26 +91,26 @@ namespace TDCB
             }
         }
         
-        public void OnHoverBegin()
+        public virtual void OnHoverBegin()
         {
             _highlight.Hovered = true;
             SetLayer();
         }
 
-        public void OnHoverEnd()
+        public virtual void OnHoverEnd()
         {
             _highlight.Hovered = false;
             SetLayer();
         }
 
-        public void OnSelect()
+        public virtual void OnSelect()
         {
             _highlight.Selected = true;
             SetLayer();
             RegisterCommands();
         }
 
-        public void OnDeSelect()
+        public virtual void OnDeSelect()
         {
             _highlight.Selected = false;
             SetLayer();

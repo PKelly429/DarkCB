@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fd1369dd1956884ea7462bbd5104c37, type: 3}
+  m_Name: Stone
+  m_EditorClassIdentifier: 
+  width: 1024
+  height: 1024
+  texture: {fileID: 2800000, guid: 974916fc31b660849bf947297cc34016, type: 3}
+  channel: 2
+  scale: 35
+  octaves: 3
+  persistance: 0.8
+  lacunarity: 1.5
+  threshold: 0.85
+  centerClearRadius: 0
+  distanceAffectsThreshold: 0
+  offsetMulti: 9545
+  seed: -1478730729

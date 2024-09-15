@@ -22,13 +22,20 @@ namespace TDCB
         public override float Size => size;
         public override SoundData SelectionClip => data.selectSound;
         public override Collider Collider => selectionCollider;
+        
+        // Building Components
+        private IBuildingPlacementFunctions[] _buildingPlacementListeners;
+        private IBuildingDestroyFunction[] _buildingDestroyedListeners;
+        private IBuildingSelectionFunctions[] _buildingSelectionListeners;
 
         //TODO: Move to separate component and remove when built
         [SerializeField] private Renderer renderer;
         [SerializeField] private Material buildingPlacementMaterial;
         private bool _validBuildingPosition;
+        private bool _isPlaced;
+        private Bounds _bounds; // can't get the bounds of a collider when it gets disabled (when obj is destroyed)
         private static readonly int Valid = Shader.PropertyToID("_Valid");
-        private Material _defaultMaterial;
+        private Material[] _defaultMaterials;
 
         public bool ValidBuildingPosition
         {
@@ -51,17 +58,119 @@ namespace TDCB
         
         protected override void OnEnable()
         {
-            _defaultMaterial = renderer.material;
-            renderer.material = buildingPlacementMaterial;
-            if (autoRegister) Build();
+            _buildingPlacementListeners = GetComponents<IBuildingPlacementFunctions>();
+            _buildingDestroyedListeners = GetComponents<IBuildingDestroyFunction>();
+            _buildingSelectionListeners = GetComponents<IBuildingSelectionFunctions>();
+            
+            _defaultMaterials = renderer.materials;
+
+            var swapMats = renderer.materials;
+            for(int i=0; i<swapMats.Length; i++)
+            {
+                swapMats[i] = buildingPlacementMaterial;
+            }
+
+            renderer.materials = swapMats;
+            if (autoRegister)
+            {
+                Build();
+            }
+            else
+            {
+                foreach (var module in _buildingPlacementListeners)
+                {
+                    module.OnBeginPlacement();
+                }
+            }
+        }
+
+        protected override void OnDisable()
+        {
+            if (_isPlaced)
+            {
+                SceneReferences.Instance.gridJobs.SetBoundsBlocked(_bounds, false);
+            }
+            else
+            {
+                foreach (var module in _buildingPlacementListeners)
+                {
+                    module.OnCancelPlacement();
+                }
+            }
+            
+            foreach (var module in _buildingDestroyedListeners)
+            {
+                module.OnBuildingDestroyed();
+            }
+            
+            base.OnDisable();
+        }
+        
+        public override void OnHoverBegin()
+        {
+            base.OnHoverBegin();
+            
+            foreach (var module in _buildingSelectionListeners)
+            {
+                module.OnHoverBegin();
+            }
+        }
+
+        public override void OnHoverEnd()
+        {
+            base.OnHoverEnd();
+            
+            foreach (var module in _buildingSelectionListeners)
+            {
+                module.OnHoverEnd();
+            }
+        }
+
+        public override void OnSelect()
+        {
+            base.OnSelect();
+            
+            foreach (var module in _buildingSelectionListeners)
+            {
+                module.OnSelect();
+            }
+        }
+
+        public override void OnDeSelect()
+        {
+            base.OnDeSelect();
+            
+            foreach (var module in _buildingSelectionListeners)
+            {
+                module.OnDeselect();
+            }
         }
 
         public void Build()
         {
+            _isPlaced = true;
+            _bounds = Collider.bounds;
             RegisterObject();
             
-            renderer.material = _defaultMaterial;
-            SceneReferences.Instance.gridJobs.SetBoundsBlocked(Collider.bounds, this);
+            renderer.materials = _defaultMaterials;
+            SceneReferences.Instance.gridJobs.SetBoundsBlocked(_bounds, true);
+            
+            foreach (var module in _buildingPlacementListeners)
+            {
+                module.OnFinishPlacement();
+            }
+        }
+
+        public bool IsPlacementValid()
+        {
+            bool validPosition = SceneReferences.Instance.gridJobs.IsPositionValid(Collider.bounds);
+            if (!validPosition) return false;
+            foreach (var module in _buildingPlacementListeners)
+            {
+                if (!module.IsValid()) return false;
+            }
+
+            return true;
         }
     }
 }

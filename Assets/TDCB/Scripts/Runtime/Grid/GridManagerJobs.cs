@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
+using Sirenix.Utilities;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -17,6 +18,7 @@ namespace TDCB
     {
         public const int WorldSize = 1024;
         public const int GridSize = 4;
+        public const int PathfindingGridSize = 2;
         
         public const int GridBounds = 1024 / GridSize; // WorldSize / GridSize
         public const int HalfGridBounds = GridBounds / 2;
@@ -28,7 +30,9 @@ namespace TDCB
         [SerializeField] private Texture2D gridTexture;
         
         private static readonly int MousePos = Shader.PropertyToID("_MousePos");
-        private LocalKeyword _showGraph;
+        private static readonly int BuildingPos = Shader.PropertyToID("_BuildingPosition");
+        private static readonly int BuildingRange = Shader.PropertyToID("_BuildingRange");
+        private LocalKeyword _showGridKeyword;
         
         private readonly HashSet<FogClearingObject> additions = new HashSet<FogClearingObject>();
         private readonly List<UnitVision> removals = new List<UnitVision>();
@@ -37,6 +41,10 @@ namespace TDCB
         private NativeArray<UnitVision> unitsToProcess;
         private NativeArray<uint> unitsWithVisionInCell;
         private NativeArray<uint> unitsWithVisionInCellBuffer; // separate array for passing into the job
+        
+        private NativeArray<ResourceType> resourceInCell;
+        private NativeArray<bool> resourceAvailable;
+        private NativeArray<bool> resourceAvailableBuffer; // separate array for passing into the job
         
         private NativeArray<bool> blockedCells;
         private NativeArray<bool> blockedCellsBuffer; // separate array for passing into the job
@@ -57,9 +65,45 @@ namespace TDCB
             set
             {
                 _showGrid = value;
-                gridMaterial.SetKeyword(_showGraph, value);
+                gridMaterial.SetKeyword(_showGridKeyword, value);
             }
         }
+        private bool _showWood;
+        private static readonly int ShowWood = Shader.PropertyToID("_ShowTrees");
+
+        public bool ShowWoodResource
+        {
+            get => _showWood;
+            set
+            {
+                _showWood = value;
+                gridMaterial.SetFloat(ShowWood, _showWood ? 1 : 0);
+            }
+        }
+        
+        private bool _showStone;
+        private static readonly int ShowStone = Shader.PropertyToID("_ShowStone");
+
+        public bool ShowStoneResource
+        {
+            get => _showStone;
+            set
+            {
+                _showStone = value;
+                gridMaterial.SetFloat(ShowStone, _showStone ? 1 : 0);
+            }
+        }
+
+        private Vector2 _buildingPos;
+        private float _buildingRange;
+        public void SetBuildingPlacementPosition(Vector3 pos, float range)
+        {
+            _buildingPos = new Vector2(pos.x, pos.z);
+            _buildingRange = range;
+            gridMaterial.SetVector(BuildingPos, _buildingPos);
+            gridMaterial.SetFloat(BuildingRange, _buildingRange);
+        }
+        
         private void SetMouseGridPos()
         {
             if (!_showGrid) return;
@@ -139,6 +183,8 @@ namespace TDCB
         
         public void SetBoundsBlocked(Bounds bounds, bool blocked)
         {
+            if (_disposed) return;
+            
             _blockedCellsUpdated = true;
             
             GridCell min = GridCell.FromWorldPos(bounds.min);
@@ -180,12 +226,13 @@ namespace TDCB
         #region Update Pathfinding
         private void SetWalkable(GridCell min, GridCell max, bool walkable)
         {
-            int halfGrid = GridSize / 2;
+            int gridDifference = GridSize / PathfindingGridSize;
+            int halfGrid = gridDifference / 2;
             
-            int minX = min.x * GridSize;
-            int minY = min.y * GridSize;
-            int maxX = (max.x * GridSize)-halfGrid;
-            int maxY = (max.y * GridSize)-halfGrid;
+            int minX = min.x * gridDifference;
+            int minY = min.y * gridDifference;
+            int maxX = (max.x * gridDifference)-halfGrid;
+            int maxY = (max.y * gridDifference)-halfGrid;
             int width = (maxX - minX)+1;
             int height = (maxY - minY)+1;
 
@@ -202,21 +249,99 @@ namespace TDCB
             }));
         }
         #endregion
+        
+        #region Resource Buildings
+        private HashSet<GridCell> _nearbyGridCells = new HashSet<GridCell>();
+        public int GetAvailableResources(ResourceType resourceType, Vector3 pos, float distance)
+        {
+            GetAvailableResourceCells(_nearbyGridCells, resourceType, pos, distance);
+
+            return _nearbyGridCells.Count;
+        }
+        public void ClaimResources(HashSet<GridCell> output, ResourceType resourceType, Vector3 pos, float distance)
+        {
+            GetAvailableResourceCells(output, resourceType, pos, distance);
+
+            foreach (var cell in output)
+            {
+                resourceAvailable[cell.y * GridBounds + cell.x] = false;
+            }
+        }
+
+        public void FreeResources(HashSet<GridCell> claimed)
+        {
+            if (_disposed) return;
+            
+            foreach (var cell in claimed)
+            {
+                resourceAvailable[cell.y * GridBounds + cell.x] = true;
+            }
+        }
+
+        public void GetAvailableResourceCells(HashSet<GridCell> gridCells, ResourceType resourceType, Vector3 pos, float distance)
+        {
+            gridCells.Clear();
+            
+            float xPos = (pos.x / GridSize) + HalfGridBounds;
+            float yPos = (pos.z / GridSize) + HalfGridBounds;
+            
+            int radius = Mathf.FloorToInt(distance / GridSize);
+            int radiusSquared = radius*radius;
+            for (int x = Mathf.FloorToInt(xPos - radius); x <= Mathf.CeilToInt(xPos + radius); x++)
+            {
+                if (x is < 0 or >= GridBounds) continue;
+
+                float xOffset = x - xPos;
+                int height = (int)Math.Sqrt(radiusSquared - (xOffset * xOffset));
+
+                for (int y = Mathf.FloorToInt(yPos - height); y <= Mathf.CeilToInt(yPos + height); y++)
+                {
+                    if (y is < 0 or >= GridBounds) continue;
+                    if(resourceInCell[y*GridBounds+x] != resourceType) continue;
+                    if(!resourceAvailable[y*GridBounds+x]) continue;
+                    gridCells.Add(new GridCell(x, y));
+                }
+            }
+        }
+
+        #endregion
 
         private void Awake()
         {
             unitsToProcess = new NativeArray<UnitVision>(MaxUnits, Allocator.Persistent);
             unitsWithVisionInCell = new NativeArray<uint>(GridBounds * GridBounds, Allocator.Persistent);
             unitsWithVisionInCellBuffer = new NativeArray<uint>(GridBounds * GridBounds, Allocator.Persistent);
+            resourceInCell = new NativeArray<ResourceType>(GridBounds * GridBounds, Allocator.Persistent);
+            resourceAvailable = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
+            resourceAvailableBuffer = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
             blockedCells = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
             blockedCellsBuffer = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
             
             InitialiseGridWithTerrain();
             gridTextureData = gridTexture.GetRawTextureData<Color32>();
-            
-            _showGraph = new LocalKeyword(gridMaterial.shader, "_SHOWGRID_ON");
 
-            ShowGrid = true;
+            for (int x = 0; x < GridBounds; x++)
+            {
+                for (int y = 0; y < GridBounds; y++)
+                {
+                    byte sample = gridTextureData[y * GridBounds + x].g;
+                    if (sample > 0)
+                    {
+                        if (sample == ResourceType.Wood.GetResourceTexMapColour())
+                        {
+                            resourceInCell[y * GridBounds + x] = ResourceType.Wood;
+                            resourceAvailable[y * GridBounds + x] = true;
+                        }
+                        if (sample == ResourceType.Stone.GetResourceTexMapColour())
+                        {
+                            resourceInCell[y * GridBounds + x] = ResourceType.Stone;
+                            resourceAvailable[y * GridBounds + x] = true;
+                        }
+                    }
+                }
+            }
+            
+            _showGridKeyword = new LocalKeyword(gridMaterial.shader, "_SHOWGRID_ON");
         }
         
         private void InitialiseGridWithTerrain()
@@ -233,9 +358,12 @@ namespace TDCB
                 }
             }
         }
-        
+
+        private bool _disposed;
         private void OnDestroy()
         {
+            _disposed = true;
+            
             if (!_updateLitCellsJobHandle.IsCompleted)
             {
                 _updateLitCellsJobHandle.Complete();
@@ -247,6 +375,9 @@ namespace TDCB
             unitsToProcess.Dispose();
             unitsWithVisionInCell.Dispose();
             unitsWithVisionInCellBuffer.Dispose();
+            resourceInCell.Dispose();
+            resourceAvailable.Dispose();
+            resourceAvailableBuffer.Dispose();
             blockedCells.Dispose();
             blockedCellsBuffer.Dispose();
             gridTextureData.Dispose();
@@ -302,6 +433,8 @@ namespace TDCB
                 var updateTextureJob = new UpdateGridTextureJob()
                 {
                     blockedCells = blockedCellsBuffer,
+                    resourceInCell = resourceInCell,
+                    resourceAvailable = resourceAvailableBuffer,
                     unitsWithVisionInCell = unitsWithVisionInCellBuffer,
                     texture = gridTextureData
                 };
@@ -314,6 +447,8 @@ namespace TDCB
                 var updateTextureJob = new UpdateGridTextureJob()
                 {
                     blockedCells = blockedCellsBuffer,
+                    resourceInCell = resourceInCell,
+                    resourceAvailable = resourceAvailableBuffer,
                     unitsWithVisionInCell = unitsWithVisionInCellBuffer,
                     texture = gridTextureData
                 };
@@ -339,6 +474,7 @@ namespace TDCB
 
             Profiler.BeginSample("Copy blocked cell buffer");
             blockedCells.CopyTo(blockedCellsBuffer);
+            resourceAvailable.CopyTo(resourceAvailableBuffer);
             unitsWithVisionInCellBuffer.CopyTo(unitsWithVisionInCell);
             Profiler.EndSample();
         }
@@ -446,14 +582,16 @@ namespace TDCB
     public struct UpdateGridTextureJob : IJobParallelFor
     {
         [@ReadOnly] public NativeArray<bool> blockedCells;
+        [@ReadOnly] public NativeArray<ResourceType> resourceInCell;
+        [@ReadOnly] public NativeArray<bool> resourceAvailable;
         [@ReadOnly] public NativeArray<uint> unitsWithVisionInCell;
-        [WriteOnly] public NativeArray<Color32> texture;
+        public NativeArray<Color32> texture;
         public void Execute(int index)
         {
             byte r = blockedCells[index] ? byte.MaxValue : byte.MinValue;
-            byte g = byte.MinValue;
-            byte b = unitsWithVisionInCell[index] > 0 ? byte.MaxValue : byte.MinValue;
-            byte a = byte.MaxValue;
+            byte g = resourceInCell[index].GetResourceTexMapColour();
+            byte b = resourceAvailable[index] ? byte.MaxValue : byte.MinValue;
+            byte a = unitsWithVisionInCell[index] > 0 ? byte.MaxValue : byte.MinValue;
             texture[index] = new Color32(r, g, b, a);
         }
     }

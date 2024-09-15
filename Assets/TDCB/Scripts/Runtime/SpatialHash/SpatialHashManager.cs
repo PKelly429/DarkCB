@@ -37,7 +37,7 @@ namespace TDCB
         private List<ISpatialHashable> unitsToDeregister = new List<ISpatialHashable>();
         
         private NativeQueue<SpatialHashItem> movedUnits;
-        private NativeList<SpatialHashItem> hashGridRemovals;
+        //private NativeList<SpatialHashItem> hashGridRemovals;
         private NativeList<SpatialHashItem> hashGridAdditions;
         
         // Job Handles
@@ -97,23 +97,32 @@ namespace TDCB
         private void ProcessDeregister(ISpatialHashable unit)
         {
             int id = unit.HashGridIndex;
+            if (id < 0) return; // trying to remove unit that had not been registered
             
-            hashGridRemovals.Add(allUnits[^1]);
+            //hashGridRemovals.Add(allUnits[^1]);
+            
+            hashGrid.Remove(allUnits[id].cell, allUnits[id].index);
             
             managedUnits[^1].HashGridIndex = id;
-            movedUnits.Enqueue(new SpatialHashItem()
+            if (id < allUnits.Length-1) // need to update the unit that gets swapped when deleting
             {
-                index = id,
-                cell = allUnits[^1].cell
-            });
-            
+                // movedUnits.Enqueue(new SpatialHashItem()
+                // {
+                //     index = id,
+                //     cell = allUnits[^1].cell
+                // });
+                hashGridAdditions.Add(new SpatialHashItem()
+                {
+                    index = id,
+                    cell = allUnits[^1].cell
+                });
+            }
+
             managedUnits.RemoveAtSwapBack(id);
             allUnits.RemoveAtSwapBack(id);
             unitTransforms.RemoveAtSwapBack(id);
             
             closestEnemy.RemoveAtSwapBack(id);
-
-            if (id >= managedUnits.Count) id--;
         }
         
         public void OnEarlyFrameUpdate()
@@ -141,7 +150,7 @@ namespace TDCB
             
             var removalJob = new HashGridRemovalsJob()
             {
-                removals = hashGridRemovals,
+                //removals = hashGridRemovals,
                 items = allUnits,
                 movedUnits = movedUnits,
                 additions = hashGridAdditions,
@@ -168,7 +177,7 @@ namespace TDCB
             updatePositionsJobHandle.Complete();
             hashGridAdditionsJobHandle.Complete();
             
-            hashGridRemovals.Clear();
+            //hashGridRemovals.Clear();
             hashGridAdditions.Clear();
             
             Profiler.EndSample();
@@ -204,12 +213,14 @@ namespace TDCB
                             float distance = (otherUnit.Transform.position - ourPosition).sqrMagnitude;
                             if (distance > aggroRadius)
                             {
+                                #if DEBUG
                                 if(_debug) Debug.DrawLine(ourPosition + Vector3.up, otherUnit.Transform.position + Vector3.up, Color.red);
+                                #endif
                                 continue;
                             }
-                            
+                            #if DEBUG
                             if(_debug) Debug.DrawLine(ourPosition + Vector3.up, otherUnit.Transform.position + Vector3.up, Color.blue);
-                        
+                            #endif
                             if (distance < bestDistance)
                             {
                                 bestDistance = distance;
@@ -222,7 +233,9 @@ namespace TDCB
                 if (best >= 0)
                 {
                     if (!otherFaction.IsValidUnit(best)) continue;
+                    #if DEBUG
                     if(_debug) Debug.DrawLine(ourPosition + Vector3.up, otherFaction.GetUnit(best).Transform.position + Vector3.up, Color.yellow);
+                    #endif
                 }
 
                 closestEnemy[index] = best;
@@ -247,7 +260,7 @@ namespace TDCB
             hashGrid = new NativeParallelMultiHashMap<SpatialHashCell, int>(Capacity, Allocator.Persistent);
 
             movedUnits = new NativeQueue<SpatialHashItem>(Allocator.Persistent);
-            hashGridRemovals = new NativeList<SpatialHashItem>(100, Allocator.Persistent);
+            //hashGridRemovals = new NativeList<SpatialHashItem>(100, Allocator.Persistent);
             hashGridAdditions = new NativeList<SpatialHashItem>(100, Allocator.Persistent);
         }
 
@@ -259,7 +272,7 @@ namespace TDCB
             unitTransforms.Dispose();
             hashGrid.Dispose();
             movedUnits.Dispose();
-            hashGridRemovals.Dispose();
+            //hashGridRemovals.Dispose();
             hashGridAdditions.Dispose();
         }
 
@@ -377,7 +390,7 @@ namespace TDCB
     [BurstCompile]
     public struct HashGridRemovalsJob : IJob
     {
-        [ReadOnly] public NativeList<SpatialHashItem> removals;
+        //[ReadOnly] public NativeList<SpatialHashItem> removals;
         public NativeList<SpatialHashItem> items;
         public NativeQueue<SpatialHashItem> movedUnits;
         [WriteOnly] public NativeList<SpatialHashItem> additions;
@@ -386,10 +399,10 @@ namespace TDCB
         
         public void Execute()
         {
-            for (int i = 0; i < removals.Length; i++)
-            {
-                hashGrid.Remove(removals[i].cell, removals[i].index);
-            }
+            // for (int i = 0; i < removals.Length; i++)
+            // {
+            //     hashGrid.Remove(removals[i].cell, removals[i].index);
+            // }
 
             while (!movedUnits.IsEmpty())
             {

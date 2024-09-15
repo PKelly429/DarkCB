@@ -247,11 +247,15 @@ namespace TDCB
             }
             
             selectablesAtMousePos.Sort((x, y) => Vector3.Distance(y.Position, cameraPos).CompareTo(Vector3.Distance(x.Position, cameraPos)));
-            ClearHover();
 
             if (selectablesAtMousePos.Count > 0)
             {
+                ClearHover(selectablesAtMousePos[0]);
                 AddHover(selectablesAtMousePos[0]);
+            }
+            else
+            {
+                ClearHover();
             }
         }
 
@@ -276,6 +280,26 @@ namespace TDCB
             return Vector2.Distance(_dragStartPosition, _dragCurrentPosition) > 30f;
         }
 
+        private void ClearHover(ISelectable exclude)
+        {
+            bool isInSelection = false;
+            foreach (var hovered in _hoveredSelectables)
+            {
+                if (hovered == exclude)
+                {
+                    isInSelection = true;
+                    continue;
+                }
+                
+                if (hovered != null && hovered.IsAlive())
+                {
+                    hovered.OnHoverEnd();
+                }
+            }
+            _hoveredSelectables.Clear();
+            if (isInSelection) _hoveredSelectables.Add(exclude);
+        }
+
         private void ClearHover()
         {
             foreach (var hovered in _hoveredSelectables)
@@ -290,6 +314,8 @@ namespace TDCB
 
         private void AddHover(ISelectable selectableObject)
         {
+            if (_hoveredSelectables.Contains(selectableObject)) return;
+            
             if (selectableObject != null && selectableObject.IsAlive())
             {
                 selectableObject.OnHoverBegin();
