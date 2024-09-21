@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15930d980cc96d49b8c70bfac168ddc, type: 3}
   m_Name: Lumbermill
   m_EditorClassIdentifier: 
-  priority: 0
+  priority: -2
   icon: {fileID: 21300000, guid: cc68b52472488e547bb93b1aafc6fcf4, type: 3}
   buildingPrefab: {fileID: 8025785944560531290, guid: bc385ef2945cf2c4b813a7aad88e6f1d, type: 3}
   commands: {fileID: 11400000, guid: c179b3dcea68f9d45b5785d1c8b236e4, type: 2}
   selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
+  costs: []
+  produced: []
   tooltip:
     type: 0
     position: 0

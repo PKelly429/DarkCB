@@ -8,10 +8,12 @@ namespace TDCB
     public class CommandManager : MonoBehaviour, InputControls.ICommandsActions
     {
          [SerializeField] private MoveCommand moveCommand;
-         [SerializeField] private Command stopCommand;
+         [SerializeField] private StopCommand stopCommand;
+         
+         [SerializeField] private BaseCommand buildCommand;
 
          public MoveCommand MoveCommand => moveCommand;
-         public Command StopCommand => stopCommand;
+         public StopCommand StopCommand => stopCommand;
          
          
          #region Input Handling
@@ -25,6 +27,7 @@ namespace TDCB
             
              _inputControls.Commands.Move.performed += OnMove;
              _inputControls.Commands.Stop.performed += OnStop;
+             _inputControls.Commands.Build.performed += OnBuild;
          }
          
          public void OnMove(InputAction.CallbackContext context)
@@ -36,6 +39,12 @@ namespace TDCB
          {
              stopCommand.Execute();
          }
+
+         public void OnBuild(InputAction.CallbackContext context)
+         {
+             buildCommand.Execute();
+         }
+
          #endregion
     }
 }

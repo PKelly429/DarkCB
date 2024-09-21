@@ -10,19 +10,21 @@ using UnityEngine.Serialization;
 namespace TDCB
 {
     [Bindable]
-    public class ResourceHarvester : MonoBehaviour, IBuildingPlacementFunctions, IBuildingSelectionFunctions
+    public class ResourceHarvester : MonoBehaviour, IBuildingPlacementFunctions, IBuildingSelectionFunctions, IBuildingPlacementValidFunction
     {
         [SerializeField] private Building building;
         [SerializeField, Required] private ResourceProducer producer;
+        [SerializeField, Required] private WorkerAssignment workerAssignment;
         
         public ResourceType resource;
         public float range;
         public int buildingsMaxWorkers = 4;
+        public float productionRate = 1f;
 
         public BindableTransform iconPosition;
         public BindableSprite resourceIcon;
-        public BindableInt currentMaxWorkers;
-        public BindableInt resourcesInRange;
+        public BindableInt currentWorkers;
+        public BindableInt resourceProduction;
 
         private static Dictionary<ResourceType, HashSet<ResourceHarvester>> resourceHarvesters = new Dictionary<ResourceType, HashSet<ResourceHarvester>>();
         
@@ -43,13 +45,16 @@ namespace TDCB
             {
                 resourceIcon.SetValue(SceneReferences.Instance.resourceManager.GetResourceIcon(resource));
             }
-            producer.resource = resource;
+            producer.SetResource(resource);
 
             if (!resourceHarvesters.ContainsKey(resource))
             {
                 resourceHarvesters[resource] = new HashSet<ResourceHarvester>();
             }
             resourceHarvesters[resource].Add(this);
+            
+            producer.OnProductionRateChanged += ProducerOnOnProductionRateChanged;
+            workerAssignment.OnWorkRateChanged += WorkerAssignmentOnOnWorkRateChanged;
         }
 
         private void OnDisable()
@@ -67,6 +72,9 @@ namespace TDCB
                     other.TryClaimMoreResources();
                 }
             }
+            
+            producer.OnProductionRateChanged -= ProducerOnOnProductionRateChanged;
+            workerAssignment.OnWorkRateChanged -= WorkerAssignmentOnOnWorkRateChanged;
         }
 
         private void Update()
@@ -78,8 +86,8 @@ namespace TDCB
             
             if (transform.position == _placementPosition) return;
             _placementPosition = transform.position;
-            resourcesInRange.SetValue(SceneReferences.Instance.gridJobs.GetAvailableResources(resource, _placementPosition, range));
-            currentMaxWorkers.SetValue(Mathf.Min(resourcesInRange, buildingsMaxWorkers));
+            resourceProduction.SetValue(GetResourceProduction(SceneReferences.Instance.gridJobs.GetAvailableResources(resource, _placementPosition, range)));
+            currentWorkers.SetValue(Mathf.Min(resourceProduction, buildingsMaxWorkers));
         }
 
         private void UpdateIconVisibility()
@@ -89,14 +97,14 @@ namespace TDCB
             _iconVisible = visible;
             if (_iconVisible)
             {
-                uiIcon = UIReferences.Instance.resourceHarvesterIconPool.GetResourceHarvesterIcon();
+                uiIcon = UIReferences.Instance.resourceHarvesterIconPool.GetIcon();
                 uiIcon.Bind(this);
             }
             else
             {
                 if (uiIcon != null)
                 {
-                    UIReferences.Instance.resourceHarvesterIconPool.ReleaseResourceHarvesterIcon(uiIcon);
+                    UIReferences.Instance.resourceHarvesterIconPool.ReleaseIcon(uiIcon);
                 }
             }
         }
@@ -133,17 +141,52 @@ namespace TDCB
             UpdateResourceCount();
         }
 
+        private int GetResourceProduction(int claimed)
+        {
+            return Mathf.CeilToInt(claimed * productionRate);
+        }
+
         private void UpdateResourceCount()
         {
-            resourcesInRange.SetValue(resourcesClaimed.Count);
-            currentMaxWorkers.SetValue(Mathf.Min(resourcesInRange, buildingsMaxWorkers));
+            producer.SetProductionRate(GetResourceProduction(resourcesClaimed.Count));
+            int maxWorkers = Mathf.Min(resourcesClaimed.Count, buildingsMaxWorkers);
+            workerAssignment.MaxWorkers = maxWorkers;
+            
+            if (_inPlacementMode)
+            {
+                resourceProduction.SetValue(resourcesClaimed.Count);
+                currentWorkers.SetValue(maxWorkers);
+            }
+            else
+            {
+                resourceProduction.SetValue(producer.ProductionRate);
+                currentWorkers.SetValue(workerAssignment.CurrentWorkers);
+            }
+        }
+        
+        private void ProducerOnOnProductionRateChanged(ResourceType resourceType, int difference)
+        {
+            if (_inPlacementMode) return;
+            
+            resourceProduction.SetValue(producer.ProductionRate);
+            currentWorkers.SetValue(workerAssignment.CurrentWorkers);
+        }
 
-            producer.SetProductionRate(resourcesInRange);
+        private void WorkerAssignmentOnOnWorkRateChanged(float workrate)
+        {
+            if (_inPlacementMode) return;
+            
+            resourceProduction.SetValue(producer.ProductionRate);
+            currentWorkers.SetValue(workerAssignment.CurrentWorkers);
         }
 
         public bool IsValid()
         {
-            return resourcesInRange > 0;
+            return resourceProduction > 0;
+        }
+
+        public void UpdateBuildingPlacementValid(bool valid)
+        {
         }
 
         public void OnHoverBegin()

@@ -9,6 +9,11 @@ namespace TDCB
         public void OnBeginPlacement();
         public void OnCancelPlacement();
         public void OnFinishPlacement();
+    }
+
+    public interface IBuildingPlacementValidFunction
+    {
         public bool IsValid();
+        public void UpdateBuildingPlacementValid(bool valid);
     }
 }

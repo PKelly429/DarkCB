@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f82bef45c934bcea274627533144cd0, type: 3}
+  m_Name: WorkerMove
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: f7c2445047d928343b6486c58360a8c2, type: 3}
+  - {fileID: 8300000, guid: 87ba732a57ca41048877ae96bdd61ccd, type: 3}
+  - {fileID: 8300000, guid: 4837cba763fe60d458738c19b81d5100, type: 3}
+  - {fileID: 8300000, guid: 02fb6cda7afd7c649801c495ce26022d, type: 3}
+  - {fileID: 8300000, guid: 546c0229b94ed764880d1955f2ea97a1, type: 3}
+  mixerGroup: {fileID: 6031991356610453623, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
+  loop: 0
+  playOnAwake: 0
+  frequentSound: 0
+  fullyRandom: 0
+  uniqueClip: 1
+  sharedVoice: {fileID: 11400000, guid: 48015cfe181d69442988873ca3f6600d, type: 2}
+  mute: 0
+  bypassEffects: 0
+  bypassListenerEffects: 0
+  bypassReverbZones: 0
+  priority: 128
+  volume: 1
+  pitch: 1
+  panStereo: 0
+  spatialBlend: 0.7
+  reverbZoneMix: 1
+  dopplerLevel: 1
+  spread: 0
+  minDistance: 1
+  maxDistance: 500
+  ignoreListenerVolume: 0
+  ignoreListenerPause: 0
+  rolloffMode: 0

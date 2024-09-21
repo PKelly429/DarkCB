@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using AudioSystem;
 using UnityEngine;
 
 namespace TDCB
@@ -12,6 +13,7 @@ namespace TDCB
         public override void Execute()
         {
             UIReferences.Instance.commandButtonGrid.Bind(nestedCommands);
+            if(soundClip != null) SoundManager.Instance.CreateSoundBuilder().Play(soundClip);
         }
     }
 }

@@ -10,24 +10,54 @@ namespace TDCB
 {
     public class MoveableEntity : MonoBehaviour, IControllableUnit
     {
+        [Required, SerializeField] private Unit unit;
         [Required, SerializeField] private GameObject aiObject;
         [Required, SerializeField] private SelectableObject selectableObject;
-        [SerializeField] private SoundData moveSoundData;
         
         private IAstarAI ai;
         [SerializeField] private AIDestinationSetter unitTarget;
 
-        private bool _hasMoveCommand;
-
-        public SoundData MoveClip => moveSoundData;
+        public SoundData MoveClip => unit.MoveClip;
         public Vector3 CurrentPosition => ai.position;
+        
+        private bool _hasMoveCommand;
+        private bool _assignedToWorkplace;
+        private WorkerAssignment _assignedTo;
 
         private void Awake()
         {
             ai = aiObject.GetComponent<IAstarAI>();
         }
 
+        public void Move(ISelectable target)
+        {
+            if(unit.IsWorker) RemoveFromWorkplace();
+            
+            if (target.selectableType == SelectableType.Building && unit.IsWorker)
+            {
+                
+                //TODO: Add a worker component
+                var workerAssignment = target.building.GetComponent<WorkerAssignment>();
+                if (workerAssignment != null)
+                {
+                    _assignedToWorkplace = workerAssignment.Assign(unit);
+                    _assignedTo = workerAssignment;
+
+                    SoundManager.Instance.CreateSoundBuilder().Play(unit.WorkClip);
+                }
+            }
+            
+            Move_Internal(target.Position);
+        }
+
         public void Move(Vector3 position)
+        {
+            if(unit.IsWorker) RemoveFromWorkplace();
+
+            Move_Internal(position);
+        }
+
+        private void Move_Internal(Vector3 position)
         {
             _hasMoveCommand = true;
             ai.isStopped = false;
@@ -35,6 +65,15 @@ namespace TDCB
             ai.SearchPath();
 
             unitTarget.enabled = false;
+        }
+
+        private void RemoveFromWorkplace()
+        {
+            if (_assignedToWorkplace)
+            {
+                _assignedTo.Unassign(unit);
+                _assignedToWorkplace = false;
+            }
         }
 
         public void AttackMove(Vector3 position)

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TDCB
 {
     [CreateAssetMenu(menuName = "Command/Move Command")]
-    public class MoveCommand : PositionCommand
+    public class MoveCommand : TargetCommand
     {
         public override void OnBeforeExecute()
         {
@@ -17,12 +17,32 @@ namespace TDCB
         {
             UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(false);
         }
-        
+
+        public override void Execute(ISelectable target)
+        {
+            foreach (var observer in SceneReferences.Instance.unitManager.allControllableUnits)
+            {
+                observer.Move(target);
+            }
+            
+            PlayCommandFeedback();
+        }
+
         public override void Execute(Vector3 position)
         {
-            var unitObservers = SceneReferences.Instance.unitManager.allControllableUnits;
+            foreach (var observer in SceneReferences.Instance.unitManager.allControllableUnits)
+            {
+                observer.Move(position);
+            }
             
-            if (unitObservers.Count > 0)
+            PlayCommandFeedback();
+            
+            base.Execute(position);
+        }
+
+        private void PlayCommandFeedback()
+        {
+            if (SceneReferences.Instance.unitManager.SelectedUnitCount > 0)
             {
                 ISelectable unit = SceneReferences.Instance.unitManager.HighestPrioritySelectedUnit;
 
@@ -35,13 +55,6 @@ namespace TDCB
                     }
                 }
             }
-            
-            foreach (var observer in unitObservers)
-            {
-                observer.Move(position);
-            }
-            
-            base.Execute(position);
         }
     }
 }

@@ -119,7 +119,7 @@ public class RectTransformGroupLayout : UIBehaviour, ILayoutElement
     }
     
 #if UNITY_EDITOR
-    protected virtual void OnValidate()
+    protected override void OnValidate()
     {
         RecalculateSize();
     }

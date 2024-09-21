@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 21300000, guid: cc68b52472488e547bb93b1aafc6fcf4, type: 3}
   imageHover: {fileID: 21300000, guid: cc68b52472488e547bb93b1aafc6fcf4, type: 3}
+  soundClip: {fileID: 11400000, guid: 71760c113f073c1439505dc5ff3d390d, type: 2}
   tooltip:
-    type: 0
+    type: 1
     position: 1
     header: Lumbermill
-    body: Build a Lumbermill
+    body: Produce Wood from nearby trees.
+    ResourceCosts: []
   building: {fileID: 11400000, guid: d5d6d7f0cf42e5044b22120e119e1878, type: 2}

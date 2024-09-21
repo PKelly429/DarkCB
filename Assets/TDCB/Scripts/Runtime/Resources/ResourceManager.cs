@@ -11,7 +11,6 @@ namespace TDCB
     {
         [SerializeField] private ResourceDefinitions _resourceDefinitions;
         [SerializeField] private float _tickTime;
-        [SerializeField] private int _defaultMaxStockpile;
 
         public float TickTime => _tickTime;
         [NonSerialized] public BindableFloat TickTimer = new BindableFloat(0);
@@ -45,9 +44,46 @@ namespace TDCB
             producer.OnProductionRateChanged -= UpdateProductionRate;
         }
 
+        public void UpdateResourceMaximum(ResourceType resource, int amount)
+        {
+            if (resource == ResourceType.None) return;
+            
+            _resources[resource].Max.SetValue(_resources[resource].Max + amount);
+        }
+        
+        public void PayResourceCost(ResourceValue cost)
+        {
+            UpdateResourceValue(cost.resourceType, -cost.value);
+        }
+        
+        public void UpdateResourceValue(ResourceType resource, int amount)
+        {
+            if (resource == ResourceType.None) return;
+            
+            _resources[resource].Value.SetValue(_resources[resource].Value + amount);
+            if (_resources[resource].Value > _resources[resource].Max)
+            {
+                _resources[resource].Value.SetValue(_resources[resource].Value);
+            }
+        }
+
         private void UpdateProductionRate(ResourceType resource, int difference)
         {
+            if (resource == ResourceType.None) return;
+            
             _resources[resource].ProductionRate.SetValue(_resources[resource].ProductionRate+difference);
+        }
+
+        public bool CanAffordCost(ResourceValue cost)
+        {
+            if (cost.resourceType == ResourceType.None) return true;
+            if (cost.value <= 0) return true;
+            
+            if (cost.resourceType == ResourceType.Population)
+            {
+                return _resources[ResourceType.Population].Value + cost.value <= _resources[ResourceType.Population].Max;
+            }
+            return _resources[cost.resourceType].Value >= cost.value;
         }
 
         private IEnumerator UpdateResourceLoop()
@@ -95,9 +131,10 @@ namespace TDCB
                 _resources.Add(resource.resource, new Resource()
                 {
                     stockpiles = resource.stockpiles,
+                    hasMaximum = resource.hasMaximum,
                     ProductionRate = new BindableInt(0),
-                    Value = new BindableInt(0),
-                    Max = new BindableInt(_defaultMaxStockpile)
+                    Value = new BindableInt(resource.startingAmount),
+                    Max = new BindableInt(resource.startingMaximum)
                 });
             }
         }
@@ -117,8 +154,16 @@ namespace TDCB
     public class Resource
     {
         public bool stockpiles;
+        public bool hasMaximum;
         public BindableInt ProductionRate;
         public BindableInt Value;
         public BindableInt Max;
+    }
+    
+    [Serializable]
+    public struct ResourceValue
+    {
+        public ResourceType resourceType;
+        public int value;
     }
 }

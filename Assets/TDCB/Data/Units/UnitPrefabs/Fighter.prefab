@@ -144,9 +144,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f259f4d53dc9afd4292f1856ce322b8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unit: {fileID: 3686551086049158228}
   aiObject: {fileID: 5553458753133035957}
   selectableObject: {fileID: 3686551086049158228}
-  moveSoundData: {fileID: 11400000, guid: 0c13f223a55047e4e97817e02b859163, type: 2}
   unitTarget: {fileID: 425311211866299843}
 --- !u!136 &8876385318692905630
 CapsuleCollider:

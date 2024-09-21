@@ -10,11 +10,13 @@ namespace TDCB
     public class BuildingPlacement : MonoBehaviour
     {
         [SerializeField] private Texture2D objectPlacementMap;
+        [SerializeField] private SoundData placeBuildingSFX;
         [SerializeField] private SoundData failToPlaceBuildingSFX;
         
         public bool InPlacementMode { get; private set; }
         private GameObject _currentPlacement;
         private Building _currentPlacementBuilding;
+        private ISelectable _currentBuilder;
         private ResourceHarvester _resourceHarvester;
         private bool _hasTextureChanges;
 
@@ -24,7 +26,7 @@ namespace TDCB
         }
 
 
-        public void StartPlacement(BuildingData building)
+        public void StartPlacement(BuildingData building, ISelectable builder)
         {
             #if DEBUG
             if (InPlacementMode)
@@ -35,27 +37,48 @@ namespace TDCB
             #endif
             
             _currentPlacement = Instantiate(building.buildingPrefab);
+            _currentBuilder = builder;
             _currentPlacementBuilding = _currentPlacement.GetComponent<Building>();
             _resourceHarvester = _currentPlacement.GetComponent<ResourceHarvester>();
+
+            var getBuilderComponents = _currentPlacement.GetComponents<IGetBuilder>();
+            foreach (var buildingModule in getBuilderComponents)
+            {
+                buildingModule.GetBuilder(builder);
+            }
+            
+            _currentPlacementBuilding.BeginPlacement();
             
             SetPlacementMode(true);
         }
         
-        public void TryCompletePlacement()
+        public (bool, ISelectable) TryCompletePlacement()
         {
             if (!_currentPlacementBuilding.ValidBuildingPosition)
             {
                 //TODO: Display Error Message
                 SoundManager.Instance.CreateSoundBuilder().Play(failToPlaceBuildingSFX);
-                return;
+                return (false, null);
             }
+
+            var placedBuilding = _currentPlacementBuilding;
+            SoundManager.Instance.CreateSoundBuilder().Play(placeBuildingSFX);
             _currentPlacementBuilding.Build();
-            _currentPlacement = null;
-            SetPlacementMode(false);
+            //_currentPlacement = null;
+            //SetPlacementMode(false);
+
+            InPlacementMode = false;
+            StartPlacement(placedBuilding.BuildingData, _currentBuilder);
+            
+            return (true, placedBuilding);
         }
         
         public void CancelPlacement()
         {
+            if (_currentPlacement != null)
+            {
+                SoundManager.Instance.CreateSoundBuilder().Play(failToPlaceBuildingSFX);
+            }
             SetPlacementMode(false);
         }
 

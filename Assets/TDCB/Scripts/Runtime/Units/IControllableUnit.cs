@@ -11,6 +11,7 @@ namespace TDCB
         
         public Vector3 CurrentPosition { get; }
         
+        public void Move(ISelectable target);
         public void Move(Vector3 position);
         public void AttackMove(Vector3 position);
         public void Stop();

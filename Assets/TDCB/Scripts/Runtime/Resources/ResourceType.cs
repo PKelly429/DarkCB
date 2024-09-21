@@ -8,10 +8,10 @@ namespace TDCB
     {
         None,
         Population,
-        Supply,
+        Food,
         Wood,
         Stone,
-        Iron
+        Iron,
     }
     
     public static class ResourceTypeExtension

@@ -28,7 +28,7 @@ namespace TDCB
             frame.enabled = false;
             icon.sprite = command.image;
             hover.SetSprites(command.image, command.imageHover);
-            tooltip.SetTooltip(command.tooltip);
+            tooltip.SetTooltip(command.GetTooltip());
         }
 
         public override void Unbind()

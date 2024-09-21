@@ -19,7 +19,14 @@ namespace TDCB
         
         [Title("Voice Clips")]
         public SoundData selectSound;
+
+        [Title("Resource Costs")] 
+        public ResourceValue[] costs;
         
+        [Title("Resources Given")]
+        public ResourceValue[] produced;
+        
+        [PropertySpace]
         [BoxGroup("Tooltip"), HideLabel] public Tooltip tooltip;
     }
 }

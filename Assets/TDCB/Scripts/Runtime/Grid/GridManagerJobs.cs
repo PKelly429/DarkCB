@@ -181,7 +181,7 @@ namespace TDCB
             return true;
         }
         
-        public void SetBoundsBlocked(Bounds bounds, bool blocked)
+        public void SetBoundsBlocked(Bounds bounds, bool blocked, bool walkable)
         {
             if (_disposed) return;
             
@@ -198,6 +198,8 @@ namespace TDCB
                 }
             }
 
+            if (walkable) return;
+            
             SetWalkable(min, max, !blocked);
         }
         

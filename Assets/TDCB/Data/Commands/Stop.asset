@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 21300000, guid: 7211f19f9675e684987bf1a6a7ddbc79, type: 3}
   imageHover: {fileID: 21300000, guid: 19583852d7060134a8321508f0a22287, type: 3}
+  soundClip: {fileID: 11400000, guid: 322e35b2c62dc864b8ea4083221fd2b6, type: 2}
   tooltip:
     type: 0
     position: 1

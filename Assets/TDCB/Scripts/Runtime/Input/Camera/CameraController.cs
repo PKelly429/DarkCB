@@ -14,8 +14,9 @@ namespace TDCB
         [Header ("Scroll")]
         [SerializeField] private float cameraScrollSpeed = 60f;
         [SerializeField] private float cameraScrollModMulti = 2f;
-        private float cameraScrollDampTime = 0.3f;
-        private float cameraDragDampTime = 0.1f;
+        
+        private const float CameraScrollDampTime = 0.15f;
+        private const float CameraDragDampTime = 0.1f;
         
         private Transform _cachedTransform;
         private Vector3 _targetPosition;
@@ -59,12 +60,24 @@ namespace TDCB
 
         private bool _cameraDragDown;
 
+        public void CenterCamera(ISelectable selectable)
+        {
+            CenterCamera(selectable.Position);
+        }
+        
+        public void CenterCamera(Vector3 position)
+        {
+            _targetPosition = position - (_cachedTransform.forward*_targetZoom);
+            _cachedTransform.position = _targetPosition;
+        }
+
         private void Start()
         {
             _inputControls = SceneReferences.Instance.inputHandler.InputControls;
             _inputControls.CameraControls.Enable();
             
             _cachedTransform = GetComponent<Transform>();
+            _targetPosition = _cachedTransform.position;
 
             _minZoomDistance = minPosition.localPosition.magnitude;
             _maxZoomDistance = maxPosition.localPosition.magnitude;
@@ -140,7 +153,7 @@ namespace TDCB
             if (DraggingCamera)
             {
                 _targetPosition = _cachedTransform.position + StartCameraDragPosition - CurrentCameraDragPosition;
-                _cachedTransform.position = Vector3.SmoothDamp(_cachedTransform.position, _targetPosition, ref _cameraVelocity, cameraDragDampTime);
+                _cachedTransform.position = Vector3.SmoothDamp(_cachedTransform.position, _targetPosition, ref _cameraVelocity, CameraDragDampTime);
             }
             else
             {
@@ -151,7 +164,7 @@ namespace TDCB
                 Vector3 moveDelta = (_cachedTransform.rotation*new Vector3(cameraMoveDelta.x, 0, cameraMoveDelta.y)) * speed;
                 _targetPosition += moveDelta;
                 
-                _cachedTransform.position = Vector3.SmoothDamp(_cachedTransform.position, _targetPosition, ref _cameraVelocity, cameraScrollDampTime);
+                _cachedTransform.position = Vector3.SmoothDamp(_cachedTransform.position, _targetPosition, ref _cameraVelocity, CameraScrollDampTime);
             }
         }
 

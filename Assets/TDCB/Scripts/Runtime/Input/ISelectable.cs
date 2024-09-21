@@ -10,6 +10,9 @@ namespace TDCB
     {
         public int Priority { get; }
         public SelectableType selectableType { get; }
+        
+        public Unit unit { get; }
+        public Building building { get; }
 
         public Sprite Icon { get; }
         public bool IsControllable { get; }

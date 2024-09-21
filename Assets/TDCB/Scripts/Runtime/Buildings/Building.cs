@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using AudioSystem;
@@ -11,11 +12,16 @@ namespace TDCB
         [SerializeField] private BuildingData data;
         [SerializeField] private float size;
         [SerializeField] private Collider selectionCollider;
+        [SerializeField] private bool walkable;
         
         [SerializeField, InfoBox("Check AutoRegister if placed in Scene")] private bool autoRegister;
+
+        public BuildingData BuildingData => data;
         
         public override int Priority => data.priority;
         public override SelectableType selectableType => SelectableType.Building;
+        public override Unit unit => null;
+        public override Building building => this;
         public override Sprite Icon => data.icon;
         public override bool HasCommands => true;
         public override CommandTemplate Commands => data.commands;
@@ -25,17 +31,14 @@ namespace TDCB
         
         // Building Components
         private IBuildingPlacementFunctions[] _buildingPlacementListeners;
+        private IBuildingPlacementValidFunction[] _buildingPlacementValidListeners;
         private IBuildingDestroyFunction[] _buildingDestroyedListeners;
         private IBuildingSelectionFunctions[] _buildingSelectionListeners;
-
-        //TODO: Move to separate component and remove when built
-        [SerializeField] private Renderer renderer;
-        [SerializeField] private Material buildingPlacementMaterial;
+        
         private bool _validBuildingPosition;
         private bool _isPlaced;
         private Bounds _bounds; // can't get the bounds of a collider when it gets disabled (when obj is destroyed)
         private static readonly int Valid = Shader.PropertyToID("_Valid");
-        private Material[] _defaultMaterials;
 
         public bool ValidBuildingPosition
         {
@@ -44,43 +47,24 @@ namespace TDCB
             {
                 _validBuildingPosition = value;
 
-                if (_validBuildingPosition)
+                foreach (var buildingModule in _buildingPlacementValidListeners)
                 {
-                    buildingPlacementMaterial.SetFloat(Valid, 1);
+                    buildingModule.UpdateBuildingPlacementValid(_validBuildingPosition);
                 }
-                else
-                {
-                    buildingPlacementMaterial.SetFloat(Valid, 0);
-                }
-                
             }
         }
         
         protected override void OnEnable()
         {
             _buildingPlacementListeners = GetComponents<IBuildingPlacementFunctions>();
+            _buildingPlacementValidListeners = GetComponents<IBuildingPlacementValidFunction>();
             _buildingDestroyedListeners = GetComponents<IBuildingDestroyFunction>();
             _buildingSelectionListeners = GetComponents<IBuildingSelectionFunctions>();
             
-            _defaultMaterials = renderer.materials;
 
-            var swapMats = renderer.materials;
-            for(int i=0; i<swapMats.Length; i++)
-            {
-                swapMats[i] = buildingPlacementMaterial;
-            }
-
-            renderer.materials = swapMats;
             if (autoRegister)
             {
                 Build();
-            }
-            else
-            {
-                foreach (var module in _buildingPlacementListeners)
-                {
-                    module.OnBeginPlacement();
-                }
             }
         }
 
@@ -88,7 +72,7 @@ namespace TDCB
         {
             if (_isPlaced)
             {
-                SceneReferences.Instance.gridJobs.SetBoundsBlocked(_bounds, false);
+                SceneReferences.Instance.gridJobs.SetBoundsBlocked(_bounds, false, walkable);
             }
             else
             {
@@ -146,18 +130,30 @@ namespace TDCB
             }
         }
 
+        public void BeginPlacement()
+        {
+            foreach (var module in _buildingPlacementListeners)
+            {
+                module.OnBeginPlacement();
+            }
+        }
+
         public void Build()
         {
             _isPlaced = true;
             _bounds = Collider.bounds;
             RegisterObject();
             
-            renderer.materials = _defaultMaterials;
-            SceneReferences.Instance.gridJobs.SetBoundsBlocked(_bounds, true);
+            SceneReferences.Instance.gridJobs.SetBoundsBlocked(_bounds, true, walkable);
             
             foreach (var module in _buildingPlacementListeners)
             {
                 module.OnFinishPlacement();
+            }
+            
+            for (int i = 0; i < data.costs.Length; i++)
+            {
+                SceneReferences.Instance.resourceManager.PayResourceCost(data.costs[i]);
             }
         }
 
@@ -165,7 +161,13 @@ namespace TDCB
         {
             bool validPosition = SceneReferences.Instance.gridJobs.IsPositionValid(Collider.bounds);
             if (!validPosition) return false;
-            foreach (var module in _buildingPlacementListeners)
+
+            for (int i = 0; i < data.costs.Length; i++)
+            {
+                if (!SceneReferences.Instance.resourceManager.CanAffordCost(data.costs[i])) return false;
+            }
+            
+            foreach (var module in _buildingPlacementValidListeners)
             {
                 if (!module.IsValid()) return false;
             }

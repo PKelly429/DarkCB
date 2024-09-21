@@ -44,7 +44,7 @@ namespace TDCB
 
         private void OnStockpileValueChanged()
         {
-            if (_boundResource.stockpiles)
+            if (_boundResource.hasMaximum)
             {
                 currentSupply.text = $"{_boundResource.Value.GetValue()}/{_boundResource.Max.GetValue()}";
             }

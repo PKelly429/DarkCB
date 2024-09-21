@@ -18,6 +18,8 @@ namespace TDCB
 
         public abstract int Priority { get; }
         public abstract SelectableType selectableType { get; }
+        public abstract Unit unit { get; }
+        public abstract Building building { get; }
         public abstract Sprite Icon { get; }
         public abstract float Size { get; }
         public abstract Collider Collider { get; }
@@ -62,6 +64,7 @@ namespace TDCB
             IsControllable = ControllableUnit != null;
 
             SceneReferences.Instance.playerUnitHash.RegisterUnit(this);
+            OnRegister();
         }
         
         protected void DeregisterObject()
@@ -73,7 +76,19 @@ namespace TDCB
             SceneReferences.Instance.highlightManager.DeregisterUnit(this);
             
             SceneReferences.Instance.playerUnitHash.DeregisterUnit(this);
+            OnDeregister();
         }
+
+        protected virtual void OnRegister()
+        {
+            
+        }
+        
+        protected virtual void OnDeregister()
+        {
+            
+        }
+        
 
         private void RegisterCommands()
         {

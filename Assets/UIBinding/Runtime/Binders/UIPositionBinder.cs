@@ -33,7 +33,7 @@ namespace DataBinding
         {
             if (targetTransform == null) return;
             
-            Vector2 screenPoint = mainCamera.WorldToScreenPoint(targetTransform.position + Vector3.up);
+            Vector2 screenPoint = mainCamera.WorldToScreenPoint(targetTransform.position);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasTransform, screenPoint, null, out var pos);
             _rectTransform.anchoredPosition = pos;
         }

@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 638942061761428424}
   - component: {fileID: 2362525175733244240}
+  - component: {fileID: 203133864141409763}
+  - component: {fileID: -4909138498866807229}
   m_Layer: 0
   m_Name: House
   m_TagString: Untagged
@@ -46,10 +48,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 77022723d35a19448a42e8d75f655f05, type: 2}
-  size: 5
+  size: 7
   selectionCollider: {fileID: 7746029492782497375}
+  walkable: 0
   autoRegister: 0
-  renderer: {fileID: 4370399812803310795}
+--- !u!114 &203133864141409763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2240570332343315355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15f72a4dae48d2041ba42c4d480aa159, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Amount: 4
+--- !u!114 &-4909138498866807229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2240570332343315355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b31c72a7313d64192a3f9d8ecba0ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 4370399812803310795}
   buildingPlacementMaterial: {fileID: 2100000, guid: ec4a6988d011b734f8b95c76565ce5bc, type: 2}
 --- !u!1 &3969632347525762183
 GameObject:

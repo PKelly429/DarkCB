@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   commandRow1:
   - {fileID: 11400000, guid: f82513b50efc21a459f8f9c9ca59d577, type: 2}
-  - {fileID: 11400000, guid: ec5bcbc19deb4254f94362f481b517a7, type: 2}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   commandRow2:
   - {fileID: 11400000, guid: 4c2da59731913d04491d6ace4881c460, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 77a867f67ef65e940a15ab7f7dba3235, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

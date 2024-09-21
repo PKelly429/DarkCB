@@ -12,18 +12,25 @@ namespace TDCB
         public TooltipType type;
         public FixedPosition position;
         
-        [ShowIf("type", TooltipType.HeaderAndBody)]
+        [ShowIf("@this.type == TooltipType.HeaderAndBody || this.type == TooltipType.ResourceCost")]
         public string header;
         public string body;
 
+        public ResourceValue[] ResourceCosts;
+
         public bool ShowHeader()
         {
-            return type == TooltipType.HeaderAndBody;
+            return type is TooltipType.HeaderAndBody or TooltipType.ResourceCost;
         }
         
         public bool ShowBody()
         {
             return true;
+        }
+        
+        public bool ShowResourceCosts()
+        {
+            return type == TooltipType.ResourceCost;
         }
     }
     
@@ -31,6 +38,7 @@ namespace TDCB
     public enum TooltipType
     {
         HeaderAndBody,
+        ResourceCost,
         OnlyBody,
     }
     

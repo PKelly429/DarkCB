@@ -512,6 +512,15 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Build"",
+                    ""type"": ""Button"",
+                    ""id"": ""92519b1a-fac1-4444-932b-229d4fcbbd6d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -534,6 +543,17 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Stop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5a430581-00cc-4ade-be4f-ef024d26c089"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Build"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -754,6 +774,7 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
         m_Commands = asset.FindActionMap("Commands", throwIfNotFound: true);
         m_Commands_Move = m_Commands.FindAction("Move", throwIfNotFound: true);
         m_Commands_Stop = m_Commands.FindAction("Stop", throwIfNotFound: true);
+        m_Commands_Build = m_Commands.FindAction("Build", throwIfNotFound: true);
         // ControlGroups
         m_ControlGroups = asset.FindActionMap("ControlGroups", throwIfNotFound: true);
         m_ControlGroups_ControlGroup1 = m_ControlGroups.FindAction("ControlGroup1", throwIfNotFound: true);
@@ -1032,12 +1053,14 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
     private List<ICommandsActions> m_CommandsActionsCallbackInterfaces = new List<ICommandsActions>();
     private readonly InputAction m_Commands_Move;
     private readonly InputAction m_Commands_Stop;
+    private readonly InputAction m_Commands_Build;
     public struct CommandsActions
     {
         private @InputControls m_Wrapper;
         public CommandsActions(@InputControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Commands_Move;
         public InputAction @Stop => m_Wrapper.m_Commands_Stop;
+        public InputAction @Build => m_Wrapper.m_Commands_Build;
         public InputActionMap Get() { return m_Wrapper.m_Commands; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1053,6 +1076,9 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
             @Stop.started += instance.OnStop;
             @Stop.performed += instance.OnStop;
             @Stop.canceled += instance.OnStop;
+            @Build.started += instance.OnBuild;
+            @Build.performed += instance.OnBuild;
+            @Build.canceled += instance.OnBuild;
         }
 
         private void UnregisterCallbacks(ICommandsActions instance)
@@ -1063,6 +1089,9 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
             @Stop.started -= instance.OnStop;
             @Stop.performed -= instance.OnStop;
             @Stop.canceled -= instance.OnStop;
+            @Build.started -= instance.OnBuild;
+            @Build.performed -= instance.OnBuild;
+            @Build.canceled -= instance.OnBuild;
         }
 
         public void RemoveCallbacks(ICommandsActions instance)
@@ -1216,6 +1245,7 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnStop(InputAction.CallbackContext context);
+        void OnBuild(InputAction.CallbackContext context);
     }
     public interface IControlGroupsActions
     {

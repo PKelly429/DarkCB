@@ -52,6 +52,8 @@ namespace TDCB
             {
                 ClearSelection();
             }
+            
+            _currentControlGroup = -1;
 
             AddUnitToSelection(toSelect);
             
@@ -75,6 +77,8 @@ namespace TDCB
             {
                 ClearSelection();
             }
+            
+            _currentControlGroup = -1;
 
             bool selectAll = true; // controllable units have priority
             foreach (var unit in toSelect)
@@ -202,7 +206,8 @@ namespace TDCB
             _inputControls.ControlGroups.ControlGroup9.performed += context => { PressControlGroup(8); };
             //_inputControls.ControlGroups.ControlGroup10.performed += context => { PressControlGroup(9); };
         }
-
+        
+        private int _currentControlGroup = -1;
         private void PressControlGroup(int id)
         {
             if (SceneReferences.Instance.inputHandler.ControlDown)
@@ -211,7 +216,17 @@ namespace TDCB
             }
             else
             {
+                if (_currentControlGroup == id)
+                {
+                    if (controlGroups[id] != null)
+                    {
+                        SceneReferences.Instance.cameraController.CenterCamera(controlGroups[id].HighestPriorityUnit);
+                    }
+                    return;
+                }
+                
                 SwitchToControlGroup(id);
+                _currentControlGroup = id;
             }
         }
 

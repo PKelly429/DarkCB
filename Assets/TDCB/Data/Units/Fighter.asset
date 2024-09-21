@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 348ddf736c75d004f8d49ff3627ba924, type: 3}
   m_Name: Fighter
   m_EditorClassIdentifier: 
-  priority: 2
+  priority: 3
   icon: {fileID: 21300000, guid: a7c29ca3b1a4b604183c6f932207081e, type: 3}
   unitPrefab: {fileID: 5553458753133035957, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
   commands: {fileID: 11400000, guid: 3b5d05e3ebf3ad549b26de1376286a93, type: 2}
@@ -21,6 +21,11 @@ MonoBehaviour:
   stopSound: {fileID: 0}
   holdSound: {fileID: 0}
   attackSound: {fileID: 0}
+  workSound: {fileID: 0}
+  population: 1
+  costs:
+  - resourceType: 2
+    value: 50
   tooltip:
     type: 0
     position: 0

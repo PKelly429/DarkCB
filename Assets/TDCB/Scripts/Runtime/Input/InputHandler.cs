@@ -40,7 +40,7 @@ namespace TDCB
         
         // Commands
         public bool HasTargetCommand { get; private set; }
-        private IPositionCommand currentTargetCommand;
+        private ITargetCommand currentTargetCommand;
         
         // Selectable Objects
         private Camera _mainCamera;
@@ -148,7 +148,7 @@ namespace TDCB
             }
         }
 
-        public void SetCommand(IPositionCommand command)
+        public void SetCommand(ITargetCommand command)
         {
             HasTargetCommand = true;
             currentTargetCommand = command;
@@ -158,15 +158,32 @@ namespace TDCB
         {
             if (PointerOverUI) return;
             
-            if (_hitCount > 0)
+            HoverFirstSelectableUnit();
+            ISelectable target = _hoveredSelectables.Count > 0 ? _hoveredSelectables.First() : null;
+            
+            if (_hitCount > 0 || target != null)
             {
-                if (HasTargetCommand)
+                if (target == null)
                 {
-                    currentTargetCommand.Execute(_hits[0].point);
+                    if (HasTargetCommand)
+                    {
+                        currentTargetCommand.Execute(_hits[0].point);
+                    }
+                    else
+                    {
+                        SceneReferences.Instance.commandManager.MoveCommand.Execute(_hits[0].point);   
+                    }
                 }
                 else
                 {
-                    SceneReferences.Instance.commandManager.MoveCommand.Execute(_hits[0].point);   
+                    if (HasTargetCommand)
+                    {
+                        currentTargetCommand.Execute(target);
+                    }
+                    else
+                    {
+                        SceneReferences.Instance.commandManager.MoveCommand.Execute(target); 
+                    }
                 }
             }
 

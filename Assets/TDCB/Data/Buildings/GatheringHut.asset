@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15930d980cc96d49b8c70bfac168ddc, type: 3}
+  m_Name: GatheringHut
+  m_EditorClassIdentifier: 
+  priority: -2
+  icon: {fileID: 21300000, guid: 0059cae421429f24ea67e5297aa94efd, type: 3}
+  buildingPrefab: {fileID: 1235173278510376315, guid: 15940ba325fed2e4889d595d08f2c099, type: 3}
+  commands: {fileID: 11400000, guid: c179b3dcea68f9d45b5785d1c8b236e4, type: 2}
+  selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
+  costs: []
+  produced: []
+  tooltip:
+    type: 0
+    position: 0
+    header: Gathering Hut
+    body: 

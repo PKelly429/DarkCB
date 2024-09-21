@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 21300000, guid: 0059cae421429f24ea67e5297aa94efd, type: 3}
   imageHover: {fileID: 21300000, guid: 0059cae421429f24ea67e5297aa94efd, type: 3}
+  soundClip: {fileID: 11400000, guid: 71760c113f073c1439505dc5ff3d390d, type: 2}
   tooltip:
-    type: 0
+    type: 1
     position: 1
     header: House
-    body: Build a House
+    body: Increase maximum Population.
+    ResourceCosts: []
   building: {fileID: 11400000, guid: 77022723d35a19448a42e8d75f655f05, type: 2}

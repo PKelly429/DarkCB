@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using AudioSystem;
 using UnityEngine;
 
 namespace TDCB
@@ -14,6 +15,8 @@ namespace TDCB
             {
                 observer.Stop();
             }
+            
+            if(soundClip != null) SoundManager.Instance.CreateSoundBuilder().Play(soundClip);
         }
     }
 }

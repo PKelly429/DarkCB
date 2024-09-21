@@ -24,6 +24,11 @@ namespace TDCB
         public SoundData stopSound;
         public SoundData holdSound;
         public SoundData attackSound;
+        public SoundData workSound;
+
+        [Title("Resource Costs")] 
+        public int population;
+        public ResourceValue[] costs;
         
         [BoxGroup("Tooltip"), HideLabel] public Tooltip tooltip;
     }

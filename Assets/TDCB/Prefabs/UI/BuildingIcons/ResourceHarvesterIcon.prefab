@@ -328,7 +328,7 @@ MonoBehaviour:
     bindingType:
       assemblyQualifiedName: TDCB.ResourceHarvester, TDCB, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-    property: resourcesInRange
+    property: resourceProduction
   stringFormat: +{0}
   text: {fileID: 5860359665332765985}
 --- !u!1 &2707099690474053235
@@ -760,7 +760,7 @@ MonoBehaviour:
     bindingType:
       assemblyQualifiedName: TDCB.ResourceHarvester, TDCB, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-    property: currentMaxWorkers
+    property: currentWorkers
   stringFormat: 
   text: {fileID: 1422937101780133718}
 --- !u!1 &7283355389350704913

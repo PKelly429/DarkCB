@@ -12,6 +12,8 @@ namespace TDCB
         [SerializeField] private TMP_Text header;
         [SerializeField] private GameObject bodyObject;
         [SerializeField] private TMP_Text body;
+        [SerializeField] private GameObject resourceCostsGameObject;
+        [SerializeField] private UIResourceCosts resourceCosts;
 
         [SerializeField] private bool fixedPosition;
         [SerializeField] private LayoutElement controlWidthLayoutElement;
@@ -24,6 +26,14 @@ namespace TDCB
             header.text = tooltip.header;
             headerObject.gameObject.SetActive(tooltip.ShowBody());
             body.text = tooltip.body;
+            bool showResourceCosts = tooltip.ShowResourceCosts();
+            resourceCostsGameObject.SetActive(showResourceCosts);
+            {
+                if (showResourceCosts)
+                {
+                    resourceCosts.Set(tooltip.ResourceCosts);
+                }
+            }
 
             if (fixedPosition) return;
 

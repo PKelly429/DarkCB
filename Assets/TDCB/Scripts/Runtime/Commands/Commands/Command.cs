@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AudioSystem;
 using DataBinding;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -12,9 +13,15 @@ namespace TDCB
     {
         [PreviewField] public Sprite image;
         [PreviewField] public Sprite imageHover;
+        public SoundData soundClip;
 
         [BoxGroup("Tooltip"), HideLabel] public Tooltip tooltip;
         public abstract void Execute();
+
+        public virtual Tooltip GetTooltip()
+        {
+            return tooltip;
+        }
     }
 
     [CreateAssetMenu(menuName="Command/Command")]
@@ -28,6 +35,8 @@ namespace TDCB
             {
                 observer.Raise();
             }
+            
+            if(soundClip != null) SoundManager.Instance.CreateSoundBuilder().Play(soundClip);
         }
             
         public void Register(ICommandListener observer) => observers.Add(observer);
@@ -48,6 +57,8 @@ namespace TDCB
             {
                 observer.Raise(value);
             }
+            
+            if(soundClip != null) SoundManager.Instance.CreateSoundBuilder().Play(soundClip);
         }
             
         public void Register(ICommandListener<T> observer) => observers.Add(observer);

@@ -30,6 +30,9 @@ namespace TDCB
     {
         public ResourceType resource;
         public bool stockpiles;
+        public bool hasMaximum;
+        public int startingAmount;
+        public int startingMaximum;
         public Sprite icon;
     }
 }
