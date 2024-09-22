@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f82bef45c934bcea274627533144cd0, type: 3}
-  m_Name: CallumSelect
+  m_Name: TorchMove
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 1704398bb4f0c5e409ab7802ebc546a1, type: 3}
-  - {fileID: 8300000, guid: 42b06dbc12626614ba7937091ee3104a, type: 3}
-  - {fileID: 8300000, guid: 5f6d97cc127d3554cb4e2c157d7b8121, type: 3}
-  - {fileID: 8300000, guid: 7991f39ca4d5f0b4d8b029ed2bcaf828, type: 3}
+  - {fileID: 8300000, guid: d96d6f7c97a1378459a7f5f4d46e4876, type: 3}
+  - {fileID: 8300000, guid: 62665bece30f6ce4b94984a1da432060, type: 3}
+  - {fileID: 8300000, guid: f90b63b16002dae40a8ece832f479d72, type: 3}
+  - {fileID: 8300000, guid: 4150b3789b00d4e4696282daed41e062, type: 3}
   mixerGroup: {fileID: 6031991356610453623, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
   loop: 0
   playOnAwake: 0
   frequentSound: 0
   fullyRandom: 0
   uniqueClip: 1
-  sharedVoice: {fileID: 11400000, guid: dd180c2b95aca694288f5d2a55226542, type: 2}
+  sharedVoice: {fileID: 11400000, guid: 4b418d275e5693a43b1df81ad8714855, type: 2}
   mute: 0
   bypassEffects: 0
   bypassListenerEffects: 0
@@ -34,7 +34,7 @@ MonoBehaviour:
   panStereo: 0
   spatialBlend: 0.7
   reverbZoneMix: 1
-  dopplerLevel: 1
+  dopplerLevel: 0
   spread: 0
   minDistance: 1
   maxDistance: 500

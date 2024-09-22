@@ -73,6 +73,11 @@ namespace TDCB
             if (_isPlaced)
             {
                 SceneReferences.Instance.gridJobs.SetBoundsBlocked(_bounds, false, walkable);
+                
+                foreach (var module in _buildingDestroyedListeners)
+                {
+                    module.OnBuildingDestroyed();
+                }
             }
             else
             {
@@ -80,11 +85,6 @@ namespace TDCB
                 {
                     module.OnCancelPlacement();
                 }
-            }
-            
-            foreach (var module in _buildingDestroyedListeners)
-            {
-                module.OnBuildingDestroyed();
             }
             
             base.OnDisable();

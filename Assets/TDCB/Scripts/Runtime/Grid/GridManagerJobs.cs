@@ -262,6 +262,8 @@ namespace TDCB
         }
         public void ClaimResources(HashSet<GridCell> output, ResourceType resourceType, Vector3 pos, float distance)
         {
+            if (_disposed) return;
+            
             GetAvailableResourceCells(output, resourceType, pos, distance);
 
             foreach (var cell in output)

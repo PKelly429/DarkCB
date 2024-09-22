@@ -20,7 +20,8 @@ MonoBehaviour:
   costs: []
   produced: []
   tooltip:
-    type: 0
+    type: 1
     position: 0
     header: Gathering Hut
     body: 
+    ResourceCosts: []

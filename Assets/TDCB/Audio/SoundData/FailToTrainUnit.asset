@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f82bef45c934bcea274627533144cd0, type: 3}
-  m_Name: CallumReady
+  m_Name: FailToTrainUnit
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 8c1f1b0ced302324782d93fdc895576a, type: 3}
-  mixerGroup: {fileID: 6031991356610453623, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
+  - {fileID: 8300000, guid: 8192981099217534098cc8b75c7e59f2, type: 3}
+  mixerGroup: {fileID: -5953739953036936921, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
   loop: 0
   playOnAwake: 0
   frequentSound: 0
   fullyRandom: 0
   uniqueClip: 0
-  sharedVoice: {fileID: 11400000, guid: dd180c2b95aca694288f5d2a55226542, type: 2}
+  sharedVoice: {fileID: 0}
   mute: 0
   bypassEffects: 0
   bypassListenerEffects: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
   volume: 1
   pitch: 1
   panStereo: 0
-  spatialBlend: 0.7
+  spatialBlend: 0
   reverbZoneMix: 1
   dopplerLevel: 1
   spread: 0

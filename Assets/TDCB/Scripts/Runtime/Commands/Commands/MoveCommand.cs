@@ -13,7 +13,7 @@ namespace TDCB
             UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(true);
         }
         
-        public override void OnAfterExecuteOrCancel()
+        public override void OnCancel()
         {
             UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(false);
         }
@@ -26,6 +26,7 @@ namespace TDCB
             }
             
             PlayCommandFeedback();
+            UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(false);
         }
 
         public override void Execute(Vector3 position)

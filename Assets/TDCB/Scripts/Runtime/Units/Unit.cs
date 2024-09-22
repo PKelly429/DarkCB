@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using AudioSystem;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -12,6 +13,9 @@ namespace TDCB
         [SerializeField] private float size;
         [SerializeField] private Collider selectionCollider;
         [SerializeField] private bool isWorker;
+        [SerializeField, InfoBox("Check if placed in scene")] private bool applyPopulationCostOnEnable;
+        
+        public UnitData unitData => data;
         
         public override int Priority => data.priority;
         public override SelectableType selectableType => SelectableType.Unit;
@@ -30,12 +34,26 @@ namespace TDCB
 
         protected override void OnRegister()
         {
-            SceneReferences.Instance.resourceManager.UpdateResourceValue(ResourceType.Population, data.population);
+            if (!applyPopulationCostOnEnable) return;
+            
+            foreach (var cost in data.costs)
+            {
+                if (cost.resourceType == ResourceType.Population)
+                {
+                    SceneReferences.Instance.resourceManager.UpdateResourceValue(ResourceType.Population, cost.value);
+                }
+            }
         }
         
         protected override void OnDeregister()
         {
-            SceneReferences.Instance.resourceManager.UpdateResourceValue(ResourceType.Population, -data.population);
+            foreach (var cost in data.costs)
+            {
+                if (cost.resourceType == ResourceType.Population)
+                {
+                    SceneReferences.Instance.resourceManager.UpdateResourceValue(ResourceType.Population, cost.value);
+                }
+            }
         }
     }
 }

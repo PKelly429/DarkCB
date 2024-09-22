@@ -19,6 +19,7 @@ namespace TDCB
         public CommandTemplate commands;
         
         [Title("Voice Clips")]
+        public SoundData trainSound;
         public SoundData selectSound;
         public SoundData moveSound;
         public SoundData stopSound;
@@ -27,7 +28,7 @@ namespace TDCB
         public SoundData workSound;
 
         [Title("Resource Costs")] 
-        public int population;
+        public float TrainingTime = 30f;
         public ResourceValue[] costs;
         
         [BoxGroup("Tooltip"), HideLabel] public Tooltip tooltip;

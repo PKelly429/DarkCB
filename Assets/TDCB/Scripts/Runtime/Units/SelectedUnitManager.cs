@@ -80,10 +80,10 @@ namespace TDCB
             
             _currentControlGroup = -1;
 
-            bool selectAll = true; // controllable units have priority
+            bool selectAll = true; // units have priority
             foreach (var unit in toSelect)
             {
-                if (unit.IsControllable)
+                if (unit.selectableType == SelectableType.Unit)
                 {
                     selectAll = false;
                     break;

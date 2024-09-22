@@ -31,7 +31,7 @@ MonoBehaviour:
   panStereo: 0
   spatialBlend: 0.7
   reverbZoneMix: 1
-  dopplerLevel: 1
+  dopplerLevel: 0
   spread: 0
   minDistance: 1
   maxDistance: 500

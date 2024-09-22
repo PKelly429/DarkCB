@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f82bef45c934bcea274627533144cd0, type: 3}
-  m_Name: CharlotteSelect
+  m_Name: TorchSelect
   m_EditorClassIdentifier: 
   clips:
   - {fileID: 8300000, guid: 6d47abd95c66cc94db6480975e71506e, type: 3}
@@ -33,7 +33,7 @@ MonoBehaviour:
   panStereo: 0
   spatialBlend: 0.7
   reverbZoneMix: 1
-  dopplerLevel: 1
+  dopplerLevel: 0
   spread: 0
   minDistance: 1
   maxDistance: 500

@@ -11,19 +11,19 @@ namespace TDCB
         [SerializeField] private GameObject selectedUnitPrefab;
         [SerializeField] private RectTransform iconParent;
         [SerializeField] private int maxPerPage;
-        private ObjectPool<SelectedUnitIcon> iconPool = new ObjectPool<SelectedUnitIcon>(CreateIcon, GetIcon, ReleaseIcon, DestroyIcon);
+        private ObjectPool<SelectedUnitIcon> iconPool;
 
         private HashSet<SelectedUnitIcon> _activeIcons = new HashSet<SelectedUnitIcon>();
 
-        private void Start()
+        private void Awake()
         {
-            IconPrefab = selectedUnitPrefab;
-            IconParent = iconParent;
+            iconPool = new ObjectPool<SelectedUnitIcon>(CreateIcon, GetIcon, ReleaseIcon, DestroyIcon);
         }
 
         private void OnEnable()
         {
             SceneReferences.Instance.unitManager.OnSelectedUnitsChanged += UnitManagerOnOnSelectedUnitsChanged;
+            UnitManagerOnOnSelectedUnitsChanged();
         }
 
         private void OnDisable()
@@ -52,27 +52,24 @@ namespace TDCB
         }
 
         #region UnitHighlightPool
-
-        private static GameObject IconPrefab;
-        private static RectTransform IconParent;
-        private static void DestroyIcon(SelectedUnitIcon obj)
+        private void DestroyIcon(SelectedUnitIcon obj)
         {
             Destroy(obj);
         }
 
-        private static void ReleaseIcon(SelectedUnitIcon obj)
+        private void ReleaseIcon(SelectedUnitIcon obj)
         {
             obj.SetActive(false);
         }
 
-        private static void GetIcon(SelectedUnitIcon obj)
+        private void GetIcon(SelectedUnitIcon obj)
         {
             obj.SetActive(true);
         }
 
-        private static SelectedUnitIcon CreateIcon()
+        private SelectedUnitIcon CreateIcon()
         {
-            return Instantiate(IconPrefab, IconParent).GetComponent<SelectedUnitIcon>();
+            return Instantiate(selectedUnitPrefab, iconParent).GetComponent<SelectedUnitIcon>();
         }
         #endregion
     }

@@ -19,10 +19,11 @@ MonoBehaviour:
   selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
   costs:
   - resourceType: 3
-    value: 50
+    value: 25
   produced: []
   tooltip:
-    type: 0
+    type: 1
     position: 0
     header: Farm
     body: 
+    ResourceCosts: []

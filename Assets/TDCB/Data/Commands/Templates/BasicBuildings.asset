@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   commandRow1:
   - {fileID: 11400000, guid: f82513b50efc21a459f8f9c9ca59d577, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 6a37db01d0462dc4ea45ea7a2695e326, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

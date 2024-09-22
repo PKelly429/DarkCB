@@ -16,6 +16,7 @@ namespace TDCB
         public bool InPlacementMode { get; private set; }
         private GameObject _currentPlacement;
         private Building _currentPlacementBuilding;
+        private BuildCommand _currentCommand;
         private ISelectable _currentBuilder;
         private ResourceHarvester _resourceHarvester;
         private bool _hasTextureChanges;
@@ -26,7 +27,7 @@ namespace TDCB
         }
 
 
-        public void StartPlacement(BuildingData building, ISelectable builder)
+        public void StartPlacement(BuildingData building, BuildCommand command, ISelectable builder)
         {
             #if DEBUG
             if (InPlacementMode)
@@ -37,6 +38,7 @@ namespace TDCB
             #endif
             
             _currentPlacement = Instantiate(building.buildingPrefab);
+            _currentCommand = command;
             _currentBuilder = builder;
             _currentPlacementBuilding = _currentPlacement.GetComponent<Building>();
             _resourceHarvester = _currentPlacement.GetComponent<ResourceHarvester>();
@@ -54,6 +56,17 @@ namespace TDCB
         
         public (bool, ISelectable) TryCompletePlacement()
         {
+            if (_currentPlacementBuilding == null)
+            {
+                UIReferences.Instance.commandButtonGrid.SetBuildCanvasVisible(false);
+                SceneReferences.Instance.buildingPlacement.CancelPlacement();
+                
+                #if DEBUG
+                Debug.LogError("Trying to complete placement when current building is NULL");
+                #endif
+                
+                return (false, null);
+            }
             if (!_currentPlacementBuilding.ValidBuildingPosition)
             {
                 //TODO: Display Error Message
@@ -64,11 +77,11 @@ namespace TDCB
             var placedBuilding = _currentPlacementBuilding;
             SoundManager.Instance.CreateSoundBuilder().Play(placeBuildingSFX);
             _currentPlacementBuilding.Build();
-            //_currentPlacement = null;
-            //SetPlacementMode(false);
+            _currentPlacement = null;
+            SetPlacementMode(false);
 
-            InPlacementMode = false;
-            StartPlacement(placedBuilding.BuildingData, _currentBuilder);
+            // Repeat building
+            _currentCommand.Execute();
             
             return (true, placedBuilding);
         }

@@ -15,12 +15,13 @@ MonoBehaviour:
   priority: -1
   icon: {fileID: 21300000, guid: 12b444002850c8a439768ca7c84814df, type: 3}
   buildingPrefab: {fileID: 2377767994034143046, guid: 135f37a88e1b4cd44a0d3f52cdd024e7, type: 3}
-  commands: {fileID: 0}
+  commands: {fileID: 11400000, guid: ba3c86b6542cf294f809fdb5163e7367, type: 2}
   selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
   costs: []
   produced: []
   tooltip:
-    type: 0
+    type: 1
     position: 0
     header: Keep
     body: 
+    ResourceCosts: []

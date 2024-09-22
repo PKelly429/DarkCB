@@ -19,10 +19,12 @@ namespace TDCB
 
         public SoundData MoveClip => unit.MoveClip;
         public Vector3 CurrentPosition => ai.position;
+
+        public bool IsAssignedToWorkplace => _assignedToWorkplace;
         
         private bool _hasMoveCommand;
         private bool _assignedToWorkplace;
-        private WorkerAssignment _assignedTo;
+        private IWorkerAssignment _assignedTo;
 
         private void Awake()
         {
@@ -37,13 +39,19 @@ namespace TDCB
             {
                 
                 //TODO: Add a worker component
-                var workerAssignment = target.building.GetComponent<WorkerAssignment>();
+                var workerAssignment = target.building.GetComponent<IWorkerAssignment>();
                 if (workerAssignment != null)
                 {
-                    _assignedToWorkplace = workerAssignment.Assign(unit);
-                    _assignedTo = workerAssignment;
-
-                    SoundManager.Instance.CreateSoundBuilder().Play(unit.WorkClip);
+                    var assigned = workerAssignment.Assign(unit);
+                    _assignedToWorkplace = assigned.WasAssigned;
+                    _assignedTo = assigned.AssignedTo;
+                    
+                    if (assigned.WasAssigned)
+                    {
+                        SoundManager.Instance.CreateSoundBuilder().Play(unit.WorkClip);
+                        Move_Internal(assigned.AssignedTo.Position);
+                        return;
+                    }
                 }
             }
             

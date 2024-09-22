@@ -18,7 +18,7 @@ MonoBehaviour:
     hasMaximum: 1
     startingAmount: 0
     startingMaximum: 0
-    icon: {fileID: 21300000, guid: d63866dfd448e6648afa660da2306fbe, type: 3}
+    icon: {fileID: 21300000, guid: 865a45dac4ab71c40a970794ab1fa180, type: 3}
   - resource: 2
     stockpiles: 1
     hasMaximum: 1
@@ -28,8 +28,8 @@ MonoBehaviour:
   - resource: 3
     stockpiles: 1
     hasMaximum: 1
-    startingAmount: 50
-    startingMaximum: 100
+    startingAmount: 100
+    startingMaximum: 200
     icon: {fileID: 21300000, guid: 1b49b92c36320e94daab2c9cc179b4a4, type: 3}
   - resource: 4
     stockpiles: 1

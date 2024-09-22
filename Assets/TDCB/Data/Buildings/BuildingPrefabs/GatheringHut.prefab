@@ -1135,6 +1135,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4909138498866807229, guid: e764febe32a8a194da3a4c412107f071, type: 3}
+      propertyPath: renderers.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 638942061761428424, guid: e764febe32a8a194da3a4c412107f071, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1177,8 +1181,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2240570332343315355, guid: e764febe32a8a194da3a4c412107f071, type: 3}
       propertyPath: m_Name
-      value: GatheringHut Variant
+      value: GatheringHut
       objectReference: {fileID: 0}
+    - target: {fileID: 2362525175733244240, guid: e764febe32a8a194da3a4c412107f071, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: f54dfe0abf26718439f320f06dab59d4, type: 2}
     - target: {fileID: 2362525175733244240, guid: e764febe32a8a194da3a4c412107f071, type: 3}
       propertyPath: renderer
       value: 
@@ -1228,7 +1236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee95953911434741bedb4f3367559fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxWorkers: 2
+  MaxWorkers:
+    _value: 0
 --- !u!114 &6630011101618081879
 MonoBehaviour:
   m_ObjectHideFlags: 0

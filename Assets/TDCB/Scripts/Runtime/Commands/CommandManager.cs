@@ -42,7 +42,17 @@ namespace TDCB
 
          public void OnBuild(InputAction.CallbackContext context)
          {
-             buildCommand.Execute();
+             if (SceneReferences.Instance.unitManager.SelectedUnitCount <= 0) return;
+             
+             foreach (var unit in SceneReferences.Instance.unitManager.OrderedUnits)
+             {
+                 if (unit.selectableType != SelectableType.Unit) continue;
+                 if (unit.unit.IsWorker)
+                 {
+                     buildCommand.Execute();
+                     return;
+                 }
+             }
          }
 
          #endregion

@@ -23,7 +23,12 @@ namespace TDCB
             
         }
 
-        public virtual void OnAfterExecuteOrCancel()
+        public virtual void OnCancel()
+        {
+            
+        }
+        
+        public virtual void OnAfterExecute()
         {
             
         }

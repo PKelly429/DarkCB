@@ -53,7 +53,24 @@ namespace TDCB
         
         public void PayResourceCost(ResourceValue cost)
         {
+            if (cost.resourceType == ResourceType.Population)
+            {
+                UpdateResourceValue(cost.resourceType, cost.value);
+                return;
+            }
+            
             UpdateResourceValue(cost.resourceType, -cost.value);
+        }
+        
+        public void RefundResourceCost(ResourceValue cost)
+        {
+            if (cost.resourceType == ResourceType.Population)
+            {
+                UpdateResourceValue(cost.resourceType, -cost.value);
+                return;
+            }
+            
+            UpdateResourceValue(cost.resourceType, cost.value);
         }
         
         public void UpdateResourceValue(ResourceType resource, int amount)

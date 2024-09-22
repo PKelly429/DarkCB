@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c22a020ecfa01ad4585322bb7a9b02c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: c3a6eb2f6bc7ea04e94599ba9a92f3cb, type: 2}
+  data: {fileID: 11400000, guid: ee27864648c431745b93e4eb3b2f0fe0, type: 2}
   size: 7
   selectionCollider: {fileID: 8839991117778121996}
   walkable: 1
@@ -82,7 +82,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eea6bcd3da66bce43978361e43b5f08b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _distance: 12
+  _building: {fileID: 0}
 --- !u!114 &6942165289978381970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,7 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee95953911434741bedb4f3367559fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxWorkers: 1
+  MaxWorkers:
+    _value: 1
 --- !u!114 &529563743234016304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,7 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resource: 2
-  defaultProductionRate: 10
+  defaultProductionRate: 5
 --- !u!1 &5026149776757258008
 GameObject:
   m_ObjectHideFlags: 0

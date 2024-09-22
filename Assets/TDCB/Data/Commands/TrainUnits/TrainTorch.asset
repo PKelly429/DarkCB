@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 588b8de9a39a21f4a91c52a636d29d79, type: 3}
+  m_Name: TrainTorch
+  m_EditorClassIdentifier: 
+  image: {fileID: 21300000, guid: e134dbfe83328854fa9f3c7da99c64dc, type: 3}
+  imageHover: {fileID: 21300000, guid: e134dbfe83328854fa9f3c7da99c64dc, type: 3}
+  soundClip: {fileID: 11400000, guid: 322e35b2c62dc864b8ea4083221fd2b6, type: 2}
+  tooltip:
+    type: 1
+    position: 1
+    header: Train Torchbearer
+    body: Allows units to see in the darkness
+    ResourceCosts: []
+  unit: {fileID: 11400000, guid: 605bc3318763bc4408422332b2a51402, type: 2}
+  failToTrainSFX: {fileID: 11400000, guid: 76319657fedaead41aee3ab0e2313c12, type: 2}

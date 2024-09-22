@@ -55,6 +55,34 @@ namespace TDCB
             return managedUnits[index];
         }
 
+        public List<ISelectable> GetUnitsInRange(Vector3 position, float range)
+        {
+            List<ISelectable> result = new List<ISelectable>();
+            
+            SpatialHashCell cell = SpatialHashCell.GetCell(position);
+
+            range *= range;
+            for (int x = cell.X - 1; x <= cell.X + 1; x++)
+            {
+                for (int y = cell.Y - 1; y <= cell.Y + 1; y++)
+                {
+                    var values = GetUnitIndexsAtCell(x, y);
+                    foreach (var value in values)
+                    {
+                        var otherUnit = GetUnit(value);
+                        float distance = (otherUnit.Transform.position - position).sqrMagnitude;
+                        if (distance > range)
+                        {
+                            continue;
+                        }
+                        result.Add(otherUnit.Transform.GetComponent<ISelectable>());
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public NativeParallelMultiHashMap<SpatialHashCell,int>.Enumerator GetUnitIndexsAtCell(int x, int y)
         {
             return hashGrid.GetValuesForKey(new SpatialHashCell()

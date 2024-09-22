@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using DataBinding;
 using UnityEngine;
 
 namespace TDCB
 {
-    public class WorkerAssignment : MonoBehaviour
+    [Bindable]
+    public class WorkerAssignment : MonoBehaviour, IWorkerAssignment
     {
-        public int MaxWorkers;
-        public int CurrentWorkers { get; private set; }
+        public BindableInt MaxWorkers;
+        public BindableInt CurrentWorkers { get; private set; } = new BindableInt(0);
 
-        public float WorkRate => MaxWorkers == 0 ? 1 : Mathf.Clamp01(CurrentWorkers / (float)MaxWorkers);
+        public float WorkRate => MaxWorkers == 0 ? 1 : Mathf.Clamp01(CurrentWorkers.GetValue() / (float)MaxWorkers.GetValue());
+
+        public Vector3 Position => transform.position;
         
         
         public delegate void WorkRateChanged(float workRate);
@@ -17,12 +21,16 @@ namespace TDCB
 
         private HashSet<Unit> workers = new HashSet<Unit>();
         
-        public bool Assign(Unit unit)
+        public AssignmentArgs Assign(Unit unit)
         {
-            if (CurrentWorkers >= MaxWorkers) return false;
+            if (CurrentWorkers.GetValue() >= MaxWorkers.GetValue()) return new AssignmentArgs(){WasAssigned = false};
             bool added = workers.Add(unit);
             if(added) UpdateWorkRate();
-            return added;
+            return new AssignmentArgs()
+            {
+                WasAssigned = true,
+                AssignedTo = this
+            };
         }
 
         public void Unassign(Unit unit)
@@ -32,9 +40,9 @@ namespace TDCB
         
         private void UpdateWorkRate()
         {
-            if (CurrentWorkers != workers.Count)
+            if (CurrentWorkers.GetValue() != workers.Count)
             {
-                CurrentWorkers = workers.Count;
+                CurrentWorkers.SetValue(workers.Count);
                 OnWorkRateChanged?.Invoke(WorkRate);
             }
         }

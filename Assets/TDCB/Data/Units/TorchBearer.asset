@@ -16,14 +16,17 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: e134dbfe83328854fa9f3c7da99c64dc, type: 3}
   unitPrefab: {fileID: 8613050218598687926, guid: 3549afd18e484674697a830b53e72160, type: 3}
   commands: {fileID: 11400000, guid: 3b5d05e3ebf3ad549b26de1376286a93, type: 2}
+  trainSound: {fileID: 11400000, guid: d420dcaf5298b1b4da15c873c28974ea, type: 2}
   selectSound: {fileID: 11400000, guid: 10435241eb99b4648ae457f3f0131398, type: 2}
   moveSound: {fileID: 11400000, guid: 02890f100c021b14e90a817bb2e7a431, type: 2}
   stopSound: {fileID: 0}
   holdSound: {fileID: 0}
   attackSound: {fileID: 0}
   workSound: {fileID: 0}
-  population: 1
+  TrainingTime: 30
   costs:
+  - resourceType: 1
+    value: 1
   - resourceType: 2
     value: 50
   - resourceType: 3
@@ -33,3 +36,4 @@ MonoBehaviour:
     position: 0
     header: Fighter
     body: 
+    ResourceCosts: []

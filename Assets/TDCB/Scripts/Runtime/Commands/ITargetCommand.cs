@@ -8,6 +8,6 @@ namespace TDCB
     {
         public void Execute(ISelectable target);
         public void Execute(Vector3 value);
-        public void OnAfterExecuteOrCancel();
+        public void OnCancel();
     }
 }

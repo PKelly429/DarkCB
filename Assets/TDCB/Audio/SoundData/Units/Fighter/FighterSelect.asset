@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f82bef45c934bcea274627533144cd0, type: 3}
+  m_Name: FighterSelect
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: 1704398bb4f0c5e409ab7802ebc546a1, type: 3}
+  - {fileID: 8300000, guid: 42b06dbc12626614ba7937091ee3104a, type: 3}
+  - {fileID: 8300000, guid: 5f6d97cc127d3554cb4e2c157d7b8121, type: 3}
+  - {fileID: 8300000, guid: 7991f39ca4d5f0b4d8b029ed2bcaf828, type: 3}
+  mixerGroup: {fileID: 6031991356610453623, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
+  loop: 0
+  playOnAwake: 0
+  frequentSound: 0
+  fullyRandom: 0
+  uniqueClip: 1
+  sharedVoice: {fileID: 11400000, guid: dd180c2b95aca694288f5d2a55226542, type: 2}
+  mute: 0
+  bypassEffects: 0
+  bypassListenerEffects: 0
+  bypassReverbZones: 0
+  priority: 128
+  volume: 1
+  pitch: 1
+  panStereo: 0
+  spatialBlend: 0.7
+  reverbZoneMix: 1
+  dopplerLevel: 0
+  spread: 0
+  minDistance: 1
+  maxDistance: 500
+  ignoreListenerVolume: 0
+  ignoreListenerPause: 0
+  rolloffMode: 0

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 588b8de9a39a21f4a91c52a636d29d79
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - image: {instanceID: 0}
+  - imageHover: {instanceID: 0}
+  - soundClip: {instanceID: 0}
+  - unit: {instanceID: 0}
+  - failToTrainSFX: {fileID: 11400000, guid: 76319657fedaead41aee3ab0e2313c12, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -22,7 +22,8 @@ MonoBehaviour:
     value: 50
   produced: []
   tooltip:
-    type: 0
+    type: 1
     position: 0
     header: Mill
     body: 
+    ResourceCosts: []

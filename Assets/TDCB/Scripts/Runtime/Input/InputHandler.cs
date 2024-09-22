@@ -163,11 +163,17 @@ namespace TDCB
             
             if (_hitCount > 0 || target != null)
             {
+                bool hasCommand = HasTargetCommand;
+                ITargetCommand toExecute = currentTargetCommand;
+                
+                // Clearing first in case a command wants to chain a second command
+                ClearCurrentCommand();
+                
                 if (target == null)
                 {
-                    if (HasTargetCommand)
+                    if (hasCommand)
                     {
-                        currentTargetCommand.Execute(_hits[0].point);
+                        toExecute.Execute(_hits[0].point);
                     }
                     else
                     {
@@ -176,9 +182,9 @@ namespace TDCB
                 }
                 else
                 {
-                    if (HasTargetCommand)
+                    if (hasCommand)
                     {
-                        currentTargetCommand.Execute(target);
+                        toExecute.Execute(target);
                     }
                     else
                     {
@@ -186,8 +192,6 @@ namespace TDCB
                     }
                 }
             }
-
-            ClearCurrentCommand();
         }
 
         private void ClearCurrentCommand()
@@ -195,7 +199,6 @@ namespace TDCB
             if (!HasTargetCommand) return;
             
             HasTargetCommand = false;
-            currentTargetCommand.OnAfterExecuteOrCancel();
             currentTargetCommand = null;
         }
 
@@ -368,6 +371,7 @@ namespace TDCB
         {
             if (HasTargetCommand)
             {
+                currentTargetCommand.OnCancel();
                 ClearCurrentCommand();
             }
             else

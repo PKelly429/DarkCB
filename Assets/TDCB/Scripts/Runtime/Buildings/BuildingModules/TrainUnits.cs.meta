@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c42aaca596ea0e942831bbb34fc41f75
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - moveCommand: {fileID: 11400000, guid: 7010bccceb68d1b4aa1ea5f6942a3e44, type: 2}
+  - flagPrefab: {fileID: 4899217140563596421, guid: e4769d7aad8491b46b8dffb28461f4b2, type: 3}
+  - spawnPosition: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

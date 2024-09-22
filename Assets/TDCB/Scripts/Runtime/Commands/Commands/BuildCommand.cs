@@ -28,19 +28,29 @@ namespace TDCB
         public override void Execute()
         {
             base.Execute();
-            
-            SceneReferences.Instance.buildingPlacement.StartPlacement(building, SceneReferences.Instance.unitManager.HighestPrioritySelectedUnit);
+
+            if (SceneReferences.Instance.unitManager.SelectedUnitCount > 0)
+            {
+                SceneReferences.Instance.buildingPlacement.StartPlacement(building, this, SceneReferences.Instance.unitManager.HighestPrioritySelectedUnit);
+            }
         }
 
         public override void Execute(Vector3 position)
         {
             var newBuild = SceneReferences.Instance.buildingPlacement.TryCompletePlacement();
 
-            if (!newBuild.Item1) return;
-            
-            foreach (var observer in SceneReferences.Instance.unitManager.allControllableUnits)
+            if (!newBuild.Item1)
             {
-                observer.Move(newBuild.Item2);
+                OnCancel();
+                return;
+            }
+
+            if (newBuild.Item2.building != null && newBuild.Item2.building.GetComponent<IWorkerAssignment>() != null)
+            {
+                foreach (var observer in SceneReferences.Instance.unitManager.allControllableUnits)
+                {
+                    observer.Move(newBuild.Item2);
+                }
             }
         }
 
@@ -49,7 +59,7 @@ namespace TDCB
             UIReferences.Instance.commandButtonGrid.SetBuildCanvasVisible(true);
         }
         
-        public override void OnAfterExecuteOrCancel()
+        public override void OnCancel()
         {
             UIReferences.Instance.commandButtonGrid.SetBuildCanvasVisible(false);
             SceneReferences.Instance.buildingPlacement.CancelPlacement();

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MainBuilding
   m_EditorClassIdentifier: 
   commandRow1:
-  - {fileID: 11400000, guid: 59d03788207bf5449a27a04e937b422a, type: 2}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -25,8 +25,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   commandRow3:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 5262a91673bdf8c4fb6a80098076a7ce, type: 2}
+  - {fileID: 11400000, guid: 5007cedfd71e8dc488a5218b41bc229e, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

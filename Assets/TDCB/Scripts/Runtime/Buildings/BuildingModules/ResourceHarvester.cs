@@ -150,7 +150,7 @@ namespace TDCB
         {
             producer.SetProductionRate(GetResourceProduction(resourcesClaimed.Count));
             int maxWorkers = Mathf.Min(resourcesClaimed.Count, buildingsMaxWorkers);
-            workerAssignment.MaxWorkers = maxWorkers;
+            workerAssignment.MaxWorkers.SetValue(maxWorkers);
             
             if (_inPlacementMode)
             {
