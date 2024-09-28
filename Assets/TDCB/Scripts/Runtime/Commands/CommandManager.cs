@@ -9,11 +9,13 @@ namespace TDCB
     {
          [SerializeField] private MoveCommand moveCommand;
          [SerializeField] private StopCommand stopCommand;
+         [SerializeField] private MoveCommand attackMoveCommand;
          
          [SerializeField] private BaseCommand buildCommand;
 
          public MoveCommand MoveCommand => moveCommand;
          public StopCommand StopCommand => stopCommand;
+         public MoveCommand AttackMoveCommand => attackMoveCommand;
          
          
          #region Input Handling
@@ -27,6 +29,7 @@ namespace TDCB
             
              _inputControls.Commands.Move.performed += OnMove;
              _inputControls.Commands.Stop.performed += OnStop;
+             _inputControls.Commands.AttackMove.performed += OnAttackMove;
              _inputControls.Commands.Build.performed += OnBuild;
          }
          
@@ -38,6 +41,11 @@ namespace TDCB
          public void OnStop(InputAction.CallbackContext context)
          {
              stopCommand.Execute();
+         }
+         
+         public void OnAttackMove(InputAction.CallbackContext context)
+         {
+             attackMoveCommand.Execute();
          }
 
          public void OnBuild(InputAction.CallbackContext context)

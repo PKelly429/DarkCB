@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 348ddf736c75d004f8d49ff3627ba924, type: 3}
+  m_Name: Archer
+  m_EditorClassIdentifier: 
+  priority: 3
+  icon: {fileID: 21300000, guid: a3220eaec8797c448993768edd38c8e4, type: 3}
+  unitPrefab: {fileID: 5553458753133035957, guid: 4f245e44ea6ace94baaa08369eeb3b6a, type: 3}
+  stats:
+    health: 40
+    armor:
+      melee: 0
+      piercing: 2
+    damage: 8
+    attackDelay: 0.3
+    attackSpeed: 1.5
+    damageType: 1
+    range: 24
+  commands: {fileID: 11400000, guid: 3b5d05e3ebf3ad549b26de1376286a93, type: 2}
+  trainSound: {fileID: 11400000, guid: 293d945ec044e8044adb874649d9a485, type: 2}
+  selectSound: {fileID: 11400000, guid: f5a7222e07d251441a73456003b28238, type: 2}
+  moveSound: {fileID: 11400000, guid: 0c13f223a55047e4e97817e02b859163, type: 2}
+  stopSound: {fileID: 0}
+  holdSound: {fileID: 0}
+  attackSound: {fileID: 0}
+  workSound: {fileID: 0}
+  TrainingTime: 25
+  costs:
+  - resourceType: 1
+    value: 1
+  - resourceType: 2
+    value: 50
+  - resourceType: 3
+    value: 25
+  consumed: []
+  produced: []
+  tooltip:
+    type: 0
+    position: 0
+    header: Fighter
+    body: 

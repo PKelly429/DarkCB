@@ -8,6 +8,8 @@ namespace TDCB
     [CreateAssetMenu(menuName = "Command/Move Command")]
     public class MoveCommand : TargetCommand
     {
+        public bool attack;
+        
         public override void OnBeforeExecute()
         {
             UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(true);
@@ -31,9 +33,21 @@ namespace TDCB
 
         public override void Execute(Vector3 position)
         {
-            foreach (var observer in SceneReferences.Instance.unitManager.allControllableUnits)
+            UIReferences.Instance.commandButtonGrid.SetMoveCanvasVisible(false);
+            
+            if (attack)
             {
-                observer.Move(position);
+                foreach (var observer in SceneReferences.Instance.unitManager.allControllableUnits)
+                {
+                    observer.AttackMove(position);
+                }
+            }
+            else
+            {
+                foreach (var observer in SceneReferences.Instance.unitManager.allControllableUnits)
+                {
+                    observer.Move(position);
+                }
             }
             
             PlayCommandFeedback();

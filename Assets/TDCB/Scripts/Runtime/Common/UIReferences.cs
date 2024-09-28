@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace TDCB
 {
     public class UIReferences : MonoBehaviour
     {
+        public UIColors uiColors;
         public CommandButtonGrid commandButtonGrid;
         public TooltipManager tooltipManager;
         public BindableIconUI resourceHarvesterIconPool;
@@ -21,5 +23,13 @@ namespace TDCB
             Instance = this;
         }
         #endregion
+    }
+
+    [Serializable]
+    public struct UIColors
+    {
+        public Color DefaultText;
+        public Color PositiveText;
+        public Color NegativeText;
     }
 }

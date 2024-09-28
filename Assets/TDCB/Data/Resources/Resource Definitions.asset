@@ -23,7 +23,7 @@ MonoBehaviour:
     stockpiles: 1
     hasMaximum: 1
     startingAmount: 50
-    startingMaximum: 100
+    startingMaximum: 200
     icon: {fileID: 21300000, guid: 4cd4035df76a3bd4e871906bb16ebb8e, type: 3}
   - resource: 3
     stockpiles: 1

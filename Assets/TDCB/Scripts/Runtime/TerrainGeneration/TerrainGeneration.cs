@@ -173,8 +173,10 @@ namespace TDCB
                     TreeInstance newTree = new TreeInstance();
                     newTree.position = new Vector3(treePosition.x/width, 0, treePosition.y/height);
                     newTree.prototypeIndex = Random.Range(0,treeVariations);
-                    newTree.heightScale = Random.Range(0.7f, 1.3f);
-                    newTree.widthScale = Random.Range(0.9f, 1.1f);
+                    
+                    float treeScale = Random.Range(0.1f, 0.3f);
+                    newTree.heightScale = treeScale;
+                    newTree.widthScale = treeScale;
                     newTree.color = Color.white;
                     newTree.lightmapColor = Color.white;
                     terrain.AddTreeInstance(newTree);
@@ -188,15 +190,15 @@ namespace TDCB
                 Color sample = terrainResourcesTexture.GetPixel((int)rockPosition.x, (int)rockPosition.y);
                 if (sample.g > 0.5f)
                 {
-                    TreeInstance newTree = new TreeInstance();
-                    newTree.position = new Vector3(rockPosition.x/width, 0, rockPosition.y/height);
-                    newTree.rotation = Random.Range(0, 360*Mathf.Deg2Rad);
-                    newTree.prototypeIndex = Random.Range(treeVariations,treeVariations+rockVariations);
-                    newTree.heightScale = Random.Range(0.7f, 1.3f);
-                    newTree.widthScale = Random.Range(0.9f, 1.1f);
-                    newTree.color = Color.white;
-                    newTree.lightmapColor = Color.white;
-                    terrain.AddTreeInstance(newTree);
+                    TreeInstance newRock = new TreeInstance();
+                    newRock.position = new Vector3(rockPosition.x/width, 0, rockPosition.y/height);
+                    newRock.rotation = Random.Range(0, 360*Mathf.Deg2Rad);
+                    newRock.prototypeIndex = Random.Range(treeVariations,treeVariations+rockVariations);
+                    newRock.heightScale = Random.Range(0.7f, 1.3f);
+                    newRock.widthScale = Random.Range(0.9f, 1.1f);
+                    newRock.color = Color.white;
+                    newRock.lightmapColor = Color.white;
+                    terrain.AddTreeInstance(newRock);
                 }
             }
             

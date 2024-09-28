@@ -17,6 +17,8 @@ namespace TDCB
         private const float MaxDistance = 500;
         
         private const float SingleUnitSelectTime = 0.3f;
+        
+        [SerializeField] private Camera _mainCamera;
 
         [SerializeField] private LayerMask groundLayers;
         [SerializeField] private LayerMask clickableLayers;
@@ -43,7 +45,6 @@ namespace TDCB
         private ITargetCommand currentTargetCommand;
         
         // Selectable Objects
-        private Camera _mainCamera;
         private readonly RaycastHit[] _hits = new RaycastHit[MaxHits];
         private int _hitCount;
         private readonly HashSet<ISelectable> _hoveredSelectables = new HashSet<ISelectable>();
@@ -90,8 +91,6 @@ namespace TDCB
 
         private void Start()
         {
-            _mainCamera = Camera.main;
-
             inputControls ??= new InputControls();
 
             inputControls.PlayerInput.Enable();

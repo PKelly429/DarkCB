@@ -36,6 +36,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 4844318240772286100, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
+      propertyPath: attackEffect
+      value: 
+      objectReference: {fileID: 2428248758908617731}
     - target: {fileID: 5174933766502452814, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -111,6 +115,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5553458753133035957, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 2428248758908617731}
+    - targetCorrespondingSourceObject: {fileID: 5553458753133035957, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 9162440869874398791}
   m_SourcePrefab: {fileID: 100100000, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
 --- !u!1 &3363432195567022036 stripped
@@ -118,6 +125,21 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5553458753133035957, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
   m_PrefabInstance: {fileID: 7186784637805735521}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2428248758908617731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3363432195567022036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 655259e283fce634d817123f3806b3fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _selectableObject: {fileID: 5806780542425713205}
+  sfx: {fileID: 11400000, guid: 3a5425881d4f63c4d8c9076b145007e3, type: 2}
+  vfx: {fileID: 0}
 --- !u!135 &9162440869874398791
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -139,3 +161,14 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.75
   m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!114 &5806780542425713205 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3686551086049158228, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
+  m_PrefabInstance: {fileID: 7186784637805735521}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3363432195567022036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3df3cd07ca2f48349a1cc263318d04c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

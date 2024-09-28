@@ -8,6 +8,7 @@ using Unity.Jobs;
 using UnityEditor;
 using UnityEngine.Jobs;
 using UnityEngine.Profiling;
+using UnityEngine.Serialization;
 using Vector3 = UnityEngine.Vector3;
 
 namespace TDCB
@@ -24,7 +25,7 @@ namespace TDCB
         [SerializeField] private SpatialHashManager otherFaction;
         
         // Output
-        public List<int> closestEnemy = new List<int>();
+        public List<NearbyUnit> closestEnemy = new List<NearbyUnit>();
         
         // Hash grid data
         private List<ISpatialHashable> managedUnits = new List<ISpatialHashable>();
@@ -119,7 +120,7 @@ namespace TDCB
             allUnits.Add(spatialHashItem);
             unitTransforms.Add(unit.Transform);
             
-            closestEnemy.Add(-1);
+            closestEnemy.Add(new NearbyUnit());
         }
         
         private void ProcessDeregister(ISpatialHashable unit)
@@ -129,9 +130,8 @@ namespace TDCB
             
             //hashGridRemovals.Add(allUnits[^1]);
             
-            hashGrid.Remove(allUnits[id].cell, allUnits[id].index);
+            hashGrid.Remove(allUnits[id].cell, id);
             
-            managedUnits[^1].HashGridIndex = id;
             if (id < allUnits.Length-1) // need to update the unit that gets swapped when deleting
             {
                 // movedUnits.Enqueue(new SpatialHashItem()
@@ -139,6 +139,7 @@ namespace TDCB
                 //     index = id,
                 //     cell = allUnits[^1].cell
                 // });
+                hashGrid.Remove(allUnits[^1].cell, allUnits[^1].index);
                 hashGridAdditions.Add(new SpatialHashItem()
                 {
                     index = id,
@@ -146,7 +147,9 @@ namespace TDCB
                 });
             }
 
+            managedUnits[^1].HashGridIndex = id;
             managedUnits.RemoveAtSwapBack(id);
+            allUnits[^1] = new SpatialHashItem() { cell = allUnits[^1].cell, index = id };
             allUnits.RemoveAtSwapBack(id);
             unitTransforms.RemoveAtSwapBack(id);
             
@@ -217,6 +220,8 @@ namespace TDCB
             Profiler.BeginSample("SpatialHash Distance Checks");
             foreach (var unit in managedUnits)
             {
+                if(!unit.IsAlive) continue;
+                
                 int index = unit.HashGridIndex;
                 var cell = allUnits[index].cell;
         
@@ -238,6 +243,7 @@ namespace TDCB
                             }
                             
                             var otherUnit = otherFaction.GetUnit(value);
+                            if (!otherUnit.IsAlive) continue;
                             float distance = (otherUnit.Transform.position - ourPosition).sqrMagnitude;
                             if (distance > aggroRadius)
                             {
@@ -264,9 +270,18 @@ namespace TDCB
                     #if DEBUG
                     if(_debug) Debug.DrawLine(ourPosition + Vector3.up, otherFaction.GetUnit(best).Transform.position + Vector3.up, Color.yellow);
                     #endif
-                }
 
-                closestEnemy[index] = best;
+                    closestEnemy[index] = new NearbyUnit()
+                    {
+                        hasNearbyUnit = true,
+                        id = best,
+                        sqDistance = bestDistance
+                    };
+                }
+                else
+                {
+                    closestEnemy[index] = new NearbyUnit();
+                }
             }
             Profiler.EndSample();
         }
@@ -345,6 +360,7 @@ namespace TDCB
     public interface ISpatialHashable
     {
         public int HashGridIndex { get; set; }
+        public bool IsAlive { get; }
         public Transform Transform { get; }
     }
     
@@ -392,6 +408,13 @@ namespace TDCB
     {
         public int index;
         public SpatialHashCell cell;
+    }
+
+    public struct NearbyUnit
+    {
+        public bool hasNearbyUnit;
+        public int id;
+        public float sqDistance;
     }
     
     [BurstCompile]

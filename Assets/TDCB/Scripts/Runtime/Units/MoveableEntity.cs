@@ -8,13 +8,18 @@ using UnityEngine;
 
 namespace TDCB
 {
-    public class MoveableEntity : MonoBehaviour, IControllableUnit
+    public class MoveableEntity : MonoBehaviour, IControllableUnit, IMoveToAttackTarget
     {
         [Required, SerializeField] private Unit unit;
         [Required, SerializeField] private GameObject aiObject;
         [Required, SerializeField] private SelectableObject selectableObject;
         
-        private IAstarAI ai;
+        public const float MeleeDistance = 3f;
+        
+        public const float MovePriority = 0.6f;
+        public const float DefaultPriority = 0.5f;
+        
+        private FollowerEntity ai;
         [SerializeField] private AIDestinationSetter unitTarget;
 
         public SoundData MoveClip => unit.MoveClip;
@@ -26,14 +31,22 @@ namespace TDCB
         private bool _assignedToWorkplace;
         private IWorkerAssignment _assignedTo;
 
+        private NearbyUnit _closestEnemy;
+        private HealthComponent _enemyHealthComponent;
+
         private void Awake()
         {
-            ai = aiObject.GetComponent<IAstarAI>();
+            ai = aiObject.GetComponent<FollowerEntity>();
         }
 
         public void Move(ISelectable target)
         {
             if(unit.IsWorker) RemoveFromWorkplace();
+
+            if (target.selectableType == SelectableType.Enemy)
+            {
+                Debug.Log($"Attack: {target}");
+            }
             
             if (target.selectableType == SelectableType.Building && unit.IsWorker)
             {
@@ -62,6 +75,9 @@ namespace TDCB
         {
             if(unit.IsWorker) RemoveFromWorkplace();
 
+            IsAbleToAttack = false;
+            ai.stopDistance = MeleeDistance;
+            ai.rvoSettings.priority = MovePriority;
             Move_Internal(position);
         }
 
@@ -86,6 +102,10 @@ namespace TDCB
 
         public void AttackMove(Vector3 position)
         {
+            IsAbleToAttack = true;
+            ai.stopDistance = MeleeDistance;
+            ai.rvoSettings.priority = DefaultPriority;
+            Move_Internal(position);
         }
 
         public void Stop()
@@ -95,12 +115,16 @@ namespace TDCB
             
             ai.destination = ai.position;
             ai.isStopped = true;
+
+            IsAbleToAttack = true;
         }
 
         public void HoldPosition()
         {
+            IsAbleToAttack = true;
+            ai.rvoSettings.priority = DefaultPriority;
         }
-        
+
         private void Update()
         {
             if (_hasMoveCommand)
@@ -109,30 +133,25 @@ namespace TDCB
                 {
                     _hasMoveCommand = false;
                     unitTarget.enabled = true;
+                    IsAbleToAttack = true;
+                    ai.rvoSettings.priority = DefaultPriority;
                 }
-                return;
-            }
-            if (selectableObject.HashGridIndex >= SceneReferences.Instance.playerUnitHash.closestEnemy.Count)
-            {
-                return;
-            }
-            int closestUnit = SceneReferences.Instance.playerUnitHash.closestEnemy[selectableObject.HashGridIndex];
-            if (closestUnit >= 0)
-            {
-                SetTarget(closestUnit);
-            }
-            else
-            {
-                unitTarget.target = null;
             }
         }
-        
-        private void SetTarget(int target)
+
+
+        public bool IsAbleToAttack { get; private set; }
+        public void SetTarget(Transform target)
         {
-            if (SceneReferences.Instance.enemyUnitHash.IsValidUnit(target))
-            {
-                unitTarget.target = SceneReferences.Instance.enemyUnitHash.GetUnit(target).Transform;
-            }
+            unitTarget.target = target;
+            transform.LookAt(target);
+            ai.rvoSettings.priority = DefaultPriority;
+        }
+
+        public void SetDesiredDistance(float distance)
+        {
+            if (!IsAbleToAttack) return;
+            ai.stopDistance = distance;
         }
     }
 }

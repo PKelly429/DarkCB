@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -6659734712206270466}
   - component: {fileID: 6942165289978381970}
   - component: {fileID: 529563743234016304}
+  - component: {fileID: 1639593602333769714}
   m_Layer: 0
   m_Name: Farm
   m_TagString: Untagged
@@ -55,6 +56,7 @@ MonoBehaviour:
   selectionCollider: {fileID: 8839991117778121996}
   walkable: 1
   autoRegister: 0
+  _healthComponent: {fileID: 1639593602333769714}
 --- !u!114 &6057435346358268699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,6 +113,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resource: 2
   defaultProductionRate: 5
+--- !u!114 &1639593602333769714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2752569740193121950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8814028ebc2aa3a40856a96b66a2d684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentHealth:
+    _value: 0
+  MaxHealth:
+    _value: 0
 --- !u!1 &5026149776757258008
 GameObject:
   m_ObjectHideFlags: 0

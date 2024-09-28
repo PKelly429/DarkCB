@@ -25,7 +25,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   commandRow3:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 0cd5711dc2a93514eb715921c2889ac8, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

@@ -13116,6 +13116,7 @@ GameObject:
   - component: {fileID: 1049067106792885339}
   - component: {fileID: 5601921189969534999}
   - component: {fileID: 6435585309792528766}
+  - component: {fileID: 8439618479857447061}
   m_Layer: 0
   m_Name: Bonfire
   m_TagString: Untagged
@@ -13158,6 +13159,7 @@ MonoBehaviour:
   selectionCollider: {fileID: 726092564350522222}
   walkable: 0
   autoRegister: 0
+  _healthComponent: {fileID: 8439618479857447061}
 --- !u!114 &1879307719069802299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13215,6 +13217,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resource: 3
   defaultProductionRate: -5
+--- !u!114 &8439618479857447061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8204718083712991693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8814028ebc2aa3a40856a96b66a2d684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentHealth:
+    _value: 0
+  MaxHealth:
+    _value: 0
 --- !u!1001 &8994603407745207797
 PrefabInstance:
   m_ObjectHideFlags: 0

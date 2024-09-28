@@ -1028,6 +1028,7 @@ GameObject:
   - component: {fileID: 5188857506303314081}
   - component: {fileID: 4515333887375292743}
   - component: {fileID: 1112726295406706358}
+  - component: {fileID: 8697453296241774702}
   m_Layer: 0
   m_Name: Mill
   m_TagString: Untagged
@@ -1072,6 +1073,7 @@ MonoBehaviour:
   selectionCollider: {fileID: 6130695309949342618}
   walkable: 0
   autoRegister: 0
+  _healthComponent: {fileID: 8697453296241774702}
 --- !u!114 &7930440463857654705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1141,6 +1143,22 @@ MonoBehaviour:
   maxWorkers:
     _value: 0
   resourceProduction:
+    _value: 0
+--- !u!114 &8697453296241774702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691900714558115360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8814028ebc2aa3a40856a96b66a2d684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentHealth:
+    _value: 0
+  MaxHealth:
     _value: 0
 --- !u!1 &1766574426452682518
 GameObject:

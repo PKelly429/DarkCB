@@ -16,12 +16,12 @@ MonoBehaviour:
   height: 1024
   texture: {fileID: 2800000, guid: 389d51ec6ed078d49bac04ba853c1d40, type: 3}
   channel: 2
-  scale: 100
+  scale: 50
   octaves: 4
   persistance: 0.5
   lacunarity: 2
   threshold: 0.5
   centerClearRadius: 25
   distanceAffectsThreshold: 0
-  offsetMulti: 9994
-  seed: -809060571
+  offsetMulti: 9185
+  seed: -357605681

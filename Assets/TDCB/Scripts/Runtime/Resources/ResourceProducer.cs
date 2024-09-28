@@ -58,6 +58,7 @@ namespace TDCB
 
         public void OnBeginPlacement()
         {
+            TargetProductionRate = defaultProductionRate;
         }
 
         public void OnCancelPlacement()
@@ -71,13 +72,14 @@ namespace TDCB
             workerAssignmentModule = GetComponent<WorkerAssignment>();
             hasWorkerAssignmentModule = workerAssignmentModule != null;
 
+            ProductionRate.SetValue(0); // Reset production rate in case it was set during placement
             if (hasWorkerAssignmentModule)
             {
                 workerAssignmentModule.OnWorkRateChanged += WorkerAssignmentModuleOnOnWorkRateChanged;
             }
             
             SceneReferences.Instance.resourceManager.Register(this);
-            SetProductionRate(defaultProductionRate);
+            SetProductionRate(TargetProductionRate);
         }
     }
 }

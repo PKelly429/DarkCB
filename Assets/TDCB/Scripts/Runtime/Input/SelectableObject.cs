@@ -5,6 +5,7 @@ using AudioSystem;
 using Shapes;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = System.Random;
 
 
 namespace TDCB
@@ -14,12 +15,15 @@ namespace TDCB
         public static readonly HashSet<SelectableObject> AllSelectableObjects = new HashSet<SelectableObject>();
 
         public int HashGridIndex { get; set; } = -1;
+        public bool IsAlive { get; private set; }
         public Transform Transform => transform;
 
         public abstract int Priority { get; }
         public abstract SelectableType selectableType { get; }
+        public abstract UnitStats stats { get; }
         public abstract Unit unit { get; }
         public abstract Building building { get; }
+        public abstract HealthComponent health { get; }
         public abstract Sprite Icon { get; }
         public abstract float Size { get; }
         public abstract Collider Collider { get; }
@@ -46,36 +50,54 @@ namespace TDCB
         
         protected virtual void OnDisable()
         {
-            DeregisterObject();
-        }
-
-        protected virtual void Start()
-        {
-            commandListeners = GetComponents<ICommandRegister>();
+            if (IsAlive)
+            {
+                DeregisterObject();
+            }
         }
 
         protected void RegisterObject()
         {
             _isRegisteredToManagers = true;
-            
-            AllSelectableObjects.Add(this);
-            _highlight = SceneReferences.Instance.highlightManager.RegisterUnit(this);
-            ControllableUnit = GetComponent<IControllableUnit>();
-            IsControllable = ControllableUnit != null;
+            IsAlive = true;
 
-            SceneReferences.Instance.playerUnitHash.RegisterUnit(this);
+            if (selectableType == SelectableType.Enemy)
+            {
+                SceneReferences.Instance.enemyUnitHash.RegisterUnit(this);
+                commandListeners = Array.Empty<ICommandRegister>();
+            }
+            else
+            {
+                SceneReferences.Instance.playerUnitHash.RegisterUnit(this);   
+                AllSelectableObjects.Add(this);
+                _highlight = SceneReferences.Instance.highlightManager.RegisterUnit(this);
+                ControllableUnit = GetComponent<IControllableUnit>();
+                IsControllable = ControllableUnit != null;
+            }
             OnRegister();
         }
         
         protected void DeregisterObject()
         {
+            IsAlive = false;
+            
             if (!_isRegisteredToManagers) return;
             _isRegisteredToManagers = false;
             
             AllSelectableObjects.Remove(this);
+            SceneReferences.Instance.unitManager.RemoveUnitFromSelectionAndControlGroups(this);
             SceneReferences.Instance.highlightManager.DeregisterUnit(this);
-            
-            SceneReferences.Instance.playerUnitHash.DeregisterUnit(this);
+
+            if (selectableType == SelectableType.Enemy)
+            {
+                SceneReferences.Instance.enemyUnitHash.DeregisterUnit(this);
+            }
+            else
+            {
+                SceneReferences.Instance.playerUnitHash.DeregisterUnit(this);
+            }
+
+            DeregisterCommands();
             OnDeregister();
         }
 
@@ -108,18 +130,24 @@ namespace TDCB
         
         public virtual void OnHoverBegin()
         {
+            if (selectableType == SelectableType.Enemy) return; //TODO: Make enemies selectable
+            
             _highlight.Hovered = true;
             SetLayer();
         }
 
         public virtual void OnHoverEnd()
         {
+            if (selectableType == SelectableType.Enemy) return; //TODO: Make enemies selectable
+            
             _highlight.Hovered = false;
             SetLayer();
         }
 
         public virtual void OnSelect()
         {
+            if (selectableType == SelectableType.Enemy) return; //TODO: Make enemies selectable
+            
             _highlight.Selected = true;
             SetLayer();
             RegisterCommands();
@@ -127,6 +155,8 @@ namespace TDCB
 
         public virtual void OnDeSelect()
         {
+            if (selectableType == SelectableType.Enemy) return; //TODO: Make enemies selectable
+            
             _highlight.Selected = false;
             SetLayer();
             DeregisterCommands();
@@ -146,6 +176,7 @@ namespace TDCB
 
         private void Awake()
         {
+            commandListeners = GetComponents<ICommandRegister>();
             OnAwake();
         }
 
@@ -153,6 +184,5 @@ namespace TDCB
         {
             
         }
-        
     }
 }

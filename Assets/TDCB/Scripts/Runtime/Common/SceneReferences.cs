@@ -20,6 +20,7 @@ namespace TDCB
         public SpatialHashManager enemyUnitHash;
         public BuildingPlacement buildingPlacement;
         public ResourceManager resourceManager;
+        public ProjectileManager projectileManager;
         
         #region Singleton
         public static SceneReferences Instance {get; private set;}

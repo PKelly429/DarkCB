@@ -16,7 +16,7 @@ namespace TDCB
         public string header;
         public string body;
 
-        public ResourceValue[] ResourceCosts;
+        public IToolTipResourceCost ResourceCosts;
 
         public bool ShowHeader()
         {
@@ -32,6 +32,13 @@ namespace TDCB
         {
             return type == TooltipType.ResourceCost;
         }
+    }
+
+    public interface IToolTipResourceCost
+    {
+        public ResourceValue[] Costs { get; }
+        public ResourceProductionValue[] Provides { get; }
+        public ResourceValue[] Consumed { get; }
     }
     
     [Serializable]

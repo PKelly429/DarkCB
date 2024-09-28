@@ -20,9 +20,11 @@ namespace TDCB
         
         public override int Priority => data.priority;
         public override SelectableType selectableType => SelectableType.Building;
+        public override UnitStats stats => data.stats;
         public override Unit unit => null;
         public override Building building => this;
         public override Sprite Icon => data.icon;
+        public override HealthComponent health => _healthComponent;
         public override bool HasCommands => true;
         public override CommandTemplate Commands => data.commands;
         public override float Size => size;
@@ -30,6 +32,7 @@ namespace TDCB
         public override Collider Collider => selectionCollider;
         
         // Building Components
+        [SerializeField] private HealthComponent _healthComponent;
         private IBuildingPlacementFunctions[] _buildingPlacementListeners;
         private IBuildingPlacementValidFunction[] _buildingPlacementValidListeners;
         private IBuildingDestroyFunction[] _buildingDestroyedListeners;
@@ -56,6 +59,8 @@ namespace TDCB
         
         protected override void OnEnable()
         {
+            _healthComponent.CurrentHealth.SetValue(BuildingData.stats.health);
+            _healthComponent.MaxHealth.SetValue(BuildingData.stats.health);
             _buildingPlacementListeners = GetComponents<IBuildingPlacementFunctions>();
             _buildingPlacementValidListeners = GetComponents<IBuildingPlacementValidFunction>();
             _buildingDestroyedListeners = GetComponents<IBuildingDestroyFunction>();

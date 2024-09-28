@@ -67,6 +67,9 @@ namespace TDCB
                 
                 return (false, null);
             }
+            
+            UpdateCurrentBuildingPosition();
+            
             if (!_currentPlacementBuilding.ValidBuildingPosition)
             {
                 //TODO: Display Error Message
@@ -97,12 +100,19 @@ namespace TDCB
 
         private void Update()
         {
-            if (!InPlacementMode) return;
+            UpdateCurrentBuildingPosition();
+        }
 
+        private void UpdateCurrentBuildingPosition()
+        {
+            if (!InPlacementMode) return;
+            
             Vector3 mousePos = SceneReferences.Instance.inputHandler.MousePosition;
             Bounds bounds = _currentPlacementBuilding.Collider.bounds;
             Vector3 position = SceneReferences.Instance.gridJobs.GetCenterPosition(mousePos, bounds);
             _currentPlacement.transform.position = position;
+            
+            Physics.SyncTransforms();
             
             _currentPlacementBuilding.ValidBuildingPosition = _currentPlacementBuilding.IsPlacementValid();
             
@@ -130,10 +140,12 @@ namespace TDCB
 
             if (active)
             {
+                UIReferences.Instance.tooltipManager.LockTooltip(_currentPlacementBuilding.building.BuildingData.GetFullTooltip());
                 RemovePreviousTextureChanges();
             }
             else
             {
+                UIReferences.Instance.tooltipManager.UnlockTooltips();
                 if (_currentPlacement != null && _currentPlacement.IsAlive())
                 {
                     Destroy(_currentPlacement);

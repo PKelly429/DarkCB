@@ -15,13 +15,18 @@ MonoBehaviour:
   priority: -2
   icon: {fileID: 21300000, guid: 0059cae421429f24ea67e5297aa94efd, type: 3}
   buildingPrefab: {fileID: 1235173278510376315, guid: 15940ba325fed2e4889d595d08f2c099, type: 3}
+  stats:
+    health: 100
+    armor:
+      melee: 0
+      piercing: 0
   commands: {fileID: 11400000, guid: c179b3dcea68f9d45b5785d1c8b236e4, type: 2}
   selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
   costs: []
+  consumed: []
   produced: []
   tooltip:
     type: 1
-    position: 0
+    position: 1
     header: Gathering Hut
     body: 
-    ResourceCosts: []

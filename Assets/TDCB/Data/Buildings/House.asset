@@ -15,15 +15,20 @@ MonoBehaviour:
   priority: -2
   icon: {fileID: 21300000, guid: 0059cae421429f24ea67e5297aa94efd, type: 3}
   buildingPrefab: {fileID: 2240570332343315355, guid: e764febe32a8a194da3a4c412107f071, type: 3}
+  stats:
+    health: 100
+    armor:
+      melee: 0
+      piercing: 0
   commands: {fileID: 0}
   selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
   costs:
   - resourceType: 3
     value: 25
+  consumed: []
   produced: []
   tooltip:
     type: 1
-    position: 0
+    position: 1
     header: House
     body: Increase maximum Population.
-    ResourceCosts: []

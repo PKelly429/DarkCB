@@ -3,17 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using DataBinding;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TDCB
 {
     public class ResourceTickBinder : MonoBehaviour
     {
-        public SliderBinder tickSlider;
+        [FormerlySerializedAs("tickSlider")] public FixedMaxSliderBinder tickFixedMaxSlider;
 
         private void OnEnable()
         {
-            tickSlider.sliderField.maxValue = SceneReferences.Instance.resourceManager.TickTime;
-            tickSlider.Bind(SceneReferences.Instance.resourceManager);
+            tickFixedMaxSlider.sliderField.maxValue = SceneReferences.Instance.resourceManager.TickTime;
+            tickFixedMaxSlider.Bind(SceneReferences.Instance.resourceManager);
         }
     }
 }

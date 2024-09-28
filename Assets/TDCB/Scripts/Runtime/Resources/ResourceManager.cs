@@ -183,4 +183,12 @@ namespace TDCB
         public ResourceType resourceType;
         public int value;
     }
+    
+    [Serializable]
+    public struct ResourceProductionValue
+    {
+        public ResourceType resourceType;
+        public bool perTile;
+        public float value;
+    }
 }

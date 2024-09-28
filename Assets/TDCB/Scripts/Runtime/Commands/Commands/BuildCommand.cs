@@ -15,14 +15,7 @@ namespace TDCB
 
         private void OnEnable()
         {
-            _buildingTooltip = new Tooltip()
-            {
-                header = tooltip.header,
-                body = tooltip.body,
-                position = tooltip.position,
-                ResourceCosts = building.costs,
-                type = TooltipType.ResourceCost
-            };
+            _buildingTooltip = building.GetFullTooltip();
         }
 
         public override void Execute()

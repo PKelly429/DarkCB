@@ -9,11 +9,14 @@ namespace TDCB
 {
     [Serializable]
     [CreateAssetMenu(menuName="TDCB/Unit")]
-    public class UnitData : ScriptableObject
+    public class UnitData : ScriptableObject, IToolTipResourceCost
     {
         [SuffixLabel("Higher Better")] public int priority;
         public Sprite icon;
         public GameObject unitPrefab;
+
+        [Title("Stats")] 
+        public UnitStats stats;
 
         [Title("Commands")] 
         public CommandTemplate commands;
@@ -31,6 +34,40 @@ namespace TDCB
         public float TrainingTime = 30f;
         public ResourceValue[] costs;
         
+        [Title("Resources Consumed")]
+        public ResourceValue[] consumed;
+        
+        [Title("Resources Produced")]
+        public ResourceProductionValue[] produced;
+        
         [BoxGroup("Tooltip"), HideLabel] public Tooltip tooltip;
+        public ResourceValue[] Costs => costs;
+        public ResourceProductionValue[] Provides => produced;
+        public ResourceValue[] Consumed => consumed;
+    }
+    
+    [Serializable]
+    public struct UnitStats
+    {
+        public int health;
+        public Armor armor;
+        public int damage;
+        public float attackDelay;
+        public float attackSpeed;
+        public DamageTypes damageType;
+        public float range;
+    }
+
+    [Serializable]
+    public struct Armor
+    {
+        public int melee;
+        public int piercing;
+    }
+
+    public enum DamageTypes
+    {
+        Melee,
+        Piercing
     }
 }

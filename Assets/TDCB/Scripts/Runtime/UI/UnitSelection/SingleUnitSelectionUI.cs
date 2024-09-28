@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DataBinding;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,15 +11,17 @@ namespace TDCB
     {
         public GameObject unitPanel;
         public GameObject buildingPanel;
+        
+        [Header("Shared")] 
+        public Image icon;
+        public TMP_Text nameText;
+        public SliderBinder healthSlider;
 
         [Header("Unit Panel")] 
-        public Image unitIcon;
-        public TMP_Text unitName;
+        public UnitStatUI statUI;
         
-        [Header("Building Panel")] 
-        public Image buildingIcon;
-        public TMP_Text buildingName;
-        
+
+        [Header("Building Panel")]
         public GameObject trainUnitPanel;
         public TrainUnitUIPanel trainUnitUI;
         
@@ -40,18 +43,30 @@ namespace TDCB
             
             unitPanel.SetActive(selected.unit);
             buildingPanel.SetActive(selected.building);
+            
+            icon.sprite = selected.Icon;
+            
+            var health = selected.health;
+            if (health != null)
+            {
+                healthSlider.Bind(health);
+            }
+            else
+            {
+                healthSlider.Unbind();
+            }
 
             if (selected.unit)
             {
-                unitIcon.sprite = selected.Icon;
-                unitName.text = selected.unit.unitData.tooltip.header;
+                nameText.text = selected.unit.unitData.tooltip.header;
+                
+                statUI.Bind(selected.unit.unitData.stats);
             }
             else if (selected.building)
             {
                 Building building = selected.building;
                 
-                buildingIcon.sprite = selected.Icon;
-                buildingName.text = selected.building.BuildingData.tooltip.header;
+                nameText.text = building.BuildingData.tooltip.header;
 
                 TrainUnits trainUnits = building.GetComponent<TrainUnits>();
                 if (trainUnits != null)

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MoveCommand
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: a95f01d1ee41db148b5bc9be4a1c1c87, type: 3}
+  - {fileID: 8300000, guid: de8d03054b2b9234db03edcff583d383, type: 3}
   mixerGroup: {fileID: -5953739953036936921, guid: 1c51845d0d847bc42a2c30c3dddcbc7b, type: 2}
   loop: 0
   playOnAwake: 0

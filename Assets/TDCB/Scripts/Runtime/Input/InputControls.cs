@@ -521,6 +521,15 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""4fa8295f-f8e4-447d-8c77-feed458c2fff"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -554,6 +563,17 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Build"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""81c0d9ee-e507-4c80-97a4-685ade722211"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -775,6 +795,7 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
         m_Commands_Move = m_Commands.FindAction("Move", throwIfNotFound: true);
         m_Commands_Stop = m_Commands.FindAction("Stop", throwIfNotFound: true);
         m_Commands_Build = m_Commands.FindAction("Build", throwIfNotFound: true);
+        m_Commands_AttackMove = m_Commands.FindAction("Attack Move", throwIfNotFound: true);
         // ControlGroups
         m_ControlGroups = asset.FindActionMap("ControlGroups", throwIfNotFound: true);
         m_ControlGroups_ControlGroup1 = m_ControlGroups.FindAction("ControlGroup1", throwIfNotFound: true);
@@ -1054,6 +1075,7 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Commands_Move;
     private readonly InputAction m_Commands_Stop;
     private readonly InputAction m_Commands_Build;
+    private readonly InputAction m_Commands_AttackMove;
     public struct CommandsActions
     {
         private @InputControls m_Wrapper;
@@ -1061,6 +1083,7 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Commands_Move;
         public InputAction @Stop => m_Wrapper.m_Commands_Stop;
         public InputAction @Build => m_Wrapper.m_Commands_Build;
+        public InputAction @AttackMove => m_Wrapper.m_Commands_AttackMove;
         public InputActionMap Get() { return m_Wrapper.m_Commands; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1079,6 +1102,9 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
             @Build.started += instance.OnBuild;
             @Build.performed += instance.OnBuild;
             @Build.canceled += instance.OnBuild;
+            @AttackMove.started += instance.OnAttackMove;
+            @AttackMove.performed += instance.OnAttackMove;
+            @AttackMove.canceled += instance.OnAttackMove;
         }
 
         private void UnregisterCallbacks(ICommandsActions instance)
@@ -1092,6 +1118,9 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
             @Build.started -= instance.OnBuild;
             @Build.performed -= instance.OnBuild;
             @Build.canceled -= instance.OnBuild;
+            @AttackMove.started -= instance.OnAttackMove;
+            @AttackMove.performed -= instance.OnAttackMove;
+            @AttackMove.canceled -= instance.OnAttackMove;
         }
 
         public void RemoveCallbacks(ICommandsActions instance)
@@ -1246,6 +1275,7 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnStop(InputAction.CallbackContext context);
         void OnBuild(InputAction.CallbackContext context);
+        void OnAttackMove(InputAction.CallbackContext context);
     }
     public interface IControlGroupsActions
     {

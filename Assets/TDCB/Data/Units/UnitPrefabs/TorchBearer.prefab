@@ -331,6 +331,10 @@ PrefabInstance:
       propertyPath: moveSoundData
       value: 
       objectReference: {fileID: 11400000, guid: 02890f100c021b14e90a817bb2e7a431, type: 2}
+    - target: {fileID: 4844318240772286100, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5302519491987042885, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

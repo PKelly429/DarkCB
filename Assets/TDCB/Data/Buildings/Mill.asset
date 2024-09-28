@@ -15,15 +15,20 @@ MonoBehaviour:
   priority: -2
   icon: {fileID: 21300000, guid: 900efdbd4f6ae8e4d9ba1d06e6d22752, type: 3}
   buildingPrefab: {fileID: 1691900714558115360, guid: c23259472dba5e34ca03e91d0fae6681, type: 3}
+  stats:
+    health: 150
+    armor:
+      melee: 0
+      piercing: 0
   commands: {fileID: 11400000, guid: af5a7687cf59f2048bae0ef2ced7d708, type: 2}
   selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
   costs:
   - resourceType: 3
     value: 50
+  consumed: []
   produced: []
   tooltip:
     type: 1
-    position: 0
+    position: 1
     header: Mill
-    body: 
-    ResourceCosts: []
+    body: Allows construction of Farms to produce Food.

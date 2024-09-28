@@ -15,6 +15,16 @@ MonoBehaviour:
   priority: 2
   icon: {fileID: 21300000, guid: e134dbfe83328854fa9f3c7da99c64dc, type: 3}
   unitPrefab: {fileID: 8613050218598687926, guid: 3549afd18e484674697a830b53e72160, type: 3}
+  stats:
+    health: 60
+    armor:
+      melee: 0
+      piercing: 0
+    damage: 0
+    attackDelay: 0
+    attackSpeed: 3
+    damageType: 0
+    range: 24
   commands: {fileID: 11400000, guid: 3b5d05e3ebf3ad549b26de1376286a93, type: 2}
   trainSound: {fileID: 11400000, guid: d420dcaf5298b1b4da15c873c28974ea, type: 2}
   selectSound: {fileID: 11400000, guid: 10435241eb99b4648ae457f3f0131398, type: 2}
@@ -23,7 +33,7 @@ MonoBehaviour:
   holdSound: {fileID: 0}
   attackSound: {fileID: 0}
   workSound: {fileID: 0}
-  TrainingTime: 30
+  TrainingTime: 25
   costs:
   - resourceType: 1
     value: 1
@@ -31,9 +41,10 @@ MonoBehaviour:
     value: 50
   - resourceType: 3
     value: 50
+  consumed: []
+  produced: []
   tooltip:
     type: 0
     position: 0
-    header: Fighter
+    header: Torchbearer
     body: 
-    ResourceCosts: []

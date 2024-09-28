@@ -52,13 +52,12 @@ namespace TDCB
                 resourceHarvesters[resource] = new HashSet<ResourceHarvester>();
             }
             resourceHarvesters[resource].Add(this);
-            
-            producer.OnProductionRateChanged += ProducerOnOnProductionRateChanged;
-            workerAssignment.OnWorkRateChanged += WorkerAssignmentOnOnWorkRateChanged;
         }
 
         private void OnDisable()
         {
+            if (_inPlacementMode) return;
+            
             resourceHarvesters[resource].Remove(this);
             SceneReferences.Instance.gridJobs.FreeResources(resourcesClaimed);
             resourcesClaimed.Clear();
@@ -67,6 +66,7 @@ namespace TDCB
             float distance = range * 2f;
             foreach (var other in resourceHarvesters[resource])
             {
+                if(other == null) continue;
                 if (Vector3.Distance(pos, other.transform.position) < distance)
                 {
                     other.TryClaimMoreResources();
@@ -130,6 +130,9 @@ namespace TDCB
             
             _showIconPlacement = false;
             UpdateIconVisibility();
+            
+            producer.OnProductionRateChanged += ProducerOnOnProductionRateChanged;
+            workerAssignment.OnWorkRateChanged += WorkerAssignmentOnOnWorkRateChanged;
         }
 
         public void TryClaimMoreResources()

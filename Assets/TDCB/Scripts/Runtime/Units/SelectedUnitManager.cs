@@ -175,7 +175,7 @@ namespace TDCB
             unit.OnSelect();
         }
 
-        private void RemoveUnitFromSelection(ISelectable unit)
+        public void RemoveUnitFromSelectionAndControlGroups(ISelectable unit)
         {
             if (unit.IsControllable)
             {
@@ -183,6 +183,12 @@ namespace TDCB
             }
             OrderedUnits.Remove(unit);  
             unit.OnDeSelect();
+
+            foreach (var controlGroup in controlGroups)
+            {
+                if(controlGroup == null) continue;
+                controlGroup.Remove(unit);
+            }
         }
 
         private void MarkListChanged()

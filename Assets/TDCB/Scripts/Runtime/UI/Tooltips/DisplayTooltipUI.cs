@@ -13,7 +13,11 @@ namespace TDCB
         [SerializeField] private GameObject bodyObject;
         [SerializeField] private TMP_Text body;
         [SerializeField] private GameObject resourceCostsGameObject;
+        [SerializeField] private GameObject providedResourcesGameObject;
+        [SerializeField] private GameObject consumedResourcesGameObject;
         [SerializeField] private UIResourceCosts resourceCosts;
+        [SerializeField] private UIResourceCosts providedResources;
+        [SerializeField] private UIResourceCosts consumedResources;
 
         [SerializeField] private bool fixedPosition;
         [SerializeField] private LayoutElement controlWidthLayoutElement;
@@ -26,13 +30,45 @@ namespace TDCB
             header.text = tooltip.header;
             headerObject.gameObject.SetActive(tooltip.ShowBody());
             body.text = tooltip.body;
-            bool showResourceCosts = tooltip.ShowResourceCosts();
-            resourceCostsGameObject.SetActive(showResourceCosts);
+            bool showResourceCosts = tooltip.ShowResourceCosts() && tooltip.ResourceCosts != null;
+            
+            if (showResourceCosts)
             {
-                if (showResourceCosts)
+                if (tooltip.ResourceCosts.Costs.Length > 0)
                 {
-                    resourceCosts.Set(tooltip.ResourceCosts);
+                    resourceCostsGameObject.SetActive(true);
+                    resourceCosts.Set(tooltip.ResourceCosts.Costs, false);
                 }
+                else
+                {
+                    resourceCostsGameObject.SetActive(false);
+                }
+                
+                if (tooltip.ResourceCosts.Provides.Length > 0)
+                {
+                    providedResourcesGameObject.SetActive(true);
+                    providedResources.Set(tooltip.ResourceCosts.Provides);
+                }
+                else
+                {
+                    providedResourcesGameObject.SetActive(false);
+                }
+                
+                if (tooltip.ResourceCosts.Consumed.Length > 0)
+                {
+                    consumedResourcesGameObject.SetActive(true);
+                    consumedResources.Set(tooltip.ResourceCosts.Consumed, true);
+                }
+                else
+                {
+                    consumedResourcesGameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                resourceCostsGameObject.SetActive(false);
+                providedResourcesGameObject.SetActive(false);
+                consumedResourcesGameObject.SetActive(false);
             }
 
             if (fixedPosition) return;

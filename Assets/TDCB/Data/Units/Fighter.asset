@@ -12,9 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 348ddf736c75d004f8d49ff3627ba924, type: 3}
   m_Name: Fighter
   m_EditorClassIdentifier: 
-  priority: 3
+  priority: 4
   icon: {fileID: 21300000, guid: a7c29ca3b1a4b604183c6f932207081e, type: 3}
   unitPrefab: {fileID: 5553458753133035957, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
+  stats:
+    health: 60
+    armor:
+      melee: 2
+      piercing: 2
+    damage: 12
+    attackDelay: 0
+    attackSpeed: 2
+    damageType: 0
+    range: 3
   commands: {fileID: 11400000, guid: 3b5d05e3ebf3ad549b26de1376286a93, type: 2}
   trainSound: {fileID: 11400000, guid: 293d945ec044e8044adb874649d9a485, type: 2}
   selectSound: {fileID: 11400000, guid: f5a7222e07d251441a73456003b28238, type: 2}
@@ -23,15 +33,16 @@ MonoBehaviour:
   holdSound: {fileID: 0}
   attackSound: {fileID: 0}
   workSound: {fileID: 0}
-  TrainingTime: 30
+  TrainingTime: 25
   costs:
   - resourceType: 1
     value: 1
   - resourceType: 2
-    value: 50
+    value: 75
+  consumed: []
+  produced: []
   tooltip:
     type: 0
     position: 0
     header: Fighter
     body: 
-    ResourceCosts: []

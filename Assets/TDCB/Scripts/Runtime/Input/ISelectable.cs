@@ -13,6 +13,7 @@ namespace TDCB
         
         public Unit unit { get; }
         public Building building { get; }
+        public HealthComponent health { get; }
 
         public Sprite Icon { get; }
         public bool IsControllable { get; }

@@ -22,7 +22,7 @@ namespace TDCB
                 header = tooltip.header,
                 body = tooltip.body,
                 position = tooltip.position,
-                ResourceCosts = unit.costs,
+                ResourceCosts = unit,
                 type = TooltipType.ResourceCost
             };
         }

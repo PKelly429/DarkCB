@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using AudioSystem;
@@ -6,49 +7,60 @@ using UnityEngine;
 
 namespace TDCB
 {
-    public class Enemy : MonoBehaviour, ISpatialHashable
+    public class Enemy : SelectableObject, IMoveToAttackTarget
     {
+        [SerializeField] private UnitStats _stats;
         [SerializeField] private AIDestinationSetter unitTarget;
-        private IAstarAI ai;
+        private FollowerEntity ai;
         
-        
-        public int HashGridIndex { get; set; }
-        public Transform Transform => transform;
+        public override int Priority { get; }
+        public override SelectableType selectableType => SelectableType.Enemy;
+        public override Unit unit { get; }
+        public override Building building { get; }
+        public override HealthComponent health => _healthComponent;
+        public override Sprite Icon { get; }
+        public override bool HasCommands { get; }
+        public override CommandTemplate Commands { get; }
+        public override float Size { get; }
+        public override SoundData SelectionClip { get; }
+        public override Collider Collider { get; }
+        public override UnitStats stats => _stats;
 
         private void Awake()
         {
-            ai = GetComponent<IAstarAI>();
+            ai = GetComponent<FollowerEntity>();
         }
         
-        protected void OnEnable()
+        [SerializeField] private HealthComponent _healthComponent;
+
+        protected override void OnRegister()
         {
-            SceneReferences.Instance.enemyUnitHash.RegisterUnit(this);
+            health.CurrentHealth.SetValue(stats.health);
+            health.MaxHealth.SetValue(stats.health);
+            
+            _healthComponent.OnKilled += Kill;
         }
         
-        protected void OnDisable()
+        private void Kill()
         {
-            SceneReferences.Instance.enemyUnitHash.DeregisterUnit(this);
+            _healthComponent.OnKilled -= Kill;
+            if(!IsAlive) return;
+            
+            DeregisterObject();
+            Destroy(gameObject);
+        }
+
+
+        public bool IsAbleToAttack => true;
+        public void SetTarget(Transform target)
+        {
+            unitTarget.target = target;
+            transform.LookAt(target);
         }
         
-        private void Update()
+        public void SetDesiredDistance(float distance)
         {
-            if (HashGridIndex >= SceneReferences.Instance.playerUnitHash.closestEnemy.Count)
-            {
-                return;
-            }
-            int closestUnit = SceneReferences.Instance.enemyUnitHash.closestEnemy[HashGridIndex];
-            if (closestUnit >= 0)
-            {
-                SetTarget(closestUnit);
-            }
-        }
-        
-        private void SetTarget(int target)
-        {
-            if (SceneReferences.Instance.playerUnitHash.IsValidUnit(target))
-            {
-                unitTarget.target = SceneReferences.Instance.playerUnitHash.GetUnit(target).Transform;
-            }
+            ai.stopDistance = distance;
         }
     }
 }
