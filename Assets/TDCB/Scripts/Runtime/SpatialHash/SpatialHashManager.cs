@@ -71,6 +71,7 @@ namespace TDCB
                     foreach (var value in values)
                     {
                         var otherUnit = GetUnit(value);
+                        if(!otherUnit.IsAlive) continue;
                         float distance = (otherUnit.Transform.position - position).sqrMagnitude;
                         if (distance > range)
                         {

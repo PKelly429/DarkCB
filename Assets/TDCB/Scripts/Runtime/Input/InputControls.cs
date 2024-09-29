@@ -116,6 +116,24 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shift"",
+                    ""type"": ""Button"",
+                    ""id"": ""fa27eb91-5e45-4183-89cf-0adaab3a788a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""a35e609d-9434-40d0-935d-db7fa62f017f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -237,6 +255,28 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Control"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2646ffbc-b829-4456-a552-8f4960ae72a2"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shift"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6c8e98d8-44e8-4f03-b4a8-dc83c5199ae0"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -782,6 +822,8 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
         m_PlayerInput_ScrollDelta = m_PlayerInput.FindAction("ScrollDelta", throwIfNotFound: true);
         m_PlayerInput_MousePosition = m_PlayerInput.FindAction("MousePosition", throwIfNotFound: true);
         m_PlayerInput_Control = m_PlayerInput.FindAction("Control", throwIfNotFound: true);
+        m_PlayerInput_Shift = m_PlayerInput.FindAction("Shift", throwIfNotFound: true);
+        m_PlayerInput_Pause = m_PlayerInput.FindAction("Pause", throwIfNotFound: true);
         // CameraControls
         m_CameraControls = asset.FindActionMap("CameraControls", throwIfNotFound: true);
         m_CameraControls_CameraMovement = m_CameraControls.FindAction("CameraMovement", throwIfNotFound: true);
@@ -878,6 +920,8 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerInput_ScrollDelta;
     private readonly InputAction m_PlayerInput_MousePosition;
     private readonly InputAction m_PlayerInput_Control;
+    private readonly InputAction m_PlayerInput_Shift;
+    private readonly InputAction m_PlayerInput_Pause;
     public struct PlayerInputActions
     {
         private @InputControls m_Wrapper;
@@ -892,6 +936,8 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
         public InputAction @ScrollDelta => m_Wrapper.m_PlayerInput_ScrollDelta;
         public InputAction @MousePosition => m_Wrapper.m_PlayerInput_MousePosition;
         public InputAction @Control => m_Wrapper.m_PlayerInput_Control;
+        public InputAction @Shift => m_Wrapper.m_PlayerInput_Shift;
+        public InputAction @Pause => m_Wrapper.m_PlayerInput_Pause;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -931,6 +977,12 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
             @Control.started += instance.OnControl;
             @Control.performed += instance.OnControl;
             @Control.canceled += instance.OnControl;
+            @Shift.started += instance.OnShift;
+            @Shift.performed += instance.OnShift;
+            @Shift.canceled += instance.OnShift;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IPlayerInputActions instance)
@@ -965,6 +1017,12 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
             @Control.started -= instance.OnControl;
             @Control.performed -= instance.OnControl;
             @Control.canceled -= instance.OnControl;
+            @Shift.started -= instance.OnShift;
+            @Shift.performed -= instance.OnShift;
+            @Shift.canceled -= instance.OnShift;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IPlayerInputActions instance)
@@ -1260,6 +1318,8 @@ public partial class @InputControls: IInputActionCollection2, IDisposable
         void OnScrollDelta(InputAction.CallbackContext context);
         void OnMousePosition(InputAction.CallbackContext context);
         void OnControl(InputAction.CallbackContext context);
+        void OnShift(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface ICameraControlsActions
     {

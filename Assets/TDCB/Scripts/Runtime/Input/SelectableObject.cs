@@ -157,9 +157,10 @@ namespace TDCB
         {
             if (selectableType == SelectableType.Enemy) return; //TODO: Make enemies selectable
             
-            _highlight.Selected = false;
             SetLayer();
             DeregisterCommands();
+            
+            _highlight.Selected = false;
         }
 
         private void SetLayer()

@@ -39,13 +39,12 @@ namespace TDCB
 
         protected override void OnRegister()
         {
-            if (!applyPopulationCostOnEnable) return;
-            
             _healthComponent.OnKilled += Kill;
 
             health.CurrentHealth.SetValue(stats.health);
             health.MaxHealth.SetValue(stats.health);
-            
+         
+            if (!applyPopulationCostOnEnable) return;
             foreach (var cost in data.costs)
             {
                 if (cost.resourceType == ResourceType.Population)

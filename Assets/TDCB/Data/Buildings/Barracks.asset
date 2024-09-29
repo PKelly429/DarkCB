@@ -35,5 +35,5 @@ MonoBehaviour:
   tooltip:
     type: 1
     position: 1
-    header: Bonfire
-    body: Lights up an area to allow building
+    header: Barracks
+    body: Train military units

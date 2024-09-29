@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15930d980cc96d49b8c70bfac168ddc, type: 3}
+  m_Name: GuardTower
+  m_EditorClassIdentifier: 
+  priority: -2
+  icon: {fileID: 21300000, guid: 1739a8463e9eecf4a953f6459e679ab6, type: 3}
+  buildingPrefab: {fileID: 4923124390115633501, guid: 663dc0f478dc02840af551bef58945a5, type: 3}
+  stats:
+    health: 200
+    armor:
+      melee: 4
+      piercing: 4
+    damage: 20
+    attackDelay: 0
+    attackSpeed: 2
+    damageType: 1
+    range: 30
+  commands: {fileID: 0}
+  selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
+  costs:
+  - resourceType: 4
+    value: 75
+  - resourceType: 3
+    value: 25
+  consumed: []
+  produced: []
+  tooltip:
+    type: 1
+    position: 1
+    header: Guard Tower
+    body: Attacks Enemies

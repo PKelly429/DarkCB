@@ -13,6 +13,7 @@ namespace TDCB
     {
         [PreviewField] public Sprite image;
         [PreviewField] public Sprite imageHover;
+        public BindableString hotkey;
         public SoundData soundClip;
 
         [BoxGroup("Tooltip"), HideLabel] public Tooltip tooltip;

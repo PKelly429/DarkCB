@@ -21,6 +21,8 @@ namespace TDCB
         public BuildingPlacement buildingPlacement;
         public ResourceManager resourceManager;
         public ProjectileManager projectileManager;
+
+        public Transform mainBuildingTransform;
         
         #region Singleton
         public static SceneReferences Instance {get; private set;}
@@ -28,6 +30,7 @@ namespace TDCB
         private void Awake()
         {
             Instance = this;
+            Time.timeScale = 1;
         }
         #endregion
     }

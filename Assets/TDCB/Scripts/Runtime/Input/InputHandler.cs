@@ -39,6 +39,7 @@ namespace TDCB
         public float LeftMouseHeldTime { get; private set; }
         
         public bool ControlDown { get; private set; }
+        public bool ShiftDown { get; private set; }
         
         // Commands
         public bool HasTargetCommand { get; private set; }
@@ -60,7 +61,7 @@ namespace TDCB
                 
                 if (value == DragState.Idle)
                 {
-                    SceneReferences.Instance.unitManager.SetUnitSelection(_hoveredSelectables);
+                    SceneReferences.Instance.unitManager.SetUnitSelection(_hoveredSelectables, !ShiftDown);
                     ClearHover();
                     OnSelectionDragFinish?.Invoke();
                 }
@@ -101,8 +102,20 @@ namespace TDCB
             inputControls.PlayerInput.Cancel.performed += OnCancel;
             inputControls.PlayerInput.RightMousePress.performed += OnRightMousePress;
             inputControls.PlayerInput.RightMouseRelease.performed += OnRightMouseRelease;
+            inputControls.PlayerInput.Pause.performed += OnPause;
         }
-        
+
+        private void OnDestroy()
+        {
+            inputControls.PlayerInput.LeftMousePress.performed -= OnLeftMousePress;
+            inputControls.PlayerInput.LeftMouseRelease.performed -= OnLeftMouseRelease;
+            inputControls.PlayerInput.Select.performed -= OnSelect;
+            inputControls.PlayerInput.Cancel.performed -= OnCancel;
+            inputControls.PlayerInput.RightMousePress.performed -= OnRightMousePress;
+            inputControls.PlayerInput.RightMouseRelease.performed -= OnRightMouseRelease;
+            inputControls.PlayerInput.Pause.performed -= OnPause;
+        }
+
         public void Update()
         {
             PointerOverUI = EventSystem.current.IsPointerOverGameObject();
@@ -111,6 +124,7 @@ namespace TDCB
             LeftMouseDownPressedThisFrame = InputControls.PlayerInput.LeftMousePress.WasPressedThisFrame();
 
             ControlDown = inputControls.PlayerInput.Control.IsPressed();
+            ShiftDown = inputControls.PlayerInput.Shift.IsPressed();
 
             if (LeftMouseDownPressedThisFrame)
             {
@@ -409,6 +423,15 @@ namespace TDCB
         
         public void OnControl(InputAction.CallbackContext context)
         {
+        }
+
+        public void OnShift(InputAction.CallbackContext context)
+        {
+        }
+
+        public void OnPause(InputAction.CallbackContext context)
+        {
+            UIReferences.Instance.pauseMenu.TogglePause();
         }
     }
 }

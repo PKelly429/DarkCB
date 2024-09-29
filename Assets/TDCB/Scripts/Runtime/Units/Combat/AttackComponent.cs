@@ -36,7 +36,15 @@ namespace TDCB
         {
             if (enemy)
             {
+                if (!SceneReferences.Instance.enemyUnitHash.IsValidUnit(selectableObject.HashGridIndex))
+                {
+                    return new NearbyUnit();
+                }
                 return SceneReferences.Instance.enemyUnitHash.closestEnemy[selectableObject.HashGridIndex];    
+            }
+            if (!SceneReferences.Instance.playerUnitHash.IsValidUnit(selectableObject.HashGridIndex))
+            {
+                return new NearbyUnit();
             }
             return SceneReferences.Instance.playerUnitHash.closestEnemy[selectableObject.HashGridIndex];
         }
@@ -68,6 +76,11 @@ namespace TDCB
 
         private void Update()
         {
+            if (selectableObject.selectableType == SelectableType.Building)
+            {
+                if(!selectableObject.building.IsBuilt) return;
+            }
+            
             if (attackCooldown > 0)
             {
                 attackCooldown -= Time.deltaTime;

@@ -16,9 +16,6 @@ namespace TDCB
         
         public const float MeleeDistance = 3f;
         
-        public const float MovePriority = 0.6f;
-        public const float DefaultPriority = 0.5f;
-        
         private FollowerEntity ai;
         [SerializeField] private AIDestinationSetter unitTarget;
 
@@ -77,7 +74,6 @@ namespace TDCB
 
             IsAbleToAttack = false;
             ai.stopDistance = MeleeDistance;
-            ai.rvoSettings.priority = MovePriority;
             Move_Internal(position);
         }
 
@@ -104,7 +100,6 @@ namespace TDCB
         {
             IsAbleToAttack = true;
             ai.stopDistance = MeleeDistance;
-            ai.rvoSettings.priority = DefaultPriority;
             Move_Internal(position);
         }
 
@@ -122,7 +117,6 @@ namespace TDCB
         public void HoldPosition()
         {
             IsAbleToAttack = true;
-            ai.rvoSettings.priority = DefaultPriority;
         }
 
         private void Update()
@@ -134,18 +128,16 @@ namespace TDCB
                     _hasMoveCommand = false;
                     unitTarget.enabled = true;
                     IsAbleToAttack = true;
-                    ai.rvoSettings.priority = DefaultPriority;
                 }
             }
         }
 
 
-        public bool IsAbleToAttack { get; private set; }
+        public bool IsAbleToAttack { get; private set; } = true;
         public void SetTarget(Transform target)
         {
             unitTarget.target = target;
             transform.LookAt(target);
-            ai.rvoSettings.priority = DefaultPriority;
         }
 
         public void SetDesiredDistance(float distance)

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DataBinding;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ namespace TDCB
         [SerializeField] private Image icon;
         [SerializeField] private HighlightOnHover hover;
         [SerializeField] private ShowTooltipOnHover tooltip;
+        [SerializeField] private TMP_Text hotkey;
         
         public override void Bind(object obj)
         {
@@ -29,6 +31,12 @@ namespace TDCB
             icon.sprite = command.image;
             hover.SetSprites(command.image, command.imageHover);
             tooltip.SetTooltip(command.GetTooltip());
+
+            string hotkeyString = command.hotkey.GetValue();
+            if (!string.IsNullOrEmpty(hotkeyString))
+            {
+                hotkey.text = $"[{hotkeyString}]";
+            }
         }
 
         public override void Unbind()
@@ -38,6 +46,7 @@ namespace TDCB
             button.onClick.RemoveAllListeners();
             icon.enabled = false;
             frame.enabled = true;
+            hotkey.text = string.Empty;
         }
 
         public override void DebugBinder()

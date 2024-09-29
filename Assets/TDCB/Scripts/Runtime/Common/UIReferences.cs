@@ -10,6 +10,7 @@ namespace TDCB
     public class UIReferences : MonoBehaviour
     {
         public UIColors uiColors;
+        public PauseMenu pauseMenu;
         public CommandButtonGrid commandButtonGrid;
         public TooltipManager tooltipManager;
         public BindableIconUI resourceHarvesterIconPool;

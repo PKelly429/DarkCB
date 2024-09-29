@@ -7,12 +7,13 @@ using UnityEngine;
 
 namespace TDCB
 {
-    public class Building : SelectableObject
+    public class Building : SelectableObject, IMoveToAttackTarget
     {
         [SerializeField] private BuildingData data;
         [SerializeField] private float size;
         [SerializeField] private Collider selectionCollider;
         [SerializeField] private bool walkable;
+        [SerializeField] private bool loseIfDestroyed;
         
         [SerializeField, InfoBox("Check AutoRegister if placed in Scene")] private bool autoRegister;
 
@@ -30,6 +31,8 @@ namespace TDCB
         public override float Size => size;
         public override SoundData SelectionClip => data.selectSound;
         public override Collider Collider => selectionCollider;
+
+        public bool IsBuilt => _isPlaced;
         
         // Building Components
         [SerializeField] private HealthComponent _healthComponent;
@@ -71,6 +74,27 @@ namespace TDCB
             {
                 Build();
             }
+        }
+
+        protected override void OnRegister()
+        {
+            _healthComponent.OnKilled += Kill;
+            
+            if (loseIfDestroyed)
+            {
+                SceneReferences.Instance.mainBuildingTransform = transform;
+                _healthComponent.OnKilled += SceneLoader.LoadMainMenu;
+            }
+            
+            base.OnRegister();
+        }
+        
+        private void Kill()
+        {
+            _healthComponent.OnKilled -= Kill;
+            if(!IsAlive) return;
+            DeregisterObject();
+            Destroy(gameObject);
         }
 
         protected override void OnDisable()
@@ -179,5 +203,15 @@ namespace TDCB
 
             return true;
         }
+
+        #region IMoveToAttackTarget
+        public bool IsAbleToAttack => true;
+        public void SetTarget(Transform transform)
+        { 
+        }
+        public void SetDesiredDistance(float distance)
+        {
+        }
+        #endregion
     }
 }

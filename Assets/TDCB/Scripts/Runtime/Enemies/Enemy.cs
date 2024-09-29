@@ -50,10 +50,16 @@ namespace TDCB
             Destroy(gameObject);
         }
 
-
+        public void MoveToCenterOfMap()
+        {
+            SetTarget(SceneReferences.Instance.mainBuildingTransform);
+        }
+        
         public bool IsAbleToAttack => true;
         public void SetTarget(Transform target)
         {
+            if(target == null) return;
+            
             unitTarget.target = target;
             transform.LookAt(target);
         }

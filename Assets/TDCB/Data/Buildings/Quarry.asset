@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15930d980cc96d49b8c70bfac168ddc, type: 3}
+  m_Name: Quarry
+  m_EditorClassIdentifier: 
+  priority: -2
+  icon: {fileID: 21300000, guid: 957f4baa21db42f4390d25cc49a6a96f, type: 3}
+  buildingPrefab: {fileID: 2533489279539536772, guid: 49659e235f9ac304dab4ff0adfa97efe, type: 3}
+  stats:
+    health: 100
+    armor:
+      melee: 0
+      piercing: 0
+    damage: 0
+    attackDelay: 0
+    attackSpeed: 0
+    damageType: 0
+    range: 0
+  commands: {fileID: 11400000, guid: c179b3dcea68f9d45b5785d1c8b236e4, type: 2}
+  selectSound: {fileID: 11400000, guid: fdd1b43cb91dc3e4f9127ce6bb8196f0, type: 2}
+  costs:
+  - resourceType: 3
+    value: 100
+  consumed: []
+  produced:
+  - resourceType: 4
+    perTile: 1
+    value: 2
+  tooltip:
+    type: 0
+    position: 1
+    header: Quarry
+    body: Collects Stone.

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,7 +33,15 @@ namespace TDCB
              _inputControls.Commands.AttackMove.performed += OnAttackMove;
              _inputControls.Commands.Build.performed += OnBuild;
          }
-         
+
+         private void OnDestroy()
+         {
+             _inputControls.Commands.Move.performed -= OnMove;
+             _inputControls.Commands.Stop.performed -= OnStop;
+             _inputControls.Commands.AttackMove.performed -= OnAttackMove;
+             _inputControls.Commands.Build.performed -= OnBuild;
+         }
+
          public void OnMove(InputAction.CallbackContext context)
          {
              moveCommand.Execute();

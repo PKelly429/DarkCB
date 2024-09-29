@@ -21,12 +21,12 @@ MonoBehaviour:
   commandRow2:
   - {fileID: 11400000, guid: 4c2da59731913d04491d6ace4881c460, type: 2}
   - {fileID: 11400000, guid: 77a867f67ef65e940a15ab7f7dba3235, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 823578daac2b49541bf839b0cf1046e2, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   commandRow3:
   - {fileID: 11400000, guid: 0cd5711dc2a93514eb715921c2889ac8, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: cc13d71d3d5f050499c582d08faa481e, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

@@ -36,7 +36,15 @@ namespace TDCB
 
         public static void LoadingSceneReady()
         {
-            SceneManager.UnloadSceneAsync(_currentScene);
+            try
+            {
+                SceneManager.UnloadSceneAsync(_currentScene);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+
             var asyncOperation = SceneManager.LoadSceneAsync(_nextScene, LoadSceneMode.Additive);
 
             asyncOperation.completed += OnSceneLoaded;

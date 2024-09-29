@@ -22,6 +22,7 @@ namespace TDCB
             set
             {
                 _selected = value;
+                if(selectedShape == null) return;
                 selectedShape.enabled = _selected;
             } 
         }
