@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using DataBinding;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace TDCB
 {
@@ -83,6 +85,7 @@ namespace TDCB
             }
         }
 
+#if UNITY_EDITOR
         [Button]
         private void Generate()
         {
@@ -97,5 +100,6 @@ namespace TDCB
                 commandBinders[i] = commandButtonObjects[i].GetComponent<BinderGroup>();
             }
         }
+#endif
     }
 }

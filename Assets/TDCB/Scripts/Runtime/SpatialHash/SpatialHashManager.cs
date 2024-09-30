@@ -320,6 +320,7 @@ namespace TDCB
             hashGridAdditions.Dispose();
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (!_debug) return;
@@ -356,6 +357,7 @@ namespace TDCB
             }
             Gizmos.color = Color.white;
         }
+#endif
     }
 
     public interface ISpatialHashable

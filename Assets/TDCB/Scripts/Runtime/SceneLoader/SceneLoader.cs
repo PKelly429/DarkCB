@@ -17,9 +17,14 @@ namespace TDCB
         private static Scene _currentScene;
         private static int _nextScene;
         
+        public static bool LoadInProgress { get; private set; }
+        
         public static void LoadMainScene()
         {
-            _currentScene = SceneManager.GetActiveScene();
+            if (LoadInProgress) return;
+            
+            LoadInProgress = true;
+            _currentScene = SceneManager.GetSceneByBuildIndex(MenuScene);
             _nextScene = MainScene;
             
             SceneManager.LoadSceneAsync(LoadingScene, LoadSceneMode.Additive);
@@ -27,7 +32,10 @@ namespace TDCB
         
         public static void LoadMainMenu()
         {
-            _currentScene = SceneManager.GetActiveScene();
+            if (LoadInProgress) return;
+            
+            LoadInProgress = true;
+            _currentScene = SceneManager.GetSceneByBuildIndex(MainScene);
             _nextScene = MenuScene;
             
             SceneManager.LoadSceneAsync(LoadingScene, LoadSceneMode.Additive);
@@ -52,7 +60,8 @@ namespace TDCB
 
         public static void UnloadLoadingScene()
         {
-            SceneManager.UnloadSceneAsync(SceneManager.GetSceneByBuildIndex(LoadingScene));
+            var asyncOperation = SceneManager.UnloadSceneAsync(SceneManager.GetSceneByBuildIndex(LoadingScene));
+            asyncOperation.completed += (x) => { LoadInProgress = false; };
         }
 
     }

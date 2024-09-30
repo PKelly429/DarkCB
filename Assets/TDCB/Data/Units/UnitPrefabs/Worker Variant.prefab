@@ -37,6 +37,10 @@ PrefabInstance:
       value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 4844318240772286100, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844318240772286100, guid: a093787ef7ade824dbcd191d59fcf06d, type: 3}
       propertyPath: attackEffect
       value: 
       objectReference: {fileID: 2428248758908617731}

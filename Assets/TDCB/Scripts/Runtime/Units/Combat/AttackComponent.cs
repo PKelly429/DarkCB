@@ -34,15 +34,22 @@ namespace TDCB
         
         private NearbyUnit GetClosestUnit()
         {
+            if (selectableObject.HashGridIndex < 0)
+            {
+                return new NearbyUnit();
+            }
+            
             if (enemy)
             {
-                if (!SceneReferences.Instance.enemyUnitHash.IsValidUnit(selectableObject.HashGridIndex))
+                if (!SceneReferences.Instance.enemyUnitHash.IsValidUnit(selectableObject.HashGridIndex) 
+                    || SceneReferences.Instance.enemyUnitHash.closestEnemy.Count <= selectableObject.HashGridIndex)
                 {
                     return new NearbyUnit();
                 }
                 return SceneReferences.Instance.enemyUnitHash.closestEnemy[selectableObject.HashGridIndex];    
             }
-            if (!SceneReferences.Instance.playerUnitHash.IsValidUnit(selectableObject.HashGridIndex))
+            if (!SceneReferences.Instance.playerUnitHash.IsValidUnit(selectableObject.HashGridIndex) 
+                || SceneReferences.Instance.playerUnitHash.closestEnemy.Count <= selectableObject.HashGridIndex)
             {
                 return new NearbyUnit();
             }

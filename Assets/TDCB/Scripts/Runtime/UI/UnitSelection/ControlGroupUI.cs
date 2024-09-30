@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -68,6 +69,11 @@ namespace TDCB
             
             icon.sprite = data.HighestPriorityUnit.Icon;
             count.text = $"{data.Count}";
+        }
+
+        private void OnDisable()
+        {
+            UnBind();
         }
     }
 }

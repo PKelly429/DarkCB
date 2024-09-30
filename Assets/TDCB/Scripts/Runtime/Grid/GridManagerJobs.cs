@@ -321,8 +321,8 @@ namespace TDCB
             blockedCells = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
             blockedCellsBuffer = new NativeArray<bool>(GridBounds * GridBounds, Allocator.Persistent);
             
-            InitialiseGridWithTerrain();
             gridTextureData = gridTexture.GetRawTextureData<Color32>();
+            InitialiseGridWithTerrain();
 
             for (int x = 0; x < GridBounds; x++)
             {
@@ -354,7 +354,7 @@ namespace TDCB
             {
                 for (int y = 0; y < GridBounds; y++)
                 {
-                    if (gridTexture.GetPixel(x, y).r > 0.5f)
+                    if (gridTextureData[y * GridBounds + x].r > 0.5f)
                     {
                         blockedCells[y * GridBounds + x] = true;
                         blockedCellsBuffer[y * GridBounds + x] = true;
@@ -472,9 +472,7 @@ namespace TDCB
             _updateTextureJobRunning = false;
             Profiler.EndSample();
             
-            Profiler.BeginSample("Apply Texture");
             gridTexture.Apply();
-            Profiler.EndSample();
 
             Profiler.BeginSample("Copy blocked cell buffer");
             blockedCells.CopyTo(blockedCellsBuffer);
@@ -482,31 +480,6 @@ namespace TDCB
             unitsWithVisionInCellBuffer.CopyTo(unitsWithVisionInCell);
             Profiler.EndSample();
         }
-
-        // private void OnDrawGizmos()
-        // {
-        //     if (_jobRunning)
-        //     {
-        //         _jobHandle.Complete();
-        //     }
-        //     
-        //     Profiler.BeginSample("Gizmos");
-        //     float size = 0.25f;
-        //     for (int i = 0; i < unitsWithVisionInCell.Length; i++)
-        //     {
-        //         if(unitsWithVisionInCell[i] == 0) continue;
-        //         
-        //         int x = i % GridBounds;
-        //         int y = i/GridBounds;
-        //
-        //         Color color = unitsWithVisionInCell[i] == 1 ? Color.red : Color.yellow;
-        //         if(unitsWithVisionInCell[i] > 2) color = Color.white;
-        //         Gizmos.color = color;
-        //         Gizmos.DrawSphere(SceneReferences.Instance.gridManager.GetWorldPositionFromCell(new GridCell(x, y)), size*unitsWithVisionInCell[i]);
-        //     }
-        //     Gizmos.color = Color.white;
-        //     Profiler.EndSample();
-        // }
     }
 
     #region Update Lit Objects Job

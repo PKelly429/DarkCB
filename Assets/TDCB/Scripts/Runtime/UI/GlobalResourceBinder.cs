@@ -77,8 +77,10 @@ namespace TDCB
             }
         }
 
+#if UNITY_EDITOR
         public override void DebugBinder()
         {
         }
+#endif
     }
 }

@@ -63,6 +63,8 @@ namespace TDCB
         private Vector2 _centerPos;
         private Vector2 offset;
         private const float OffsetMulti = 9999f;
+        
+        public Texture2D GridTexture => validTerrainTexture;
 
         private void Awake()
         {
@@ -205,8 +207,7 @@ namespace TDCB
             terrain.Flush();
             gridTerrain.Flush();
         }
-        
-        [Conditional("UNITY_EDITOR")]
+
         private void UpdateTextures()
         {
             if (terrainFeaturesTexture.width != width)
@@ -214,6 +215,8 @@ namespace TDCB
                 Debug.LogError("Texture size does not match");
                 return;
             }
+
+            validTerrainTexture.Reinitialize(256, 256);
 
             for (int x = 0; x < width; x++)
             {

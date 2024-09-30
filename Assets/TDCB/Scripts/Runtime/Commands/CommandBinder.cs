@@ -48,17 +48,17 @@ namespace TDCB
             frame.enabled = true;
             hotkey.text = string.Empty;
         }
-
-        public override void DebugBinder()
-        {
-            
-        }
         
 #if UNITY_EDITOR
         public override void Reset()
         {
             base.Reset();
             button = GetComponent<Button>();
+        }
+        
+        public override void DebugBinder()
+        {
+            
         }
 #endif
     }

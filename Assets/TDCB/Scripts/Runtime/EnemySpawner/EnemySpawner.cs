@@ -10,7 +10,7 @@ namespace TDCB
         [SerializeField] private GameObject BrutePrefab;
         [SerializeField] private GameObject SpeedlingPrefab;
 
-        private const float SpawnPeriod = 4 * 60;
+        private const float SpawnPeriod = 5 * 60;
         private const float SpawnRate = 0.1f;
 
         private float StartTime;
@@ -19,12 +19,12 @@ namespace TDCB
         private int GetWaveSpawnCount()
         {
             float t = (Time.time - StartTime)/60f;
-            return Mathf.FloorToInt(Mathf.Pow(t, 1.8f));
+            return Mathf.FloorToInt(Mathf.Pow(t, 1.6f));
         }
 
         private void SpawnEnemyAtPosition(Vector3 pos)
         {
-            var enemy = Random.Range(0f, 1f) >= 0.85f ? BrutePrefab : SpeedlingPrefab;
+            var enemy = Random.Range(0f, 100f) >= 80f ? BrutePrefab : SpeedlingPrefab;
             var newEnemy =Instantiate(enemy, pos + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)), Quaternion.identity, transform);
             newEnemy.GetComponent<Enemy>().MoveToCenterOfMap();
         }
